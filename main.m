@@ -37,9 +37,7 @@ FlowType = cellstr(char('Parallel', 'Counter'));
 ap = AirPipe;
     ap.d_i = 0.07;
     ap.delta_a = 0.005;
-    ap.p = 5e5;
     ap.alpha = 0.87;
-    ap.p = 5e5;
 amb = Ambient;
     amb.I_r = 700;
     amb.p = 1e5;
@@ -55,8 +53,7 @@ il = InsLayer;
 dc = DishCollector
     dc.fluidType = char(Fluid(1));
     dc.A = 87.7;
-    dc.q_m = 0.0892;    % To be calculated
-%     dc.T_cav = 1316;    % To be calculated
+    dc.p = 5e5;
     dc.T_i = C2K(350);
     dc.T_o = C2K(800);
     dc.d_ap = 0.184;
@@ -70,22 +67,15 @@ dc = DishCollector
     dc.ambient = amb;
     dc.insLayer = il;
     
-% q_dr_1 = dc.get_q_dr_1();
-% q_ref = dc.get_q_ref(amb);
 
-% q_cond_conv = dc.get_q_cond_conv(T_ins, amb);
-% q_cond_rad = dc.get_q_cond_rad(T_ins, amb);
-% q_cond_tot = dc.get_q_cond_tot(T_ins);
-% q_cond_tot = q_cond_conv + q_cond_rad;
-
-% q_cond_conv = dc.get_q_cond_conv(T_ins, amb);
-% q_cond_rad = dc.get_q_cond_rad(T_ins, amb);
-% q_cond_tot = dc.get_q_cond_tot(T_ins);
-% q_cond_tot1 = q_cond_conv + q_cond_rad;
-% q_conv_tot = dc.get_q_conv_tot(amb);
-% q_rad_emit = dc.get_q_rad_emit(amb);
-% q_in = dc.get_q_in(amb);
-% q_in1 = q_dr_1 + q_ref + (q_cond_tot + q_conv_tot + q_rad_emit);
-guess = [400] ;
+guess = [1400; 400; 0.2] ;
 options = optimset('Display','iter');
-[T_ins,fval] = fsolve(@(T_ins)solve(T_ins, dc, amb),guess,options);
+[x, fval] = fsolve(@(x)CalcDishCollector(x, dc, amb), guess, options);
+
+dc.T_cav = x(1);
+dc.T_ins = x(2);
+dc.q_m = x(3);
+dc.efficiency = dc.q_dr_1_h(dc.q_m) ./ dc.q_tot(amb);
+
+
+

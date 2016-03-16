@@ -4,7 +4,6 @@ classdef AirPipe
     properties
         d_i
         delta_a
-        p
         alpha
     end
     

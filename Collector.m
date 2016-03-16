@@ -7,7 +7,7 @@ classdef Collector
     properties
         fluidType;
         A;
-        q_m;
+        q_m = 0.1;
         T_i;
         T_o;
         p;
@@ -20,8 +20,11 @@ classdef Collector
     methods
 %         function eta = get_eta()
 %         end
-        function q_in = get_q_in(obj, amb@Ambient)
+        function q_in = q_in(obj, amb@Ambient)
             q_in = amb.I_r .* obj.A .* obj.gamma * obj.shading * obj.rho;
+        end
+        function q_tot = q_tot(obj, amb@Ambient)
+            q_tot = amb.I_r .* obj.A;
         end
     end
     
