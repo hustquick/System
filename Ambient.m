@@ -1,17 +1,12 @@
 classdef Ambient
-    %Environment parameters
-    %   I_r     Irradiance
-    %   T   Temperature
-    %   P   Pressure
-    %   w   wind speed
-    %   fluid   ambient fluid
+    %Ambient Environment parameters
     
     properties
-        I_r
-        T
-        p
-        w   
-        fluid
+        I_r     % Irradiance, W/m^2
+        T       % Temperature, K
+        p       % Pressure, Pa
+        w       % Wind speed, m/s
+        fluid   % Ambient fluid type
     end
     
     methods

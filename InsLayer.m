@@ -1,11 +1,11 @@
 classdef InsLayer
-    %InsLayer is used to describe the insulating layer
+    %InsLayer The insulating layer of the dish receiver
     
     properties
-        d_i;
-        delta;
-        lambda;
-        epsilon;
+        d_i;    % Inner diameter of the insulating layer, m
+        delta;  % Thickness of the insulating layer, m
+        lambda; % Thermal conductivity of the insulating layer, W/m-K
+        epsilon;    % Emissivity of the insulating layer
     end
     
     methods

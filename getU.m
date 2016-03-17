@@ -1,5 +1,5 @@
 function U = getU(T)
-%This function is used to calculate the overall heat transfer
+%U This function is used to calculate the overall heat transfer
 %coefficient of trough receiver with the fluid temperature of T.
 %   U   overall heat transfer coefficient of trough recevier
 %   T   temperature of fluid

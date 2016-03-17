@@ -1,5 +1,5 @@
 function Nu = NuOfExternalCylinder(Re, Pr)
-%This is a function to get Nusselt number for flow perpendicular to
+%NuOfExternalCylinder This is a function to get Nusselt number for flow perpendicular to
 %circular cylinder of diameter D, the average heat-transfer coefficient can
 %be obtained from the correlation in BOOK "Process Heat Transfer PRINCIPLES
 %AND APPLICATIONS".

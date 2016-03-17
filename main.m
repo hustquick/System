@@ -2,10 +2,9 @@ clear;
 %%%%%%%%%%%%%BASIC DESIGN PARAMETERS%%%%%%%%%%%%%%%%%%%%
 % Fluid names
 % global F1 F2 F3 p_dr
-Fluid = cellstr(char('Air', 'Water', 'Therminol_VP1'));	% Fluids
+
 
 % Flow Type of the two fluids in Stirling engine array
-FlowType = cellstr(char('Parallel', 'Counter'));
 
 % % Generator
 % P_ge = 4e6;	% Power of generator, W
@@ -32,7 +31,9 @@ FlowType = cellstr(char('Parallel', 'Counter'));
 % p_c = 1.5e4;     % Exhaust pressure of steam turbine, Pa
 % 
 % % Deaerator
-% p_da = 1e6;      % Pressure of deareator, Pa
+pp1.p = 1e6;      % Pressure of deareator, Pa
+pp1.T_o = 327.2;     % Outlet temperature of pump 1
+pp1.fluid = char(Const.Fluid(2));
 
 ap = AirPipe;
     ap.d_i = 0.07;
@@ -43,7 +44,7 @@ amb = Ambient;
     amb.p = 1e5;
     amb.T = C2K(20);
     amb.w = 4;
-    amb.fluid = char(Fluid(1));
+    amb.fluid = char(Const.Fluid(1));
 il = InsLayer;
     il.delta = 0.075;
     il.d_i = 0.46;
@@ -51,7 +52,7 @@ il = InsLayer;
     il.lambda = 0.06;
 
 dc = DishCollector
-    dc.fluidType = char(Fluid(1));
+    dc.fluidType = char(Const.Fluid(1));
     dc.A = 87.7;
     dc.p = 5e5;
     dc.T_i = C2K(350);
@@ -72,10 +73,53 @@ guess = [1400; 400; 0.2] ;
 options = optimset('Display','iter');
 [x, fval] = fsolve(@(x)CalcDishCollector(x, dc, amb), guess, options);
 
-dc.T_cav = x(1);
+dc.T_p = x(1);
 dc.T_ins = x(2);
 dc.q_m = x(3);
-dc.efficiency = dc.q_dr_1_h(dc.q_m) ./ dc.q_tot(amb);
+dc.eta = dc.q_dr_1_h(dc.q_m) ./ dc.q_tot(amb);
 
+for i = 1:11
+    st_se1(i) = Stream;
+    st_se1(i).fluid = char(Const.Fluid(1));
+    st_se1(i).p = dc.p;
+    st_se1(i).q_m = 0.3244;
+    st_se1(i).T = Temperature;
+    st_se2(i) = Stream;
+    st_se2(i).fluid = char(Const.Fluid(2));
+    st_se2(i).p = pp1.p;
+    st_se2(i).q_m = 0.5629;
+    st_se2(i).T = Temperature;
+end
 
+cp_1 = CoolProp.PropsSI('C', 'T', dc.T_o, 'P', dc.p, dc.fluidType);
+cp_2 = CoolProp.PropsSI('C', 'T', pp1.T_o, 'P', pp1.p, pp1.fluid);
 
+for j = 1:10
+    se(j) = StirlingEngine;
+    se(j).cp_1 = cp_1;
+    se(j).cp_2 = cp_2;
+    se(j).T_1_i = Temperature;
+    se(j).T_1_o = Temperature;
+    se(j).T_2_i = Temperature;
+    se(j).T_2_o = Temperature;
+end
+
+%%%%% Same order %%%%%
+
+for j = 1:10
+    se(j).InletStream1(st_se1(j));
+    se(j).InletStream2(st_se2(j));
+    se(j).OutletStream1(st_se1(j+1));
+    se(j).OutletStream2(st_se2(j+1));
+end
+
+% st_se1(11).T = C2K(400);
+
+for i = 1:10
+    guess1(i,1) = dc.T_o;
+    guess1(i,2) = dc.T_o - 40 * i;
+    guess1(i,3) = pp1.T_o;
+    guess1(i,4) = pp1.T_o + 4 * i;
+end
+
+[x2, fval] = fsolve(@(x2)CalcSEA(x2, se, dc, pp1), guess1, options);
