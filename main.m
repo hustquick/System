@@ -53,7 +53,7 @@ il = InsLayer;
 
 st_dc_i = Stream;
     st_dc_i.fluid = char(Const.Fluid(1));
-    st_dc_i.q_m = 0.1;
+%     st_dc_i.q_m = 0.1;
     st_dc_i.T = Temperature(C2K(350));
     st_dc_i.p = 5e5;
     
@@ -80,18 +80,15 @@ dc = DishCollector
     dc.ambient = amb;
     dc.insLayer = il;
     
-    dc.T_ins.v = 340;   % Test only
-    dc.T_p.v = 1400;      % Test only
+%     dc.T_ins.v = 340;   % Test only
+%     dc.T_p.v = 1400;      % Test only
 
     guess = [1400; 400; 0.2] ;
     options = optimset('Display','iter');
     [x, fval] = fsolve(@(x)CalcDishCollector(x, dc, amb), guess, options);
-% 
-% dc.T_p = x(1);
-% dc.T_ins = x(2);
-% dc.q_m = x(3);
-% dc.eta = dc.q_dr_1_h(dc.q_m) ./ dc.q_tot(amb);
-% 
+    
+dc.eta = dc.q_dr_1_1() ./ dc.q_tot(amb);
+
 % for i = 1:11
 %     st_se1(i) = Stream;
 %     st_se1(i).fluid = char(Const.Fluid(1));
