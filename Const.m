@@ -5,6 +5,7 @@ classdef Const
         SIGMA = 5.67e-8;
         G = 9.807;
         R = 8.314;
+        NUM_SE = 100;
     end
     
     properties (Constant = true)

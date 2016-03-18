@@ -39,6 +39,14 @@ classdef Stream < handle
                 error('The two streams have different fluid types!');
             end
         end
+        function st2 = diverge(st1, n)
+            % Get the properties of a stream diverged from a stream
+            % It is diverged into n equal parts
+            st2.fluid = st1.fluid;
+            st2.q_m.v = st1.q_m.v / n;
+            st2.T = st1.T;
+            st2.p = st1.p;
+        end
     end
     
 end
