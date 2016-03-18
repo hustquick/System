@@ -9,7 +9,7 @@ classdef Const
     
     properties (Constant = true)
         Fluid = cellstr(char('Air', 'Water', 'Therminol_VP1'));	% Fluids' name
-        FlowType = cellstr(char('Parallel', 'Counter'));
+        FlowType = cellstr(char('Same', 'Inverse'));
     end
     
 end
