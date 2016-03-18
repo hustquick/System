@@ -11,6 +11,7 @@ classdef Stream < handle
     methods (Static)
         function obj = Stream
             obj.T = Temperature;
+            obj.q_m = Q_m;
         end
         function st2 = flow(st1)
             % st2 is another state of the same stream st1 after a flow

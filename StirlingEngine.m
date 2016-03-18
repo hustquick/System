@@ -37,70 +37,70 @@ classdef StirlingEngine
             obj.st2_i = Stream;
             obj.st2_o = Stream;
         end
-        function T_H = T_H(obj, T_1_i, T_1_o)
+        function T_H = T_H(obj)
             % Highest temperature of expansion space, K
-            T_H = T_1_i - (T_1_i - T_1_o) ./ (1 - ...
-                exp(- obj.U_1 .* obj.A_1 ./ (obj.q_m_1 .* obj.cp_1)));
+            T_H = obj.st1_i.T.v - (obj.st1_i.T.v - obj.st1_o.T.v) ./ (1 - ...
+                exp(- obj.U_1 .* obj.A_1 ./ (obj.st1_i.q_m.v .* obj.cp_1)));
         end
-        function T_L = T_L(obj, T_2_i, T_2_o)
+        function T_L = T_L(obj)
             % Lowest temperature of compression space, K
-            T_L = T_2_i - (T_2_i - T_2_o) ./ (1 - ...
-                exp(- obj.U_2 .* obj.A_2 ./ (obj.q_m_2 .* obj.cp_2)));
+            T_L = obj.st2_i.T.v - (obj.st2_i.T.v - obj.st2_o.T.v) ./ (1 - ...
+                exp(- obj.U_2 .* obj.A_2 ./ (obj.st2_i.q_m.v .* obj.cp_2)));
         end
-        function T_R = T_R(obj, T_1_i, T_1_o, T_2_i, T_2_o)
+        function T_R = T_R(obj)
             % Regenerator temperature, K
-            T_R = LogMean(obj.T_H(T_1_i, T_1_o), obj.T_L(T_2_i, T_2_o));
+            T_R = LogMean(obj.T_H(), obj.T_L());
         end
-        function e = e(obj, T_1_i, T_1_o, T_2_i, T_2_o)
+        function e = e(obj)
             % Regeneration effectiveness of the Stirling engine
-            e = (obj.T_R(T_1_i, T_1_o, T_2_i, T_2_o) - obj.T_L(T_2_i, T_2_o)) ...
-                ./ (obj.T_H(T_1_i, T_1_o) - obj.T_L(T_2_i, T_2_o));
+            e = (obj.T_R() - obj.T_L()) ...
+                ./ (obj.T_H() - obj.T_L());
         end
-        function eta = eta1(obj, T_1_i, T_1_o, T_2_i, T_2_o)
+        function eta = eta1(obj)
             % Efficiency of the Stirling engine using formula
-            T_H = obj.T_H(T_1_i, T_1_o);
-            T_L = obj.T_L(T_2_i, T_2_o);
-            e = obj.e(T_1_i, T_1_o, T_2_i, T_2_o);
+            T_H = obj.T_H();
+            T_L = obj.T_L();
+            e = obj.e();
             eta = (T_H - T_L) ./ (T_H + (1 - e) .* (T_H - T_L) ...
                 ./ (obj.k -1) ./ log(obj.gamma));        
         end
-        function eta = eta2(obj, T_1_i, T_1_o, T_2_i, T_2_o)
+        function eta = eta2(obj)
             % Efficiency of the Stirling engine using definition
-            Q_1 = obj.q_m_1 .* obj.cp_1 .* (T_1_i - T_1_o);
-            Q_2 = obj.q_m_2 .* obj.cp_2 .* (T_2_o - T_2_i);
+            Q_1 = obj.st1_i.q_m.v .* obj.cp_1 .* (obj.st1_i.T.v - obj.st1_o.T.v);
+            Q_2 = obj.st2_i.q_m.v .* obj.cp_2 .* (obj.st2_o.T.v - obj.st2_i.T.v);
             eta =  (Q_1 - Q_2) ./ Q_1;
         end
-        function P = P1(obj, T_1_i, T_1_o, T_2_i, T_2_o)
+        function P = P1(obj)
             % Power of the Stirling engine using the efficiency
-            eta = obj.eta2(T_1_i, T_1_o, T_2_i, T_2_o);
+            eta = obj.eta2();
 %             h_1_o = CoolProp.PropsSI('H', 'T', T_1_o, 'P', obj.p_1, obj.F_1);
 %             h_1_i = CoolProp.PropsSI('H', 'T', T_1_i, 'P', obj.p_1, obj.F_1);
-            P = obj.q_m_1 .* obj.cp_1 .* (T_1_i - T_1_o) .* eta;
+            P = obj.st1_i.q_m.v .* obj.cp_1 .* (obj.st1_i.T.v - obj.st1_o.T.v) .* eta;
         end
-        function P = P2(obj, T_1_i, T_1_o, T_2_i, T_2_o)
+        function P = P2(obj)
             % Power of the Stirling engine using the speed of engine
-            T_H = obj.T_H(T_1_i, T_1_o);
-            T_L = obj.T_L(T_2_i, T_2_o);
+            T_H = obj.T_H();
+            T_L = obj.T_L();
             P = obj.n_g .* Const.R .* (T_H - T_L) .* log(obj.gamma) .* obj.s_se;
         end
-        function InletStream1(obj, st)
-            % This function is used to set the heating inlet stream properties to the
-            % Stirling engine
-            obj.st1_i = st;
-        end
-        function InletStream2(obj, st)
-            % This function is used to set the cooling inlet stream properties to the
-            % Stirling engine
-            obj.st2_i = st;
-        end
-        function OutletStream1(obj, st)
-            % This function is used to set the heating outlet stream properties
-            obj.st1_o = st;
-        end
-        function OutletStream2(obj, st)
-            % This function is used to set the cooling outlet stream properties
-            obj.st2_o = st;
-        end
+%         function InletStream1(obj, st)
+%             % This function is used to set the heating inlet stream properties to the
+%             % Stirling engine
+%             obj.st1_i = st;
+%         end
+%         function InletStream2(obj, st)
+%             % This function is used to set the cooling inlet stream properties to the
+%             % Stirling engine
+%             obj.st2_i = st;
+%         end
+%         function OutletStream1(obj, st)
+%             % This function is used to set the heating outlet stream properties
+%             obj.st1_o = st;
+%         end
+%         function OutletStream2(obj, st)
+%             % This function is used to set the cooling outlet stream properties
+%             obj.st2_o = st;
+%         end
     end
     
 end

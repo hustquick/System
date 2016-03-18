@@ -32,14 +32,14 @@ classdef DishCollector < Collector
             % Heat absorbed by the fluid, W
             h_o = CoolProp.PropsSI('H', 'T', obj.st_o.T.v, 'P', obj.st_o.p, obj.st_o.fluid);
             h_i = CoolProp.PropsSI('H', 'T', obj.st_i.T.v, 'P', obj.st_o.p, obj.st_i.fluid);
-            q_dr_1 = obj.st_i.q_m .* (h_o - h_i);
+            q_dr_1 = obj.st_i.q_m.v .* (h_o - h_i);
         end
         function q_dr_1 = q_dr_1_2(obj) 
             % Heat transferred from the air pipe to the air, W
             T = (obj.st_i.T.v + obj.st_o.T.v)/2;
             p = (obj.st_i.p + obj.st_o.p)/2;
             rho = CoolProp.PropsSI('D', 'T', T, 'P', p, obj.st_i.fluid);
-            v = 4 .* obj.st_i.q_m ./ (pi * obj.airPipe.d_i .^2 * rho);
+            v = 4 .* obj.st_i.q_m.v ./ (pi * obj.airPipe.d_i .^2 * rho);
             mu = CoolProp.PropsSI('V', 'T', T, 'P', p, obj.st_i.fluid);
             Re = rho * v * obj.airPipe.d_i / mu;
             Cp = CoolProp.PropsSI('C', 'T', T, 'P', p, obj.st_i.fluid);
