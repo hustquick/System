@@ -1,14 +1,24 @@
-classdef Stream
+classdef Stream < handle
     %Stream This class describes a fluid stream
     
     properties
         fluid;  % Fluid type
         q_m;    % Mass flow rate, kg/s
-        T@Temperature;      % Temperature, K
+        T;      % Temperature, K
         p;      % Pressure, Pa
     end
     
-    methods
+    methods (Static)
+        function obj = Stream
+            obj.T = Temperature;
+        end
+        function st2 = flow(st1)
+            % st2 is another state of the same stream st1 after a flow
+            % process
+            st2 = Stream;
+            st2.fluid = st1.fluid;
+            st2.q_m = st1.q_m;
+        end
         function st3 = converge(st1, st2)
             % Get the properties of a stream converged by two streams converged
             % The two streams have the same fluid type

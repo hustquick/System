@@ -10,6 +10,9 @@ classdef Ambient
     end
     
     methods
+        function obj = Ambient
+            obj.T = Temperature;
+        end
     end
     
 end

@@ -1,4 +1,4 @@
-classdef Temperature
+classdef Temperature < handle
     %Temperature This class is defined to make temperature a handle class
     
     properties

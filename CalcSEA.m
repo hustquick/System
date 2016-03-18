@@ -8,13 +8,13 @@ function F = CalcSEA(x, se, dc, pp1)
             - se(1).eta2(x(1,1), x(1,2), x(1,3), x(1,4));
     F(1,4) = se(1).P1(x(1,1), x(1,2), x(1,3), x(1,4))
             - se(1).P2(x(1,1), x(1,2), x(1,3), x(1,4));
-    for i = 2:10
-        F(i,1) = x(i,1) - x(i-1,2);
-        F(i,2) = x(i,3) - x(i-1,4);
-        F(i,3) = se(i).eta1(x(i,1), x(i,2), x(i,3), x(i,4))
-            - se(i).eta2(x(i,1), x(i,2), x(i,3), x(i,4));
-        F(i,4) = se(i).P1(x(i,1), x(i,2), x(i,3), x(i,4))
-            - se(i).P2(x(i,1), x(i,2), x(i,3), x(i,4));
-    end
+%     for i = 2:10
+%         F(i,1) = x(i,1) - x(i-1,2);
+%         F(i,2) = x(i,3) - x(i-1,4);
+%         F(i,3) = se(i).eta1(x(i,1), x(i,2), x(i,3), x(i,4))
+%             - se(i).eta2(x(i,1), x(i,2), x(i,3), x(i,4));
+%         F(i,4) = se(i).P1(x(i,1), x(i,2), x(i,3), x(i,4))
+%             - se(i).P2(x(i,1), x(i,2), x(i,3), x(i,4));
+%     end
 end
 

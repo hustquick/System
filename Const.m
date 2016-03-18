@@ -12,8 +12,5 @@ classdef Const
         FlowType = cellstr(char('Parallel', 'Counter'));
     end
     
-    methods
-    end
-    
 end
 
