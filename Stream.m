@@ -25,6 +25,7 @@ classdef Stream < handle
             % The two streams have the same fluid type
             if st1.fluid == st2.fluid
                 if  st1.p == st2.p
+                    st3 = Stream;
                     st3.fluid = st1.fluid;
                     st3.p = st1.p;
                     st3.q_m = st1.q_m + st2.q_m;
@@ -42,6 +43,7 @@ classdef Stream < handle
         function st2 = diverge(st1, n)
             % Get the properties of a stream diverged from a stream
             % It is diverged into n equal parts
+            st2 = Stream;
             st2.fluid = st1.fluid;
             st2.q_m.v = st1.q_m.v / n;
             st2.T = st1.T;

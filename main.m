@@ -27,6 +27,8 @@ clear;
 % p_s = 2.35e6;    % Main steam pressure of steam turbine, Pa
 % p_c = 1.5e4;     % Exhaust pressure of steam turbine, Pa
 
+%%%%%%%%%%%%%Dish Collector Part%%%%%%%%%%%%%%%
+
 amb = Ambient;
     amb.I_r = 700;
     amb.p = 1e5;
@@ -188,3 +190,39 @@ else
     error('Uncomplished work.');
 end
 eta_ses = sum(P) ./ (st1_se_i.q_m.v * se_cp_1 * (se(1).st1_i.T.v - se(n1).st1_o.T.v)); 
+
+%%%%%%%%%%%%%Trough Collector Part%%%%%%%%%%%%%%%
+
+tc = TroughCollector;
+    tc.A = 545;
+    tc.gamma = 0.93;
+    tc.rho = 0.94;
+    tc.shading = 1;
+    tc.Fe = 0.97;
+    tc.phi = Deg2Rad(70);
+    tc.d_i = 0.066;
+    tc.d_o = 0.07;
+    tc.alpha = 0.96;
+    tc.tau = 0.95;
+    tc.w = 5.76;
+
+st3(4) = Stream;
+
+st3(1).fluid = char(Const.Fluid(3));
+st3(1).T = Temperature(C2K(400));
+st3(1).p = 2e6;
+st3(1).q_m.v = 53.41;  % To be calculated
+
+st3_tc_o = Stream;
+st3_tc_o.fluid = char(Const.Fluid(3));
+st3_tc_o.T = Temperature(C2K(350));
+st3_tc_o.p = 2e6;
+st3_tc_o.q_m.v = 3.41;  % To be calculated
+
+st3_tc_i = Stream.flow(st3_tc_o);
+    st3_tc_i.T = Temperature(C2K(225));
+    st3_tc_i.p = st3_tc_o.p;
+
+tc.st_i = st3_tc_i;
+tc.st_o = st3_tc_o;
+tc.eta = tc.get_eta(amb)
