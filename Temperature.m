@@ -7,8 +7,7 @@ classdef Temperature < handle
     
     methods
         function obj = Temperature(v)
-            if nargin == 0
-            else
+            if nargin > 0
                 obj.v = v;
             end
         end

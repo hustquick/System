@@ -6,6 +6,11 @@ classdef Q_m < handle
     end
     
     methods
+        function obj = Q_m(v)
+            if nargin > 0
+                obj.v = v;
+            end
+        end
     end
     
 end

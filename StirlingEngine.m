@@ -72,6 +72,4 @@ classdef StirlingEngine
             P = obj.n_g .* Const.R .* (T_H - T_L) .* log(obj.gamma) .* obj.s_se;
         end
     end
-    
 end
-

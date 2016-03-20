@@ -6,33 +6,39 @@ classdef Stream < handle
         q_m;    % Mass flow rate, kg/s
         T;      % Temperature, K
         p;      % Pressure, Pa
+        x;      % Quality of two?phase stream
+    end
+    properties%(Dependent)
+        h;      % Mass specific enthalpy, J.kg
+        s;      % Mass specific entropy, J/kg-K
+        cp;     % Specific heat under constant pressure, J/kg-K
     end
     
-    methods (Static)
+    methods
         function obj = Stream
             obj.T = Temperature;
             obj.q_m = Q_m;
         end
-        function st2 = flow(st1)
+        function st = flow(obj)
             % st2 is another state of the same stream st1 after a flow
             % process
-            st2 = Stream;
-            st2.fluid = st1.fluid;
-            st2.q_m = st1.q_m;
+            st = Stream;
+            st.fluid = obj.fluid;
+            st.q_m = obj.q_m;
         end
-        function st3 = converge(st1, st2)
+        function st2 = converge(obj, st1)
             % Get the properties of a stream converged by two streams converged
             % The two streams have the same fluid type
-            if st1.fluid == st2.fluid
-                if  st1.p == st2.p
-                    st3 = Stream;
-                    st3.fluid = st1.fluid;
-                    st3.p = st1.p;
-                    st3.q_m = st1.q_m + st2.q_m;
-                    h_1 = CoolProp.PropsSI('H', 'T', st1.T.v, 'P', st1.p, st1.fluid);
-                    h_2 = CoolProp.PropsSI('H', 'T', st2.T.v, 'P', st2.p, st2.fluid);
-                    h_3 = (st1.q_m .* h_1 + st2.q_m .* h_2) ./ (st1.q_m + st2.q_m);
-                    st3.T.v = CoolProp.PropsSI('T', 'H', h_3, 'P', st3.p);
+            if obj.fluid == st1.fluid
+                if  obj.p == st1.p
+                    st2 = Stream;
+                    st2.fluid = obj.fluid;
+                    st2.p = obj.p;
+                    st2.q_m = obj.q_m + st1.q_m;
+                    h_1 = CoolProp.PropsSI('H', 'T', obj.T.v, 'P', obj.p, obj.fluid);
+                    h_2 = CoolProp.PropsSI('H', 'T', st1.T.v, 'P', st1.p, st1.fluid);
+                    h_3 = (obj.q_m .* h_1 + st1.q_m .* h_2) ./ (obj.q_m + st1.q_m);
+                    st2.T.v = CoolProp.PropsSI('T', 'H', h_3, 'P', st2.p);
                 else
                     error('The two streams have different pressures!');
                 end
@@ -40,16 +46,48 @@ classdef Stream < handle
                 error('The two streams have different fluid types!');
             end
         end
-        function st2 = diverge(st1, n)
+        function st = diverge(obj, y)
             % Get the properties of a stream diverged from a stream
             % It is diverged into n equal parts
-            st2 = Stream;
-            st2.fluid = st1.fluid;
-            st2.q_m.v = st1.q_m.v / n;
-            st2.T = st1.T;
-            st2.p = st1.p;
+            st = Stream;
+            st.fluid = obj.fluid;
+            st.q_m.v = obj.q_m.v .* y;
+            st.T = obj.T;
+            st.p = obj.p;
         end
     end
-    
+    methods
+%         function value = get.h(obj)
+%             T_s = CoolProp.PropsSI('T', 'P', obj.p, 'Q', 0, obj.fluid);
+%             if abs(obj.T.v - T_s) > 1e-6 
+%                 value = CoolProp.PropsSI('H', 'T', obj.T.v, ...
+%                     'P', obj.p, obj.fluid);
+% %             else
+% %                 value = CoolProp.PropsSI('H', 'T', obj.T.v, ...
+% %                     'Q', 0, obj.fluid);
+% %               error('Saturated state, q is required to get h!');
+%             end
+%         end
+%         function value = get.s(obj)
+%             T_s = CoolProp.PropsSI('T', 'P', obj.p, 'Q', 0, obj.fluid);
+%             if abs(obj.T.v - T_s) > 1e-6
+%                 value = CoolProp.PropsSI('S', 'T', obj.T.v, ...
+%                     'P', obj.p, obj.fluid);
+%             else
+%                 value = CoolProp.PropsSI('S', 'H', obj.h, ...
+%                     'P', obj.p, obj.fluid);
+% %                 error('Saturated state, q is required to get s!');
+%             end
+%         end
+%         function value = get.cp(obj)
+%             T_s = CoolProp.PropsSI('T', 'P', obj.p, 'Q', 0, obj.fluid);
+%             if abs(obj.T.v - T_s) > 1e-6
+%                 value = CoolProp.PropsSI('C', 'T', obj.T.v, ...
+%                     'P', obj.p, obj.fluid);
+%             else
+%                 value = inf;
+% %                 error('Saturated state, cp not exist!');
+%             end
+%         end
+     end    
 end
-
