@@ -30,7 +30,7 @@ classdef TroughCollector
         function U = U(obj)
             %This function is used to calculate the overall heat transfer
             %coefficient of trough receiver with the fluid average temperature of T.
-
+            
             T = (obj.st_i.T.v + obj.st_o.T.v) / 2;
             if (T < C2K(200))
                 U = 0.687257 + 0.001941 * (T - obj.amb.T.v) + ...
@@ -49,7 +49,7 @@ classdef TroughCollector
                 + 3.18596e-6 * obj.phi ^3 - 4.85509e-8 * obj.phi ^ 4;
         end
         function L_per_q_m = L_per_q_m(obj)
-            % Required length of unit mass flow rate of the collector to 
+            % Required length of unit mass flow rate of the collector to
             % heat the temperature of the working fluid from
             % st_i.T upto st_o.T
             para = pi * obj.d_o;
@@ -59,7 +59,7 @@ classdef TroughCollector
             T = (obj.st_i.T.v + obj.st_o.T.v) / 2;
             p = (obj.st_i.p + obj.st_o.p) / 2;
             cp = CoolProp.PropsSI('C', 'T', T, 'P', ...
-        p, obj.st_i.fluid);
+                p, obj.st_i.fluid);
             U = obj.U;
             DeltaT_o = obj.st_o.T.v - (obj.amb.T.v + q ./ U);
             DeltaT_i = obj.st_i.T.v - (obj.amb.T.v + q ./ U);
@@ -82,5 +82,5 @@ classdef TroughCollector
             value = (h_o - h_i) ./ (obj.amb.I_r .* obj.w .* ...
                 obj.L_per_q_m);
         end
-    end    
+    end
 end

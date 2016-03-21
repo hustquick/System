@@ -1,4 +1,4 @@
-classdef Deaerator
+classdef Deaerator < handle
     %Deaerator This class describes the deaerator
     
     properties
@@ -17,4 +17,3 @@ classdef Deaerator
     end
     
 end
-

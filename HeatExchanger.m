@@ -1,4 +1,4 @@
-classdef HeatExchanger
+classdef HeatExchanger < handle
     %HeatExchanger This class defines heat exchangers
     
     properties

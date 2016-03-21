@@ -13,4 +13,3 @@ classdef Ambient
     end
     
 end
-

@@ -1,5 +1,5 @@
 classdef DishCollector
-    %DishCollector is a kind of Collector who uses dish as the reflector
+    %DishCollector is a kind of Collector which uses dish mirror as the reflector
     %and uses volumetric receiver
     
     properties(Constant)
@@ -10,7 +10,7 @@ classdef DishCollector
         d_ap = 0.184;       % Aperture diameter of the dish receiver, m
         d_cav = 0.46;       % Diameter of the cavity of the dish receiver, m
         dep_cav = 0.23;     % Depth of the cavity of the dish receiver, m
-        theta = Deg2Rad(45);% Dish aperture angle(0 is horizontal, 90 is vertically down)
+        theta = Deg2Rad(45);% Dish aperture angle(0 is horizontal, 90 is vertically down), rad
     end
     properties
         amb;        % Ambient
@@ -22,7 +22,7 @@ classdef DishCollector
         insLayer;   % Insulating layer
     end
     properties(Dependent)
-        q_use;      % Energy used, transferred to the fluid     
+        q_use;      % Energy used, transferred to the fluid, W
         q_tot;      % Energy projected to the reflector, W
         eta;        % Thermal efficiency of the collector
     end
@@ -41,11 +41,11 @@ classdef DishCollector
             obj.st_i = Stream;
             obj.st_o = Stream;
         end
-        function q_in = q_in(obj)  
+        function q_in = q_in(obj)
             % The accepted energy from the reflector, W
             q_in = obj.amb.I_r .* obj.A .* obj.gamma * obj.shading * obj.rho;
         end
-        function q_dr_1 = q_dr_1_1(obj)    
+        function q_dr_1 = q_dr_1_1(obj)
             % Heat absorbed by the fluid, W
             h_o = CoolProp.PropsSI('H', 'T', obj.st_o.T.v,...
                 'P', obj.st_o.p, obj.st_o.fluid);
@@ -53,7 +53,7 @@ classdef DishCollector
                 'P', obj.st_i.p, obj.st_i.fluid);
             q_dr_1 = obj.st_i.q_m.v .* (h_o - h_i);
         end
-        function q_dr_1 = q_dr_1_2(obj) 
+        function q_dr_1 = q_dr_1_2(obj)
             % Heat transferred from the air pipe to the air, W
             T = (obj.st_i.T.v + obj.st_o.T.v)/2;
             p = (obj.st_i.p + obj.st_o.p)/2;
@@ -71,7 +71,7 @@ classdef DishCollector
             c_r = 1 + 3.5 * obj.airPipe.d_i / (obj.d_cav - ...
                 obj.airPipe.d_i - 2 * obj.airPipe.delta_a);
             Nu = c_r * Nu_prime;
-                        
+            
             h = Nu * k / obj.airPipe.d_i;
             
             H_prime_c = obj.airPipe.d_i + 2 * obj.airPipe.delta_a;
@@ -89,7 +89,7 @@ classdef DishCollector
         function q_ref = q_ref(obj)
             % Reflected energy by the receiver, W
             A_ap = pi * obj.d_ap .^ 2 / 4;
-              
+            
             alpha_eff = obj.airPipe.alpha ./ (obj.airPipe.alpha + ...
                 (1 - obj.airPipe.alpha) .* (A_ap ./ obj.A_cav()));
             
@@ -153,7 +153,7 @@ classdef DishCollector
             h_nat = k .* Nu ./ d_bar_cav;
             
             h_for = 0.1967 * obj.amb.w .^ 1.849;
-
+            
             q_conv_tot = (h_nat + h_for) .* obj.A_cav() .* ...
                 (obj.T_p.v - obj.amb.T.v);
         end
@@ -178,7 +178,7 @@ classdef DishCollector
             d_bar_cav = obj.d_cav - 2 * obj.airPipe.d_i ...
                 - 4 * obj.airPipe.delta_a;
             value = pi * d_bar_cav .^ 2 / 4 + pi * d_bar_cav ...
-                * obj.dep_cav + pi * (d_bar_cav .^ 2 - obj.d_ap .^ 2) / 4; 
+                * obj.dep_cav + pi * (d_bar_cav .^ 2 - obj.d_ap .^ 2) / 4;
         end
         function value = get.q_use(obj)
             h_i = CoolProp.PropsSI('H', 'T', obj.st_i.T.v, 'P', ...

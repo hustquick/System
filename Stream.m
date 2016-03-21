@@ -57,37 +57,37 @@ classdef Stream < handle
         end
     end
     methods
-%         function value = get.h(obj)
-%             T_s = CoolProp.PropsSI('T', 'P', obj.p, 'Q', 0, obj.fluid);
-%             if abs(obj.T.v - T_s) > 1e-6 
-%                 value = CoolProp.PropsSI('H', 'T', obj.T.v, ...
-%                     'P', obj.p, obj.fluid);
-% %             else
-% %                 value = CoolProp.PropsSI('H', 'T', obj.T.v, ...
-% %                     'Q', 0, obj.fluid);
-% %               error('Saturated state, q is required to get h!');
-%             end
-%         end
-%         function value = get.s(obj)
-%             T_s = CoolProp.PropsSI('T', 'P', obj.p, 'Q', 0, obj.fluid);
-%             if abs(obj.T.v - T_s) > 1e-6
-%                 value = CoolProp.PropsSI('S', 'T', obj.T.v, ...
-%                     'P', obj.p, obj.fluid);
-%             else
-%                 value = CoolProp.PropsSI('S', 'H', obj.h, ...
-%                     'P', obj.p, obj.fluid);
-% %                 error('Saturated state, q is required to get s!');
-%             end
-%         end
-%         function value = get.cp(obj)
-%             T_s = CoolProp.PropsSI('T', 'P', obj.p, 'Q', 0, obj.fluid);
-%             if abs(obj.T.v - T_s) > 1e-6
-%                 value = CoolProp.PropsSI('C', 'T', obj.T.v, ...
-%                     'P', obj.p, obj.fluid);
-%             else
-%                 value = inf;
-% %                 error('Saturated state, cp not exist!');
-%             end
-%         end
-     end    
+        %         function value = get.h(obj)
+        %             T_s = CoolProp.PropsSI('T', 'P', obj.p, 'Q', 0, obj.fluid);
+        %             if abs(obj.T.v - T_s) > 1e-6
+        %                 value = CoolProp.PropsSI('H', 'T', obj.T.v, ...
+        %                     'P', obj.p, obj.fluid);
+        % %             else
+        % %                 value = CoolProp.PropsSI('H', 'T', obj.T.v, ...
+        % %                     'Q', 0, obj.fluid);
+        % %               error('Saturated state, q is required to get h!');
+        %             end
+        %         end
+        %         function value = get.s(obj)
+        %             T_s = CoolProp.PropsSI('T', 'P', obj.p, 'Q', 0, obj.fluid);
+        %             if abs(obj.T.v - T_s) > 1e-6
+        %                 value = CoolProp.PropsSI('S', 'T', obj.T.v, ...
+        %                     'P', obj.p, obj.fluid);
+        %             else
+        %                 value = CoolProp.PropsSI('S', 'H', obj.h, ...
+        %                     'P', obj.p, obj.fluid);
+        % %                 error('Saturated state, q is required to get s!');
+        %             end
+        %         end
+        %         function value = get.cp(obj)
+        %             T_s = CoolProp.PropsSI('T', 'P', obj.p, 'Q', 0, obj.fluid);
+        %             if abs(obj.T.v - T_s) > 1e-6
+        %                 value = CoolProp.PropsSI('C', 'T', obj.T.v, ...
+        %                     'P', obj.p, obj.fluid);
+        %             else
+        %                 value = inf;
+        % %                 error('Saturated state, cp not exist!');
+        %             end
+        %         end
+    end
 end

@@ -1,6 +1,6 @@
-classdef StirlingEngine
+classdef StirlingEngine < handle
     %StirlingEngine This class defines some basic characteristics of Stirling engine
-   
+    
     properties
         U_1 = 30;   % Overall heat transfer coefficient of Stirling engine at air side, W/m^2-K
         U_2 = 150;  % Overall heat transfer coefficient of Stirling engine at water side, W/m^2-K
@@ -52,7 +52,7 @@ classdef StirlingEngine
             T_L = obj.T_L();
             e = obj.e();
             eta = (T_H - T_L) ./ (T_H + (1 - e) .* (T_H - T_L) ...
-                ./ (obj.k -1) ./ log(obj.gamma));        
+                ./ (obj.k -1) ./ log(obj.gamma));
         end
         function eta = eta2(obj)
             % Efficiency of the Stirling engine using definition
