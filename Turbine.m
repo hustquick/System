@@ -12,7 +12,7 @@ classdef Turbine < handle
     end
     properties(Constant, Access = private)
         fluid_d = char(Const.Fluid(2));     % Designed working fluid
-        T_s_d = Temperature(C2K(390));      % Designed main steam temperature
+        T_s_d = Temperature(663.15);                     % Designed main steam temperature
         p_s_d = 2.35e6;                     % Designed main steam pressure
         p_c_d = 1.5e4;                      % Designed exhaust pressure
         q_m_d = Q_m(8.084);                 % Designed mass flow rate

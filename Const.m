@@ -5,12 +5,11 @@ classdef Const
         SIGMA = 5.67e-8;
         G = 9.807;
         R = 8.314;
-        NUM_SE = 100;
     end
     
     properties (Constant = true)
         Fluid = cellstr(char('Air', 'Water', 'INCOMP::TVP1'));	% Fluids' name
-        FlowType = cellstr(char('Same', 'Inverse'));
+        FlowType = cellstr(char('Parallel', 'Counter'));
     end
     
 end

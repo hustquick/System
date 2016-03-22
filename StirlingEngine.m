@@ -17,7 +17,7 @@ classdef StirlingEngine < handle
         cp_1;   % Specific heat of fluid 1 under constant pressure, assume to be constant, J/kg-K
         cp_2;   % Specific heat of fluid 2 under constant pressure, assume to be constant, J/kg-K
         P;      % Power of the Stirling engine, W
-        flowType;   % Flow type of the Stirling engine
+        flowType;   % Flow type of the Stirling engine, 'Parallel' or 'Counter'
     end
     
     methods

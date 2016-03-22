@@ -10,7 +10,7 @@ classdef DishCollector
         d_ap = 0.184;       % Aperture diameter of the dish receiver, m
         d_cav = 0.46;       % Diameter of the cavity of the dish receiver, m
         dep_cav = 0.23;     % Depth of the cavity of the dish receiver, m
-        theta = Deg2Rad(45);% Dish aperture angle(0 is horizontal, 90 is vertically down), rad
+        theta = degtorad(45);% Dish aperture angle(0 is horizontal, 90 is vertically down), rad
     end
     properties
         amb;        % Ambient

@@ -13,7 +13,7 @@ classdef TroughCollector
         Fe = 0.97;     % Soiling factor of the trough collector
         d_i = 0.066;    % Inner diameter of the absorber, m
         d_o = 0.07;    % Outer diameter of the absorber, m
-        phi = Deg2Rad(70);    % Incidence angle
+        phi = degtorad(70);    % Incidence angle
     end
     properties
         amb;        % Ambient
@@ -32,10 +32,10 @@ classdef TroughCollector
             %coefficient of trough receiver with the fluid average temperature of T.
             
             T = (obj.st_i.T.v + obj.st_o.T.v) / 2;
-            if (T < C2K(200))
+            if (T < 473.15)
                 U = 0.687257 + 0.001941 * (T - obj.amb.T.v) + ...
                     0.000026 * (T - obj.amb.T.v).^2;
-            elseif (T > C2K(300))
+            elseif (T > 573.15)
                 U = 1.433242 - 0.00566 * (T - obj.amb.T.v) + ...
                     0.000046 * (T - obj.amb.T.v).^2;
             else
