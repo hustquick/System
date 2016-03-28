@@ -6,8 +6,14 @@ classdef AirPipe
         delta_a = 0.005; % Thickness of the air pipe, m
         alpha = 0.87;   % Absorbtance of the air pipe
     end
+    properties
+        T;
+    end
     
     methods
+        function obj = AirPipe
+            obj.T = Temperature;
+        end
     end
     
 end

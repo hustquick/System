@@ -1,4 +1,11 @@
 clear;
+    
+st1(3) = Stream;
+    st1(1).fluid = char(Const.Fluid(1));
+st2(11) = Stream;
+    st2(1).fluid = char(Const.Fluid(2));
+st3(4) = Stream;
+    st3(1).fluid = char(Const.Fluid(3));
 %% Dish Collector
 % A dish collector is built under given ambient parameters
 ap = AirPipe;
@@ -6,7 +13,7 @@ il = InsLayer;
 amb = Ambient;
 
 dc = DishCollector;
-    dc.st_i.fluid = char(Const.Fluid(1));
+    dc.st_i.fluid = st1(1).fluid;
     dc.st_i.T = Temperature(convtemp(350, 'C', 'K'));
     dc.st_i.p = 5e5;
     
@@ -17,23 +24,19 @@ dc = DishCollector;
     dc.amb = amb;
     dc.airPipe = ap;
     dc.insLayer = il;
+    
+    dc.calculate();
 
-guess1 = [1500; 400; 0.1] ;
-options = optimset('Display','iter');
-[x1, fval1] = fsolve(@(x1)CalcDishCollector(x1, dc), ...
-    guess1, options);
+    ratio = 2.990 / dc.st_o.q_m.v;      % To be calculated  
+    st1(1) = dc.st_o.converge(ratio);   
+    st1(3) = dc.st_i.converge(ratio);   
 %% Stirling Engine Array
 % Two kinds of connection orders of the Stirling engines are considered.
-q_m_1 = Q_m(2.990);  % To be calculated!
-q_m_2 = Q_m(5.625);  % To be calculated;
-
-st1(3) = Stream;
-st2(11) = Stream;
-
-st1(1) = dc.st_o.converge(q_m_1.v / dc.st_o.q_m.v);
 st1(2) = st1(1).flow();
 
-st2(5).fluid = char(Const.Fluid(2));
+q_m_2 = Q_m(5.625);  % To be calculated;
+
+st2(5).fluid = st2(1).fluid;
 st2(5).T = Temperature(327.2);  % to be calculated
 st2(5).p = 1e6;
 st2(5).q_m = q_m_2; % to be calculated
@@ -52,9 +55,6 @@ sea.calculate();
 tc = TroughCollector;
 tc.amb = Ambient;
 
-st3(4) = Stream;
-
-st3(1).fluid = char(Const.Fluid(3));
 st3(1).T = Temperature(convtemp(350, 'C', 'K'));
 st3(1).p = 2e6;
 st3(1).q_m.v = 53.41;  % To be calculated
@@ -85,16 +85,40 @@ st2(3).p = 1e6;
 %% Turbine
 % A steam turbine is created
 tb = Turbine;
-tb.st1 = st2(1);
-tb.st2 = st2(2);
-tb.st3 = st2(3);
+tb.st_i = st2(1);
+tb.st_o_1 = st2(2);
+tb.st_o_2 = st2(3);
 tb.y = 0.1;
 tb.calculate();
-st2(2) = tb.st2;    % Necessary for the stream has been diverged in the turbine
-st2(3) = tb.st3;    % Necessary for the stream has been diverged in the turbine
-%% Condensor
-% A condensor is created
-cd = Condensor;
+st2(2) = tb.st_o_1;    % Necessary for the stream has been diverged in the turbine
+st2(3) = tb.st_o_2;    % Necessary for the stream has been diverged in the turbine
+%% Condenser
+% A condenser is created
+cd = Condenser;
 cd.st1 = st2(2);
-cd.st2;
-%%
+st2(4) = cd.st2;
+%% Pump1
+% Pump 1 is used to raise the pressure of water to 1MPa
+pu1 = Pump;
+pu1.p = 1e6;
+pu1.st_i = st2(4);
+st2(5) = pu1.st_o;
+%% Deaerator
+% Deaerator is created
+da.st_i_1 = st2(3);
+da.st_i_2 = st2(6);
+st2(7) = da.st_o;
+%% Pump2
+% Pump 2 is used to raise the pressure of water to the main pressure
+pu2 = Pump;
+pu2.p = tb.st_i.p;
+pu2.st_i = st2(7);
+st2(8) = pu2.st_o;
+%% Preheater
+% Preheater is created
+ph = Preheater;
+ph.st1_i = st2(8);
+st2(9) = ph.st1_o;
+ph.st2_o = tc.st_i;
+
+ph.calculate();

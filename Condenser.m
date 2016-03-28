@@ -1,4 +1,4 @@
-classdef Condensor
+classdef Condenser
     %Condensor This class describes condensor
     
     properties
@@ -9,7 +9,7 @@ classdef Condensor
     end
     
     methods
-        function obj = Condensor
+        function obj = Condenser
             obj.st1 = Stream;
         end
     end
@@ -23,6 +23,8 @@ classdef Condensor
             value.T.v = CoolProp.PropsSI('T', 'P', value.p, 'Q', ...
                 value.x, value.fluid);
             value.h = CoolProp.PropsSI('H', 'P', value.p, 'Q', ...
+                value.x, value.fluid);
+            value.s = CoolProp.PropsSI('S', 'P', value.p, 'Q', ...
                 value.x, value.fluid);
         end
     end

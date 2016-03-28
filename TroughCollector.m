@@ -27,6 +27,13 @@ classdef TroughCollector
     end
     
     methods
+        function obj = TroughCollector
+            obj.amb = Ambient;
+            obj.st_i = Stream;
+            obj.st_o = Stream;
+        end
+    end
+    methods
         function U = U(obj)
             %This function is used to calculate the overall heat transfer
             %coefficient of trough receiver with the fluid average temperature of T.

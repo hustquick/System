@@ -14,8 +14,8 @@ classdef DishCollector
     end
     properties
         amb;        % Ambient
-        T_p;        % Temperature of the fluid pipe, K
-        T_ins;      % Outside temperature of the insulating layer, K
+%         airPipe.T;        % Temperature of the fluid pipe, K
+%         insLayer.T;      % Outside temperature of the insulating layer, K
         st_i;       % Inlet stream
         st_o;       % Outlet stream
         airPipe;    % Air pipe
@@ -34,8 +34,8 @@ classdef DishCollector
     methods
         function obj = DishCollector
             obj.amb = Ambient;
-            obj.T_ins = Temperature;
-            obj.T_p = Temperature;
+            obj.insLayer.T = Temperature;
+            obj.airPipe.T = Temperature;
             obj.airPipe = AirPipe;
             obj.insLayer = InsLayer;
             obj.st_i = Stream;
@@ -64,7 +64,7 @@ classdef DishCollector
             Cp = CoolProp.PropsSI('C', 'T', T, 'P', p, obj.st_i.fluid);
             k = CoolProp.PropsSI('L', 'T', T, 'P', p, obj.st_i.fluid);
             Pr = Cp .* mu ./k;
-            mu_cav = CoolProp.PropsSI('V', 'T', obj.T_p.v,...
+            mu_cav = CoolProp.PropsSI('V', 'T', obj.airPipe.T.v,...
                 'P', p, obj.st_i.fluid);
             Nu_prime = NuInPipe(Re, Pr, mu, mu_cav);
             
@@ -80,8 +80,8 @@ classdef DishCollector
             L_c = N .* sqrt((pi * obj.d_cav).^2 + H_c.^2);
             A_airPipe = pi * obj.airPipe.d_i .* L_c;
             
-            DeltaT1 = obj.T_p.v - obj.st_i.T.v;
-            DeltaT2 = obj.T_p.v - obj.st_o.T.v;
+            DeltaT1 = obj.airPipe.T.v - obj.st_i.T.v;
+            DeltaT2 = obj.airPipe.T.v - obj.st_o.T.v;
             DeltaT = LogMean(DeltaT1, DeltaT2);
             
             q_dr_1 = h .* A_airPipe .* DeltaT;
@@ -117,23 +117,23 @@ classdef DishCollector
             
             h = Nu * k / d_o;
             A_ins = obj.A_ins;
-            q_cond_conv = h .* A_ins .* (obj.T_ins.v - obj.amb.T.v);
+            q_cond_conv = h .* A_ins .* (obj.insLayer.T.v - obj.amb.T.v);
         end
         function q_cond_rad = q_cond_rad(obj)
             % Radiation loss from the insulating layer, W
             q_cond_rad = obj.insLayer.epsilon .* obj.A_ins * ...
-                Const.SIGMA .* (obj.T_ins.v.^4 - obj.amb.T.v .^ 4);
+                Const.SIGMA .* (obj.insLayer.T.v.^4 - obj.amb.T.v .^ 4);
         end
         function q_cond_tot = q_cond_tot(obj)
             % Heat loss from air pipe to the insulating layer, W
             d_o = obj.insLayer.d_i + 2 * obj.insLayer.delta;
-            q_cond_tot = (obj.T_p.v - obj.T_ins.v) ./ ...
+            q_cond_tot = (obj.airPipe.T.v - obj.insLayer.T.v) ./ ...
                 (log(d_o ./ obj.insLayer.d_i) ./ ...
                 (2 * pi * obj.insLayer.lambda .* obj.dep_cav));
         end
         function q_conv_tot = q_conv_tot(obj)
             % Total covection loss, W
-            T = (obj.T_p.v + obj.amb.T.v) / 2;   % Film temperature is used
+            T = (obj.airPipe.T.v + obj.amb.T.v) / 2;   % Film temperature is used
             k = CoolProp.PropsSI('L', 'T', T, 'P', obj.amb.p, obj.amb.fluid);
             
             d_bar_cav = obj.d_cav - 2 * obj.airPipe.d_i - 4 * ...
@@ -145,17 +145,17 @@ classdef DishCollector
             density = CoolProp.PropsSI('D', 'T', T, 'P', ...
                 obj.amb.p, obj.amb.fluid);
             nu = mu ./ density;
-            Gr = Const.G * beta .* (obj.T_p.v - obj.amb.T.v) .* ...
+            Gr = Const.G * beta .* (obj.airPipe.T.v - obj.amb.T.v) .* ...
                 d_bar_cav .^ 3 ./ nu .^ 2;
             
-            Nu = Nu_nat_conv(Gr, obj.T_p.v, obj.amb.T.v, ...
+            Nu = Nu_nat_conv(Gr, obj.airPipe.T.v, obj.amb.T.v, ...
                 obj.theta, obj.d_ap, d_bar_cav);
             h_nat = k .* Nu ./ d_bar_cav;
             
             h_for = 0.1967 * obj.amb.w .^ 1.849;
             
             q_conv_tot = (h_nat + h_for) .* obj.A_cav() .* ...
-                (obj.T_p.v - obj.amb.T.v);
+                (obj.airPipe.T.v - obj.amb.T.v);
         end
         function q_rad_emit = q_rad_emit(obj)
             % Emitted radiation loss, W
@@ -164,7 +164,13 @@ classdef DishCollector
                 (1 - obj.airPipe.alpha) .* (A_ap / obj.A_cav));
             epsilon_cav = alpha_eff;
             q_rad_emit = epsilon_cav .* A_ap * Const.SIGMA .* ...
-                (obj.T_p.v .^4 - obj.amb.T.v .^ 4);
+                (obj.airPipe.T.v .^4 - obj.amb.T.v .^ 4);
+        end
+        function calculate(obj)
+            guess = [1500; 400; 0.1] ;
+            options = optimset('Display','iter');
+            [x] = fsolve(@(x)CalcDishCollector(x, obj), ...
+                guess, options);
         end
     end
     methods

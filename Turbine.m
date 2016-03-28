@@ -4,9 +4,9 @@ classdef Turbine < handle
     %    Station Engineering Co., Ltd
     
     properties
-        st1;    % Main steam stream
-        st2;    % Exhaust steam stream
-        st3;    % Extraction steam stream
+        st_i;    % Main steam stream
+        st_o_1;    % Exhaust steam stream
+        st_o_2;    % Extraction steam stream
         y;      % Extraction ratio
         eta_i;  % Isentropic efficiency
     end
@@ -32,9 +32,9 @@ classdef Turbine < handle
     
     methods
         function obj = Turbine
-            obj.st1 = Stream;
-            obj.st2 = Stream;
-            obj.st3 = Stream;
+            obj.st_i = Stream;
+            obj.st_o_1 = Stream;
+            obj.st_o_2 = Stream;
         end
     end
     methods
@@ -71,11 +71,11 @@ classdef Turbine < handle
             end
         end
         function calculate(obj)
-            st_tmp = obj.flowInTurbine(obj.st1, obj.st3.p);
+            st_tmp = obj.flowInTurbine(obj.st_i, obj.st_o_2.p);
             if (obj.y >= 0 && obj.y <= 1)
-                obj.st3 = st_tmp.diverge(obj.y);
+                obj.st_o_2 = st_tmp.diverge(obj.y);
                 st_tmp2 = st_tmp.diverge(1-obj.y);
-                obj.st2 = obj.flowInTurbine(st_tmp2, obj.st2.p);
+                obj.st_o_1 = obj.flowInTurbine(st_tmp2, obj.st_o_1.p);
             else
                 error('Wrong extraction ratio y value given!');
             end

@@ -5,30 +5,27 @@ classdef Pump < handle
         eta = 0.85;     % Isentropic efficiency
     end
     properties
-        st1;            % Inlet flow stream
+        st_i;            % Inlet flow stream
         p;              % outlet pressure, Pa
     end
     properties(Dependent)
-        st2;
+        st_o;
     end
     
     methods
         function obj = Pump
-            obj.st1 = Stream;
+            obj.st_i = Stream;
         end
     end
     methods
-        function value = get.st2(obj)
-            obj.st1.h = CoolProp.PropsSI('H', 'T', obj.st1.T.v, 'P', ...
-                obj.st1.p, obj.st1.fluid);
-            obj.st1.s = CoolProp.PropsSI('S', 'T', obj.st1.T.v, 'P', ...
-                obj.st1.p, obj.st1.fluid);
+        function value = get.st_o(obj)
             value = Stream;
-            value.fluid = obj.st1.fluid;
+            value.fluid = obj.st_i.fluid;
             value.p = obj.p;
-            s_i = obj.st1.s;
+            s_i = obj.st_i.s;
             h_i = CoolProp.PropsSI('H', 'S', s_i, 'P', value.p, value.fluid);
-            value.h = obj.st1.h + (h_i - obj.st1.h) ./ obj.eta;
+            value.h = obj.st_i.h + (h_i - obj.st_i.h) ./ obj.eta;
+            value.q_m = obj.st_i.q_m;
             value.T.v = CoolProp.PropsSI('T', 'H', value.h, ...
                 'P', value.p, value.fluid);
         end

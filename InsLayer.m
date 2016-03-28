@@ -7,8 +7,14 @@ classdef InsLayer
         lambda = 0.06; % Thermal conductivity of the insulating layer, W/m-K
         epsilon = 0.6;    % Emissivity of the insulating layer
     end
+    properties
+        T;
+    end
     
     methods
+        function obj = InsLayer
+            obj.T = Temperature;
+        end
     end
     
 end

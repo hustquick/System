@@ -105,7 +105,20 @@ classdef SEA < handle
             end
             
             options = optimset('Display','iter');
-            [x, fval] = fsolve(@(x)CalcSEA(x, obj), guess, options);
+            [x] = fsolve(@(x)CalcSEA(x, obj), guess, options);
+            
+            obj.st1_o.T = obj.se(obj.n1).st1_o.T;
+            obj.st1_o.p = obj.se(obj.n1).st1_o.p;
+            
+            if (strcmp(obj.order, 'Same'))
+                obj.st2_o.T = obj.se(obj.n1).st2_o.T;
+                obj.st2_o.p = obj.se(obj.n1).st2_o.p;
+            elseif (strcmp(obj.order,'Reverse'))
+                obj.st2_o.T = obj.se(1).st2_o.T;
+                obj.st2_o.p = obj.se(1).st2_o.p;
+            else
+                error('Uncomplished work.');
+            end
             
             P = zeros(obj.n1,1);
             
