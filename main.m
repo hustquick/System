@@ -122,3 +122,21 @@ st2(9) = ph.st1_o;
 ph.st2_o = tc.st_i;
 
 ph.calculate();
+st3(3) = ph.st2_i;
+st3(4) = ph.st2_o;
+%% Evaporator
+% Evaporator is created
+ev = Evaporator;
+ev.st1_i = st2(9);
+st2(10) = ev.st1_o;
+ev.st2_o = st3(3);
+
+ev.calculate();
+st3(2) = ev.st2_i;
+%% Superheater
+% Superheater is created
+sh = Superheater;
+sh.st1_i = st2(10);
+sh.st2_i = st3(1);
+sh.st2_o = st3(2);
+st2(11) = sh.st1_o;

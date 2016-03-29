@@ -17,5 +17,11 @@ classdef HeatExchanger < handle
         end
     end
     
+    methods
+        function calculate(obj)
+            
+        end
+    end
+    
 end
 

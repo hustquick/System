@@ -19,12 +19,16 @@ classdef Preheater < handle
     end
     methods
         function calculate(obj)
-            obj.st2_i.T.v = obj.st1_i.T.v + obj.Delta_T;
+            obj.st2_i.T.v = obj.st1_o.T.v + obj.Delta_T;
             obj.st2_i.p = obj.st2_o.p;
             obj.st2_i.fluid = obj.st2_o.fluid;
+%             obj.st2_i.q_m = obj.st2_o.q_m;
             obj.st2_i.h = CoolProp.PropsSI('H', 'T', obj.st2_i.T.v, 'P', ...
                 obj.st2_i.p, obj.st2_i.fluid);
-            
+            obj.st2_o.h = CoolProp.PropsSI('H', 'T', obj.st2_o.T.v, 'P', ...
+                obj.st2_o.p, obj.st2_o.fluid);
+            obj.st2_i.q_m.v = obj.st1_i.q_m.v .* (obj.st1_o.h - ...
+                obj.st1_i.h) ./ (obj.st2_i.h - obj.st2_o.h);
         end
     end
     methods
