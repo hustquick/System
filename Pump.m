@@ -24,9 +24,9 @@ classdef Pump < handle
             value.p = obj.p;
             s_i = obj.st_i.s;
             h_i = CoolProp.PropsSI('H', 'S', s_i, 'P', value.p, value.fluid);
-            value.h = obj.st_i.h + (h_i - obj.st_i.h) ./ obj.eta;
+            h = obj.st_i.h + (h_i - obj.st_i.h) ./ obj.eta;
             value.q_m = obj.st_i.q_m;
-            value.T.v = CoolProp.PropsSI('T', 'H', value.h, ...
+            value.T.v = CoolProp.PropsSI('T', 'H', h, ...
                 'P', value.p, value.fluid);
         end
     end

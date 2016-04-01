@@ -21,10 +21,10 @@ classdef Evaporator < handle
         function calculate(obj)
             obj.st2_i = obj.st2_o.flow();
             obj.st2_i.p = obj.st2_o.p;
-            obj.st2_i.h = obj.st2_o.h + (obj.st1_o.h - ...
+            h = obj.st2_o.h + (obj.st1_o.h - ...
                 obj.st1_i.h) .* obj.st1_i.q_m.v ./ obj.st2_i.q_m.v;
-            obj.st2_i.T = CoolProp.PropsSI('T', 'H', ...
-                obj.st2_i.h, 'P', obj.st2_i.p, obj.st2_i.fluid);
+            obj.st2_i.T.v = CoolProp.PropsSI('T', 'H', ...
+                h, 'P', obj.st2_i.p, obj.st2_i.fluid);
         end
     end
     methods
@@ -34,8 +34,6 @@ classdef Evaporator < handle
             value.p = obj.st1_i.p;
             value.x = 1;
             value.T = obj.st1_i.T;
-            value.h = CoolProp.PropsSI('H', 'T', ...
-                value.T.v, 'Q', value.x, value.fluid);
         end
     end
     

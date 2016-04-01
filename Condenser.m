@@ -22,10 +22,6 @@ classdef Condenser
             value.x = 0;
             value.T.v = CoolProp.PropsSI('T', 'P', value.p, 'Q', ...
                 value.x, value.fluid);
-            value.h = CoolProp.PropsSI('H', 'P', value.p, 'Q', ...
-                value.x, value.fluid);
-            value.s = CoolProp.PropsSI('S', 'P', value.p, 'Q', ...
-                value.x, value.fluid);
         end
     end
     

@@ -23,12 +23,6 @@ classdef Preheater < handle
             obj.st2_i.p = obj.st2_o.p;
             obj.st2_i.fluid = obj.st2_o.fluid;
             obj.st2_i.q_m = obj.st2_o.q_m;
-            obj.st2_i.h = CoolProp.PropsSI('H', 'T', obj.st2_i.T.v, 'P', ...
-                obj.st2_i.p, obj.st2_i.fluid);
-            obj.st2_o.h = CoolProp.PropsSI('H', 'T', obj.st2_o.T.v, 'P', ...
-                obj.st2_o.p, obj.st2_o.fluid);
-%             obj.st2_i.q_m.v = obj.st1_i.q_m.v .* (obj.st1_o.h - ...
-%                 obj.st1_i.h) ./ (obj.st2_i.h - obj.st2_o.h);
         end
     end
     methods
@@ -40,15 +34,7 @@ classdef Preheater < handle
             value.x = 0;
             value.T.v = CoolProp.PropsSI('T', 'P', value.p, 'Q', ...
                 value.x, value.fluid);
-            value.h = CoolProp.PropsSI('H', 'P', value.p, 'Q', ...
-                value.x, value.fluid);
         end
-%         function value = get.st2_o(obj)
-%             value = Stream;
-%             value.fluid = obj.st2_i.fluid;
-%             value.p = obj.st2_i.p;
-%             value.
-%         end
     end
     
 end

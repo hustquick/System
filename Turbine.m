@@ -53,11 +53,7 @@ classdef Turbine < handle
             st2.fluid = st1.fluid;
             st2.q_m = st1.q_m;
             st2.p = p;
-%             st1.s = CoolProp.PropsSI('S', 'T', st1.T.v, 'P', ...
-%                 st1.p, st1.fluid);
             h2_i = CoolProp.PropsSI('H', 'P', st2.p, 'S', st1.s, st2.fluid);
-            st1.h = CoolProp.PropsSI('H', 'T', st1.T.v, 'P', ...
-                st1.p, st1.fluid);
             h2 = st1.h - obj.eta_i .* (st1.h - h2_i);
             h2_l = CoolProp.PropsSI('H', 'P', st2.p, 'Q', 0, st2.fluid);
             h2_g = CoolProp.PropsSI('H', 'P', st2.p, 'Q', 1, st2.fluid);
@@ -76,6 +72,7 @@ classdef Turbine < handle
                 obj.st_o_2 = st_tmp.diverge(obj.y);
                 st_tmp2 = st_tmp.diverge(1-obj.y);
                 obj.st_o_1 = obj.flowInTurbine(st_tmp2, obj.st_o_1.p);
+%                 obj.st_o_1.q_m.v = obj.st_i.q_m.v .* obj.y;
             else
                 error('Wrong extraction ratio y value given!');
             end
