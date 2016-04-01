@@ -18,8 +18,9 @@ classdef HeatExchanger < handle
     end
     
     methods
-        function calculate(obj)
-            
+        function value = st2_q_m(obj)
+            value = obj.st1_i.q_m.v .* (obj.st1_i.h - obj.st1_o.h) ./ ...
+                (obj.st2_o.h - obj.st2_i.h);
         end
     end
     

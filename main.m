@@ -37,7 +37,7 @@ st1(2) = st1(1).flow();
 q_m_2 = Q_m(5.625);  % To be calculated;
 
 st2(5).fluid = st2(1).fluid;
-st2(5).T = Temperature(327.2);  % to be calculated
+st2(5).T = Temperature(330);  % to be calculated
 st2(5).p = 1e6;
 st2(5).q_m = q_m_2; % to be calculated
 st2(6) = st2(5).flow();
@@ -140,3 +140,11 @@ sh.st1_i = st2(10);
 sh.st2_i = st3(1);
 sh.st2_o = st3(2);
 st2(11) = sh.st1_o;
+%% HeatExchanger
+% Air-water heat exchanger is created
+he = HeatExchanger;
+he.st1_i = st1(2);
+he.st1_o = st1(3);
+he.st2_i = st2(11);
+he.st2_o = st2(1);
+he.st2_q_m;

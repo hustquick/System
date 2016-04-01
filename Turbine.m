@@ -53,8 +53,8 @@ classdef Turbine < handle
             st2.fluid = st1.fluid;
             st2.q_m = st1.q_m;
             st2.p = p;
-            st1.s = CoolProp.PropsSI('S', 'T', st1.T.v, 'P', ...
-                st1.p, st1.fluid);
+%             st1.s = CoolProp.PropsSI('S', 'T', st1.T.v, 'P', ...
+%                 st1.p, st1.fluid);
             h2_i = CoolProp.PropsSI('H', 'P', st2.p, 'S', st1.s, st2.fluid);
             st1.h = CoolProp.PropsSI('H', 'T', st1.T.v, 'P', ...
                 st1.p, st1.fluid);
