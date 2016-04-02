@@ -169,7 +169,7 @@ classdef DishCollector
         function calculate(obj)
             guess = [1500; 400; 0.1] ;
             options = optimset('Display','iter');
-            [x] = fsolve(@(x)CalcDishCollector(x, obj), ...
+            fsolve(@(x)CalcDishCollector(x, obj), ...
                 guess, options);
         end
     end
@@ -187,11 +187,7 @@ classdef DishCollector
                 * obj.dep_cav + pi * (d_bar_cav .^ 2 - obj.d_ap .^ 2) / 4;
         end
         function value = get.q_use(obj)
-            h_i = CoolProp.PropsSI('H', 'T', obj.st_i.T.v, 'P', ...
-                obj.st_i.p, obj.st_i.fluid);
-            h_o = CoolProp.PropsSI('H', 'T', obj.st_o.T.v, 'P', ...
-                obj.st_o.p, obj.st_o.fluid);
-            value = obj.st_i.q_m.v .* (h_o - h_i);
+            value = obj.st_i.q_m.v .* (obj.st_o.h - obj.st_i.h);
         end
         function value = get.q_tot(obj)
             value = obj.amb.I_r .* obj.A;

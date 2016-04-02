@@ -17,6 +17,8 @@ st3(1).fluid = char(Const.Fluid(3));
 st3(1).p = 2e6;
 st3(1).T = Temperature(convtemp(350, 'C', 'K'));    % Design parameter
 
+ge_P = 4e6;             % Power of generator, W
+ge_eta = 0.975;         % Efficiency of generator
 da_p = 1e6;             % Design parameter, deaerator pressure, Pa
 n1 = 10;                % Can be optimized
 %% Dish Collector
@@ -44,6 +46,11 @@ st1(1).q_m = Q_m(2.990);               % To be calculated
 ratio = st1(1).q_m.v / dc.st_o.q_m.v;
 st1(1) = dc.st_o.converge(ratio);
 st1(3) = dc.st_i.converge(ratio);
+%% Generator
+% A generator is created
+ge = Generator;
+ge.P = ge_P;
+ge.eta = ge_eta;
 %% Turbine
 % A steam turbine is created
 st2(1).q_m = Q_m(6.672);               % To be calculated
@@ -52,8 +59,8 @@ tb = Turbine;
 tb.st_i = st2(1);
 tb.st_o_1 = st2(2);
 tb.st_o_2 = st2(3);
-st2(5).q_m = Q_m(5.625);            % To be calculated
-tb.y = (st2(1).q_m.v - st2(5).q_m.v) ./ st2(1).q_m.v;
+st2(2).q_m = Q_m(5.625);            % To be calculated
+% tb.y = (st2(1).q_m.v - st2(5).q_m.v) ./ st2(1).q_m.v;
 tb.calculate();
 st2(2) = tb.st_o_1;    % Necessary for the stream has been diverged in the turbine
 st2(3) = tb.st_o_2;    % Necessary for the stream has been diverged in the turbine
@@ -71,7 +78,6 @@ st2(5) = pu1.st_o;
 %% Stirling Engine Array
 % Two kinds of connection orders of the Stirling engines are considered.
 st1(2) = st1(1).flow();
-
 st2(6) = st2(5).flow();
 
 sea = SEA(n1, 'Reverse');
@@ -141,3 +147,7 @@ he.st2_i = st2(11);
 he.st2_o = st2(1);
 he.st2_q_m;
 %% Cascade System Calculation
+guess = [6.672];
+options = optimset('Display','iter');
+[x] = fsolve(@(x)CalcSystem(x, tb, ge), ...
+                guess, options);

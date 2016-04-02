@@ -43,10 +43,8 @@ classdef SEA < handle
         function calculate(obj)
             guess = zeros(2, obj.n1);   % 2 * n1 unknown parameters (outlet temperature of two fluids in each column)
             
-            cp_1 = CoolProp.PropsSI('C', 'T', obj.st1_i.T.v, 'P', ...
-                obj.st1_i.p, obj.st1_i.fluid);
-            cp_2 = CoolProp.PropsSI('C', 'T', obj.st2_i.T.v, 'P', ...
-                obj.st2_i.p, obj.st2_i.fluid);
+            cp_1 = obj.st1_i.cp;
+            cp_2 = obj.st2_i.cp;
             obj.se(1).st1_i = obj.st1_i_r;
             obj.se(1).st1_o = obj.se(1).st1_i.flow();
             obj.se(1).st1_o.p = obj.se(1).st1_i.p;
