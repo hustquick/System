@@ -56,14 +56,15 @@ classdef StirlingEngine < handle
         end
         function eta = eta2(obj)
             % Efficiency of the Stirling engine using definition
-            Q_1 = obj.st1_i.q_m.v .* obj.cp_1 .* (obj.st1_i.T.v - obj.st1_o.T.v);
-            Q_2 = obj.st2_i.q_m.v .* obj.cp_2 .* (obj.st2_o.T.v - obj.st2_i.T.v);
+            Q_1 = obj.st1_i.q_m.v .* (obj.st1_i.h - obj.st1_o.h);
+            Q_2 = obj.st2_i.q_m.v .* (obj.st2_o.h - obj.st2_i.h);
             eta =  (Q_1 - Q_2) ./ Q_1;
         end
         function P = P1(obj)
             % Power of the Stirling engine using the efficiency
             eta = obj.eta2();
-            P = obj.st1_i.q_m.v .* obj.cp_1 .* (obj.st1_i.T.v - obj.st1_o.T.v) .* eta;
+            % P = obj.st1_i.q_m.v .* obj.cp_1 .* (obj.st1_i.T.v - obj.st1_o.T.v) .* eta;
+            P = obj.st1_i.q_m.v .* (obj.st1_i.h - obj.st1_o.h) .* eta;
         end
         function P = P2(obj)
             % Power of the Stirling engine using the speed of engine

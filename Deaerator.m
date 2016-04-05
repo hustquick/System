@@ -5,6 +5,7 @@ classdef Deaerator < handle
         p;
         st_i_1;
         st_i_2;
+        q_m
     end
     properties(Dependent)
         st_o;
@@ -26,8 +27,9 @@ classdef Deaerator < handle
                 value.x, value.fluid);
             value.q_m.v = obj.st_i_1.q_m.v + obj.st_i_2.q_m.v;
         end
-        function q_m = get_q_m(obj)
-            q_m = (obj.st_i_1.h .* obj.st_i_1.q_m.v + ...
+        function value = get.q_m(obj)
+            value = Q_m;
+            value.v = (obj.st_i_1.h .* obj.st_i_1.q_m.v + ...
                 obj.st_i_2.h .* obj.st_i_2.q_m.v) ./ obj.st_o.h;
         end
     end

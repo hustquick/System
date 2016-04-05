@@ -15,8 +15,8 @@ classdef Turbine < handle
         T_s_d = Temperature(663.15);                     % Designed main steam temperature
         p_s_d = 2.35e6;                     % Designed main steam pressure
         p_c_d = 1.5e4;                      % Designed exhaust pressure
-        q_m_d = Q_m(8.084);                 % Designed mass flow rate
-        %         q_m_d = Q_m(32.09 / 3.6);
+        %         q_m_d = Q_m(8.084);                 % Designed mass flow rate
+        q_m_d = Q_m(32.09 / 3.6);
         P_d = 6e6;                          % Designed power
     end
     properties(Dependent)
@@ -50,7 +50,7 @@ classdef Turbine < handle
                     h2, st2.fluid);
             end
         end
-        function calculate(obj)
+        function flow(obj)
             st_tmp = obj.flowInTurbine(obj.st_i, obj.st_o_2.p);
             obj.y = (obj.st_i.q_m.v - obj.st_o_1.q_m.v) ./ ...
                 obj.st_i.q_m.v;
@@ -61,6 +61,10 @@ classdef Turbine < handle
             else
                 error('Wrong extraction ratio y value given!');
             end
+        end
+                
+        function value = given_P(obj, ge)
+            value = ge.P ./ ge.eta;
         end
         
         function value = get.eta_i(obj)
