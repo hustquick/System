@@ -66,7 +66,7 @@ classdef DishCollector
             Pr = Cp .* mu ./k;
             mu_cav = CoolProp.PropsSI('V', 'T', obj.airPipe.T.v,...
                 'P', p, obj.st_i.fluid);
-            Nu_prime = NuInPipe(Re, Pr, mu, mu_cav);
+            Nu_prime = Const.NuInPipe(Re, Pr, mu, mu_cav);
             
             c_r = 1 + 3.5 * obj.airPipe.d_i / (obj.d_cav - ...
                 obj.airPipe.d_i - 2 * obj.airPipe.delta_a);
@@ -82,7 +82,7 @@ classdef DishCollector
             
             DeltaT1 = obj.airPipe.T.v - obj.st_i.T.v;
             DeltaT2 = obj.airPipe.T.v - obj.st_o.T.v;
-            DeltaT = LogMean(DeltaT1, DeltaT2);
+            DeltaT = Const.LogMean(DeltaT1, DeltaT2);
             
             q_dr_1 = h .* A_airPipe .* DeltaT;
         end
@@ -113,7 +113,7 @@ classdef DishCollector
                 'P', obj.amb.p, obj.amb.fluid);
             Pr = Cp .* mu ./ k;
             
-            Nu = NuOfExternalCylinder(Re, Pr);
+            Nu = Const.NuOfExternalCylinder(Re, Pr);
             
             h = Nu * k / d_o;
             A_ins = obj.A_ins;
@@ -148,7 +148,7 @@ classdef DishCollector
             Gr = Const.G * beta .* (obj.airPipe.T.v - obj.amb.T.v) .* ...
                 d_bar_cav .^ 3 ./ nu .^ 2;
             
-            Nu = Nu_nat_conv(Gr, obj.airPipe.T.v, obj.amb.T.v, ...
+            Nu = Const.Nu_nat_conv(Gr, obj.airPipe.T.v, obj.amb.T.v, ...
                 obj.theta, obj.d_ap, d_bar_cav);
             h_nat = k .* Nu ./ d_bar_cav;
             

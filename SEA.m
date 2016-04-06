@@ -128,6 +128,7 @@ classdef SEA < handle
             end
             obj.eta = sum(P) ./ (obj.st1_i_r.q_m.v * cp_1 * ...
                 (obj.se(1).st1_i.T.v - obj.se(obj.n1).st1_o.T.v));
+            obj.st2_o.q_m = obj.st2_i.q_m;
         end
         function F = CalcSEA(x, sea)
             %CalcSEA Use expressions to calculate Temperatures of Stirling Engine Array
