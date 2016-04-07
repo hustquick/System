@@ -1,10 +1,35 @@
-function F = CalcSystem(x, cs)
-%CalcSystem Use expressions to calculate some parameters of the system
-%   First expression expresses eta of each Stirling engine in two ways
-%   Second expression expresses P of each Stirling engine in two ways
-%     x = zeros(sea.n1,2);
+clear;
+global flag
+flag = 0;
 
- cs.dca.st_i = cs.st1(3);
+cs = CascadeSystem;
+cs.sea = SEA(10, 'Reverse');
+%% Streams
+for i = 1 : 3
+    cs.st1(i).fluid = char(Const.Fluid(1));
+    cs.st1(i).T = Temperature(convtemp(800, 'C', 'K'));
+    cs.st1(i).p = 5e5;      % Design parameter, air pressure in dish receiver, Pa
+%     cs.st1(i).q_m.v = 3.94;          %%%%%%% To be calculated!
+    cs.st1(i).q_m.v = x(1);
+end
+
+for i = 1 : 11
+    cs.st2(i).fluid = char(Const.Fluid(2));
+    cs.st2(i).T = Temperature(convtemp(340, 'C', 'K'));
+    cs.st2(i).p = 2.35e6;
+%     cs.st2(i).q_m = Q_m(7.356);         %%%%%%% To be calculated!
+    cs.st2(i).q_m.v = x(2);
+end
+
+for i = 1 : 4
+    cs.st3(i).fluid = char(Const.Fluid(3));
+    cs.st3(i).T = Temperature(convtemp(350, 'C', 'K'));    % Design parameter
+    cs.st3(i).p = 2e6;
+%     cs.st3(i).q_m = Q_m(57.57);            %%%%%%%% To be calculated!
+%     cs.st3(i).q_m = Q_m(57.57);
+end
+
+cs.dca.st_i = cs.st1(3);
 cs.dca.st_o = cs.st1(1);
 cs.sea.st1_i = cs.st1(1);
 cs.sea.st1_o = cs.st1(2);
@@ -44,9 +69,8 @@ cs.tca.st_o = cs.st3(1);
 %% Design parameters
 cs.dca.st_i.T = Temperature(convtemp(350, 'C', 'K'));   % Design parameter
 cs.tb.st_o_1.p = 1.5e4;
+cs.tb.st_o_1.q_m.v = x(3);     %%%%%% To be calculated
 cs.da.p = 1e6;
-cs.DeltaT_3_2 = 15;          % Minimun temperature difference between oil
-%and water
 
 cs.dca.dc.st_i = cs.dca.st_i.diverge(1);
 cs.dca.dc.st_o = cs.dca.st_o.diverge(1);
@@ -58,7 +82,7 @@ cs.ge.P = 4e6;
 cs.ge.eta = 0.975;
 
 cs.tb.st_o_2.p = cs.da.p;
-cs.tb.work(cs.ge);
+cs.tb.work;
 
 cs.cd.work;
 
@@ -71,8 +95,6 @@ cs.da.work;
 
 cs.pu2.p = cs.tb.st_i.p;
 cs.pu2.work;
-
-cs.he.work;
 
 % get q_m_3
 cs.ph.st1_o.x = 0;
@@ -95,8 +117,12 @@ cs.tca.n1 = cs.tca.tc.n;
 cs.tca.n2 = cs.tca.st_i.q_m.v ./ cs.tca.tc.st_i.q_m.v;
 cs.tca.eta = cs.tca.tc.eta;
 
-F = [cs.sea.P ./ cs.sea.eta - cs.sea.st1_i.q_m.v ...
-    .* (cs.sea.st1_i.h - cs.sea.st1_o.h);
-    cs.tb.y - cs.da.y];
-    %cs.he.st2_q_m - cs.he.st2_i.q_m.v];
-end
+F = [(cs.tb.P - cs.ge.P ./ cs.ge.eta) .* cs.tb.st_i.q_m.v ./ cs.tb.P;
+    cs.da.q_m.v - cs.da.st_o.q_m.v;
+    cs.he.st2_q_m - cs.he.st2_i.q_m.v];
+% test1 = length(F);
+
+guess = [3.941; 7.356; 57.57];
+options = optimset('Display','iter');
+fsolve(@(x)CalcSystem(x, cs), ...
+                guess, options);

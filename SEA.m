@@ -18,6 +18,7 @@ classdef SEA < handle
         % order, 'Reverse' means the two flows have reverse
         % order, other orders are not considered
         eta;
+        P;
     end
     properties(Dependent, Access = private)
         n2;         % Number of rows of the Stirling engine array
@@ -102,7 +103,7 @@ classdef SEA < handle
                 error('Uncomplished work.');
             end
             
-            options = optimset('Display','iter');
+            options = optimset('Algorithm','levenberg-marquardt','Display','iter');
             [x] = fsolve(@(x)CalcSEA(x, obj), guess, options);
             
             obj.st1_o.T = obj.se(obj.n1).st1_o.T;
@@ -118,17 +119,18 @@ classdef SEA < handle
                 error('Uncomplished work.');
             end
             
-            P = zeros(obj.n1,1);
+            P1 = zeros(obj.n1,1);
             
             for i = 1 : obj.n1
                 obj.se(i).st1_o.T.v = x(i, 1);
                 obj.se(i).st2_o.T.v = x(i, 2);
                 obj.se(i).P = obj.se(i).P1();
-                P(i) = obj.se(i).P2();
+                P1(i) = obj.se(i).P2();
             end
-            obj.eta = sum(P) ./ (obj.st1_i_r.q_m.v * cp_1 * ...
-                (obj.se(1).st1_i.T.v - obj.se(obj.n1).st1_o.T.v));
+            obj.eta = sum(P1) ./ (obj.st1_i_r.q_m.v * ...
+                (obj.se(1).st1_i.h - obj.se(obj.n1).st1_o.h));
             obj.st2_o.q_m = obj.st2_i.q_m;
+            obj.P = sum(P1) .* obj.n_se ./ obj.n1;
         end
         function F = CalcSEA(x, sea)
             %CalcSEA Use expressions to calculate Temperatures of Stirling Engine Array

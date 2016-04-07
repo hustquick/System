@@ -1,4 +1,4 @@
-classdef TroughCollector
+classdef TroughCollector < handle
     %TroughCollector is a kind of Collector who uses trough as the reflector
     %and uses vacumn receiver
     
@@ -14,16 +14,22 @@ classdef TroughCollector
         d_i = 0.066;    % Inner diameter of the absorber, m
         d_o = 0.07;    % Outer diameter of the absorber, m
         phi = degtorad(70);    % Incidence angle
+        v_min = 1;      % Minimun fluid speed in pipe, m/s
+        v_max = 3;      % Maximun fluid speed in pipe, m/s
     end
     properties
         amb;        % Ambient
-        st_i;       % Inlet stream
-        st_o;       % Outlet stream
+        n;          % Numbers of trough collectors in a row
+        st_i;       % Inlet stream of a row
+        st_o;       % Outlet stream of a row
+        v;          % Actual oil speed in the pipe
     end
     properties(Dependent)
         q_use;
         q_tot;
         eta;
+        v_s;          % Oil speed in the pipe if only one collector 
+                      % in a row, m/s
     end
     
     methods
@@ -67,11 +73,28 @@ classdef TroughCollector
             p = (obj.st_i.p + obj.st_o.p) / 2;
             cp = CoolProp.PropsSI('C', 'T', T, 'P', ...
                 p, obj.st_i.fluid);
-            U = obj.U;
+            U = obj.U();
             DeltaT_o = obj.st_o.T.v - (obj.amb.T.v + q ./ U);
             DeltaT_i = obj.st_i.T.v - (obj.amb.T.v + q ./ U);
             L_per_q_m = - cp .* log(DeltaT_o ./ DeltaT_i) ./ ...
                 (U .* para);
+        end
+        function calculate(obj)
+            obj.n = 0;
+            obj.v = obj.n .* obj.v_s;
+            while(obj.v < obj.v_min)
+                obj.n = obj.n + 1;
+                obj.v = obj.n .* obj.v_s;
+            end
+            if (obj.v > obj.v_max)
+                error('No proper speed found!');
+            else
+                obj.st_i.q_m.v = obj.n .* obj.q_use ...
+                    ./ (obj.st_o.h - obj.st_i.h);
+                obj.st_o.q_m.v = obj.st_i.q_m.v;
+                L = obj.L_per_q_m * obj.st_i.q_m.v;
+%             obj.n = L / (obj.A / obj.w);
+            end
         end
     end
     methods
@@ -84,6 +107,14 @@ classdef TroughCollector
         function value = get.eta(obj)
             value = (obj.st_o.h - obj.st_i.h) ./ (obj.amb.I_r .* obj.w .* ...
                 obj.L_per_q_m);
+        end
+        function value = get.v_s(obj)
+            fluid = obj.st_i.fluid;
+            T = (obj.st_i.T.v + obj.st_o.T.v) / 2;
+            p = (obj.st_i.p + obj.st_o.p) / 2;
+            density = CoolProp.PropsSI('D', 'T', T, 'P', p, fluid);
+            q_m_basic = obj.q_use ./ (obj.st_o.h - obj.st_i.h);
+            value = 4 * q_m_basic / (density * pi * obj.d_i^2);
         end
     end
 end

@@ -18,9 +18,11 @@ classdef HeatExchanger < handle
     end
     
     methods
-        function value = st2_q_m(obj)
-            value = obj.st1_i.q_m.v .* (obj.st1_i.h - obj.st1_o.h) ./ ...
-                (obj.st2_o.h - obj.st2_i.h);
+        function work(obj)
+            st2_i_h = obj.st2_o.h - (obj.st1_i.h - obj.st1_o.h) ...
+                .* obj.st1_i.q_m.v ./ obj.st2_i.q_m.v;
+            obj.st2_i.T.v = CoolProp.PropsSI('T', 'H', st2_i_h, 'P', ...
+                obj.st2_i.p, obj.st2_i.fluid);
         end
     end
     

@@ -20,5 +20,8 @@ classdef TCA
         end
     end
     
+    methods
+
+    end
 end
 

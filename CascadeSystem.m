@@ -18,6 +18,7 @@ classdef CascadeSystem
         ev = Evaporator;
         sh = Superheater;
         he = HeatExchanger;
+        DeltaT_3_2;
     end
     
     methods

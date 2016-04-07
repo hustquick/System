@@ -41,7 +41,9 @@ classdef Turbine < handle
             h2_l = CoolProp.PropsSI('H', 'P', st2.p, 'Q', 0, st2.fluid);
             h2_g = CoolProp.PropsSI('H', 'P', st2.p, 'Q', 1, st2.fluid);
             if (h2 >= h2_l && h2 <= h2_g)
-                st2.x = (h2 - h2_l) ./ (h2_g - h2_l);
+%                 st2.x = (h2 - h2_l) ./ (h2_g - h2_l);
+                st2.x = CoolProp.PropsSI('Q', 'P', st2.p, ...
+                    'H', h2, st2.fluid);
                 st2.T.v = CoolProp.PropsSI('T', 'P', st2.p, ...
                     'Q', st2.x, st2.fluid);
             else
@@ -49,21 +51,25 @@ classdef Turbine < handle
                     h2, st2.fluid);
             end
         end
-        function work(obj)
-            st_tmp = Stream;
-            obj.flowInTurbine(obj.st_i, st_tmp, obj.st_o_2.p);
-            y1 = (obj.st_i.q_m.v - obj.st_o_1.q_m.v) / ...
-                obj.st_i.q_m.v;
+        function work(obj, ge)
+            st_tmp2 = Stream;
+            st_tmp1 = Stream;
+            obj.flowInTurbine(obj.st_i, st_tmp2, obj.st_o_2.p);
+            obj.flowInTurbine(st_tmp2, st_tmp1, obj.st_o_1.p);
+            P = ge.P ./ ge.eta;
+            y1 = (P - obj.st_i.q_m.v .* (obj.st_i.h - st_tmp1.h)) ...
+                / (obj.st_i.q_m.v .* (st_tmp1.h - st_tmp2.h));
             if (y1 >= 0 && y1 <= 1)
                 obj.y = y1;
-                obj.st_o_2.q_m.v = st_tmp.q_m.v .* obj.y;
-                obj.st_o_2.T.v = st_tmp.T.v;
-                st_tmp2 = st_tmp.diverge(1-obj.y);
-                obj.flowInTurbine(st_tmp2, obj.st_o_1, obj.st_o_1.p);
+                obj.st_o_2.q_m.v = st_tmp2.q_m.v .* obj.y;
+                obj.st_o_2.T.v = st_tmp2.T.v;
+                st_tmp1 = st_tmp2.diverge(1-obj.y);
+                obj.flowInTurbine(st_tmp1, obj.st_o_1, obj.st_o_1.p);
             else
-                error('Wrong extraction ratio y value given!');
+                error('wrong y value of turbine');
+%                 flag = 1;
             end
-        end            
+        end
        
         function value = get.eta_i(obj)
             h_1_d = CoolProp.PropsSI('H', 'T', obj.T_s_d.v, 'P', ...

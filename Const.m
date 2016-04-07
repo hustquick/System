@@ -7,16 +7,21 @@ classdef Const
         R = 8.314;
     end
     
+    properties (Constant)
+        flag = 0;
+    end
+    
     properties (Constant = true)
         Fluid = cellstr(char('Air', 'Water', 'INCOMP::TVP1'));	% Fluids' name
         FlowType = cellstr(char('Parallel', 'Counter'));
     end
     methods(Static)
-        function c  = LogMean( a, b )
+        function c  = LogMean(a, b)
             %LogMean A simple function provide the logarithmic mean number of given two numbers
             if (a * b > 0)
                 c = (a - b) / log(a / b);
             else
+%                 c = 0;
                 error('The two numbers are wrong!');
             end
         end
