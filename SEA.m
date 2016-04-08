@@ -41,8 +41,8 @@ classdef SEA < handle
         end
     end
     methods
-        function calculate(obj)
-            guess = zeros(2, obj.n1);   % 2 * n1 unknown parameters (outlet temperature of two fluids in each column)
+        function calculate(obj, guess)
+%             guess = zeros(2, obj.n1);   % 2 * n1 unknown parameters (outlet temperature of two fluids in each column)
             
             cp_1 = obj.st1_i.cp;
             cp_2 = obj.st2_i.cp;
@@ -68,10 +68,10 @@ classdef SEA < handle
                     obj.se(i).st2_o.p = obj.se(i).st2_i.p;
                 end
                 
-                for j = 1 : obj.n1
-                    guess(j,1) = obj.se(1).st1_i.T.v - 40 * j;
-                    guess(j,2) = obj.se(1).st2_i.T.v + 4 * j;
-                end
+%                 for j = 1 : obj.n1
+%                     guess(j,1) = obj.se(1).st1_i.T.v - 27 * j;
+%                     guess(j,2) = obj.se(1).st2_i.T.v + 4 * j;
+%                 end
             elseif (strcmp(obj.order,'Reverse'))
                 %%%%% Inverse order %%%%%
                 obj.se(1).cp_2 = cp_2;
@@ -94,11 +94,11 @@ classdef SEA < handle
                     obj.se(obj.n1-i).st2_o.p = obj.se(obj.n1-i).st2_i.p;
                 end
                 
-                for j = 1 : obj.n1
-                    guess(j,1) = obj.se(1).st1_i.T.v - 30 * j;
-                    guess(j,2) = obj.se(obj.n1).st2_i.T.v + ...
-                        4 * (obj.n1 + 1 - j);
-                end
+%                 for j = 1 : obj.n1
+%                     guess(j,1) = obj.se(1).st1_i.T.v - 27 * j;
+%                     guess(j,2) = obj.se(obj.n1).st2_i.T.v + ...
+%                         4 * (obj.n1 + 1 - j);
+%                 end
             else
                 error('Uncomplished work.');
             end
@@ -131,6 +131,8 @@ classdef SEA < handle
                 (obj.se(1).st1_i.h - obj.se(obj.n1).st1_o.h));
             obj.st2_o.q_m = obj.st2_i.q_m;
             obj.P = sum(P1) .* obj.n_se ./ obj.n1;
+            obj.st1_o.q_m = obj.st1_i.q_m;
+            obj.st2_o.q_m = obj.st2_i.q_m;
         end
         function F = CalcSEA(x, sea)
             %CalcSEA Use expressions to calculate Temperatures of Stirling Engine Array

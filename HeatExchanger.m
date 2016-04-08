@@ -23,6 +23,8 @@ classdef HeatExchanger < handle
                 .* obj.st1_i.q_m.v ./ obj.st2_i.q_m.v;
             obj.st2_i.T.v = CoolProp.PropsSI('T', 'H', st2_i_h, 'P', ...
                 obj.st2_i.p, obj.st2_i.fluid);
+%             obj.st2_i.q_m = obj.st2_o.q_m;
+            obj.st2_i.p = obj.st2_o.p;
         end
     end
     

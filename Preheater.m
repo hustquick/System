@@ -22,8 +22,8 @@ classdef Preheater < handle
     methods
         function calculate(obj)
 %             obj.st1_o.fluid = obj.st1_i.fluid;
-            obj.st1_o.p = obj.st1_i.p;
-            obj.st1_o.q_m = obj.st1_i.q_m;
+            obj.st1_i.p = obj.st1_o.p;
+%             obj.st1_i.q_m = obj.st1_o.q_m;
             obj.st1_o.x = 0;
             obj.st1_o.T.v = CoolProp.PropsSI('T', 'P', obj.st1_o.p, ...
                 'Q', obj.st1_o.x, obj.st1_o.fluid);

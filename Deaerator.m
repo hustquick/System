@@ -20,13 +20,15 @@ classdef Deaerator < handle
         end
     end
     methods
-        function work(obj)
-            obj.st_o.fluid = obj.st_i_1.fluid;
+        function work(obj, tb)
+%             obj.st_o.fluid = obj.st_i_1.fluid;
             obj.st_o.p = obj.p;
             obj.st_o.x = 0;
-            obj.st_o.T.v = CoolProp.PropsSI('T', 'P', obj.st_o.p, 'Q', ...
-                obj.st_o.x, obj.st_o.fluid);
-            obj.st_o.q_m.v = obj.st_i_1.q_m.v + obj.st_i_2.q_m.v;
+%             obj.st_o.q_m.v = obj.st_i_1.q_m.v + obj.st_i_2.q_m.v;
+            st_i_2_h = (obj.st_o.h - tb.y * obj.st_i_1.h) ./ ...
+                (1 - tb.y);
+            obj.st_i_2.T.v = CoolProp.PropsSI('T', 'H', st_i_2_h, ...
+                'P', obj.st_i_2.p, obj.st_i_2.fluid);
         end
         function value = get.y(obj)
             value = (obj.st_o.h - obj.st_i_2.h)./ ...

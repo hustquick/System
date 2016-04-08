@@ -5,8 +5,8 @@ classdef Turbine < handle
     
     properties
         st_i;    % Main steam stream
-        st_o_1;    % Exhaust steam stream
-        st_o_2;    % Extraction steam stream
+        st_o_1;    % Extraction steam stream
+        st_o_2;    % Exhaust steam stream
         y;      % Extraction ratio
         eta_i;  % Isentropic efficiency
     end
@@ -52,19 +52,19 @@ classdef Turbine < handle
             end
         end
         function work(obj, ge)
-            st_tmp2 = Stream;
             st_tmp1 = Stream;
-            obj.flowInTurbine(obj.st_i, st_tmp2, obj.st_o_2.p);
-            obj.flowInTurbine(st_tmp2, st_tmp1, obj.st_o_1.p);
+            st_tmp2 = Stream;
+            obj.flowInTurbine(obj.st_i, st_tmp1, obj.st_o_1.p);
+            obj.flowInTurbine(st_tmp1, st_tmp2, obj.st_o_2.p);
             P = ge.P ./ ge.eta;
-            y1 = (P - obj.st_i.q_m.v .* (obj.st_i.h - st_tmp1.h)) ...
-                / (obj.st_i.q_m.v .* (st_tmp1.h - st_tmp2.h));
+            y1 = (P - obj.st_i.q_m.v .* (obj.st_i.h - st_tmp2.h)) ...
+                / (obj.st_i.q_m.v .* (st_tmp2.h - st_tmp1.h));
             if (y1 >= 0 && y1 <= 1)
                 obj.y = y1;
-                obj.st_o_2.q_m.v = st_tmp2.q_m.v .* obj.y;
-                obj.st_o_2.T.v = st_tmp2.T.v;
-                st_tmp1 = st_tmp2.diverge(1-obj.y);
-                obj.flowInTurbine(st_tmp1, obj.st_o_1, obj.st_o_1.p);
+                obj.st_o_1.q_m.v = st_tmp1.q_m.v .* obj.y;
+                obj.st_o_1.T.v = st_tmp1.T.v;
+                st_tmp2 = st_tmp1.diverge(1-obj.y);
+                obj.flowInTurbine(st_tmp2, obj.st_o_2, obj.st_o_2.p);
             else
                 error('wrong y value of turbine');
 %                 flag = 1;
@@ -83,8 +83,8 @@ classdef Turbine < handle
         end
         function value = get.P(obj)
             value = obj.st_i.q_m.v .* ((1-obj.y) .* ...
-                (obj.st_i.h - obj.st_o_1.h) + ...
-                obj.y .* (obj.st_i.h - obj.st_o_2.h));
+                (obj.st_i.h - obj.st_o_2.h) + ...
+                obj.y .* (obj.st_i.h - obj.st_o_1.h));
         end
     end
 end

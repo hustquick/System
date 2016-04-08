@@ -21,8 +21,8 @@ classdef Evaporator < handle
     end
     methods
         function calculate(obj)
-            obj.st1_o.q_m = obj.st1_i.q_m;
-            obj.st1_o.p = obj.st1_i.p;
+%             obj.st1_i.q_m = obj.st1_o.q_m;
+            obj.st1_i.p = obj.st1_o.p;
             obj.st1_o.x = 1;
             obj.st1_o.T = obj.st1_i.T;
             
