@@ -10,7 +10,7 @@ classdef Pump < handle
         p;              % outlet pressure, Pa
     end
     properties(Dependent)
-        
+        P;              % Power consumed
     end
     
     methods
@@ -32,4 +32,10 @@ classdef Pump < handle
         end
     end
     
+    methods
+        function value = get.P(obj)
+            value = obj.st_o.q_m.v .* obj.st_o.h - obj.st_i.q_m.v .* ...
+                obj.st_i.h;
+        end
+    end
 end

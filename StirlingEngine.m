@@ -18,6 +18,9 @@ classdef StirlingEngine < handle
         cp_2;   % Specific heat of fluid 2 under constant pressure, assume to be constant, J/kg-K
         P;      % Power of the Stirling engine, W
         flowType;   % Flow type of the Stirling engine, 'Parallel' or 'Counter'
+        eta;
+        T_H;
+        T_L;
     end
     
     methods
@@ -27,12 +30,12 @@ classdef StirlingEngine < handle
             obj.st2_i = Stream;
             obj.st2_o = Stream;
         end
-        function T_H = T_H(obj)
+        function T_H = get.T_H(obj)
             % Highest temperature of expansion space, K
             T_H = obj.st1_i.T.v - (obj.st1_i.T.v - obj.st1_o.T.v) ./ (1 - ...
                 exp(- obj.U_1 .* obj.A_1 ./ (obj.st1_i.q_m.v .* obj.cp_1)));
         end
-        function T_L = T_L(obj)
+        function T_L = get.T_L(obj)
             % Lowest temperature of compression space, K
             T_L = obj.st2_i.T.v - (obj.st2_i.T.v - obj.st2_o.T.v) ./ (1 - ...
                 exp(- obj.U_2 .* obj.A_2 ./ (obj.st2_i.q_m.v .* obj.cp_2)));
@@ -48,10 +51,9 @@ classdef StirlingEngine < handle
         end
         function eta = eta1(obj)
             % Efficiency of the Stirling engine using formula
-            T_H = obj.T_H();
-            T_L = obj.T_L();
             e = obj.e();
-            eta = (T_H - T_L) ./ (T_H + (1 - e) .* (T_H - T_L) ...
+            eta = (obj.T_H - obj.T_L) ./ (obj.T_H + ...
+                (1 - e) .* (obj.T_H - obj.T_L) ...
                 ./ (obj.k -1) ./ log(obj.gamma));
         end
         function eta = eta2(obj)
@@ -62,15 +64,14 @@ classdef StirlingEngine < handle
         end
         function P = P1(obj)
             % Power of the Stirling engine using the efficiency
-            eta = obj.eta2();
+            eta2 = obj.eta2();
             % P = obj.st1_i.q_m.v .* obj.cp_1 .* (obj.st1_i.T.v - obj.st1_o.T.v) .* eta;
-            P = obj.st1_i.q_m.v .* (obj.st1_i.h - obj.st1_o.h) .* eta;
+            P = obj.st1_i.q_m.v .* (obj.st1_i.h - obj.st1_o.h) .* eta2;
         end
         function P = P2(obj)
             % Power of the Stirling engine using the speed of engine
-            T_H = obj.T_H();
-            T_L = obj.T_L();
-            P = obj.n_g .* Const.R .* (T_H - T_L) .* log(obj.gamma) .* obj.s_se;
+            P = obj.n_g .* Const.R .* (obj.T_H - obj.T_L) .* ...
+                log(obj.gamma) .* obj.s_se;
         end
     end
 end
