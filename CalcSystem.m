@@ -3,105 +3,84 @@ function F = CalcSystem(x, cs)
 %   First expression expresses eta of each Stirling engine in two ways
 %   Second expression expresses P of each Stirling engine in two ways
 %     x = zeros(sea.n1,2);
-cs.st1(1).q_m.v = x(2 * cs.sea.n1 + 1);
-
-% cs.dca.st_i = cs.st1(3);
-% cs.dca.st_o = cs.st1(1);
-% cs.sea.st1_i = cs.st1(1);
-% cs.sea.st1_o = cs.st1(2);
-% cs.sea.st2_i = cs.st2(5);
-% cs.sea.st2_o = cs.st2(6);
-% cs.he.st1_i = cs.st1(2);
-% cs.he.st1_o = cs.st1(3);
-% cs.he.st2_i = cs.st2(11);
-% cs.he.st2_o = cs.st2(1);
-% cs.tb.st_i = cs.st2(1);
-% cs.tb.st_o_1 = cs.st2(2);
-% cs.tb.st_o_2 = cs.st2(3);
-% cs.cd.st_i = cs.st2(3);
-% cs.cd.st_o = cs.st2(4);
-% cs.pu1.st_i = cs.st2(4);
-% cs.pu1.st_o = cs.st2(5);
-% cs.da.st_i_1 = cs.st2(2);
-% cs.da.st_i_2 = cs.st2(6);
-% cs.da.st_o = cs.st2(7);
-% cs.pu2.st_i = cs.st2(7);
-% cs.pu2.st_o = cs.st2(8);
-% cs.ph.st1_i = cs.st2(8);
-% cs.ph.st1_o = cs.st2(9);
-% cs.ph.st2_i = cs.st3(3);
-% cs.ph.st2_o = cs.st3(4);
-% cs.ev.st1_i = cs.st2(9);
-% cs.ev.st1_o = cs.st2(10);
-% cs.ev.st2_i = cs.st3(2);
-% cs.ev.st2_o = cs.st3(3);
-% cs.sh.st1_i = cs.st2(10);
-% cs.sh.st1_o = cs.st2(11);
-% cs.sh.st2_i = cs.st3(1);
-% cs.sh.st2_o = cs.st3(2);
-% cs.tca.st_i = cs.st3(4);
-% cs.tca.st_o = cs.st3(1);
-
-% %% Design parameters
-% cs.dca.st_i.T = Temperature(convtemp(350, 'C', 'K'));   % Design parameter
-% cs.tb.st_o_2.p = 1.5e4;
-% cs.da.p = 1e6;
-% cs.DeltaT_3_2 = 15;          % Minimun temperature difference between oil
-%and water
-
-cs.dca.dc.st_i = cs.dca.st_i.diverge(1);
-cs.dca.dc.st_o = cs.dca.st_o.diverge(1);
-cs.dca.dc.calculate;
-cs.dca.n = cs.dca.st_i.q_m.v ./ cs.dca.dc.st_i.q_m.v;
-cs.dca.eta = cs.dca.dc.eta;
-
-cs.ge.P = 4e6;
-cs.ge.eta = 0.975;
-
-cs.tb.st_o_1.p = cs.da.p;
+cs.tb.st_i.q_m.v = x(cs.sea.n1 + 1, 1);
 cs.tb.work(cs.ge);
 
-cs.cd.work;
+cs.cd.work();
 
-cs.pu1.p = cs.da.p;
-cs.pu1.work;
+cs.pu1.work();
 
-guess = zeros(2,cs.sea.n1);
+cp_1 = cs.sea.st1_i.cp;
+cp_2 = cs.sea.st2_i.cp;
+cs.sea.se(1).st1_i = cs.sea.st1_i_r;
+cs.sea.se(1).st1_o = cs.sea.se(1).st1_i.flow();
+cs.sea.se(1).st1_o.p = cs.sea.se(1).st1_i.p;
+cs.sea.se(1).cp_1 = cp_1;
 
-for j = 1 : cs.sea.n1
-    guess(j,1) = x(j);
-    guess(j,2) = x(cs.sea.n1 + j);
+if (strcmp(cs.sea.order, 'Same'))
+    %%%%% Same order %%%%%
+    cs.sea.se(1).st2_i = cs.sea.st2_i_r;
+    cs.sea.se(1).st2_o = cs.sea.se(1).st2_i.flow();
+    cs.sea.se(1).st2_o.p = cs.sea.se(1).st2_i.p;
+    cs.sea.se(1).cp_2 = cp_2;
+    for i = 2 : cs.sea.n1
+        cs.sea.se(i).cp_1 = cp_1;
+        cs.sea.se(i).cp_2 = cp_2;
+        cs.sea.se(i).st1_i = cs.sea.se(i-1).st1_o;
+        cs.sea.se(i).st2_i = cs.sea.se(i-1).st2_o;
+        cs.sea.se(i).st1_o = cs.sea.se(i).st1_i.flow();
+        cs.sea.se(i).st1_o.p = cs.sea.se(i).st1_i.p;
+        cs.sea.se(i).st2_o = cs.sea.se(i).st2_i.flow();
+        cs.sea.se(i).st2_o.p = cs.sea.se(i).st2_i.p;
+    end
+elseif (strcmp(cs.sea.order,'Reverse'))
+    %%%%% Inverse order %%%%%
+    cs.sea.se(1).cp_2 = cp_2;
+    for i = 2 : cs.sea.n1
+        %                     cs.sea.se(i) = StirlingEngine;
+        cs.sea.se(i).cp_1 = cp_1;
+        cs.sea.se(i).cp_2 = cp_2;
+    end
+    cs.sea.se(cs.sea.n1).st2_i = cs.sea.st2_i_r;
+    cs.sea.se(cs.sea.n1).st2_o = cs.sea.se(cs.sea.n1).st2_i.flow();
+    cs.sea.se(cs.sea.n1).st2_o.p = cs.sea.se(cs.sea.n1).st2_i.p;
+    
+    for i = 1 : cs.sea.n1-1
+        cs.sea.se(i+1).st1_i = cs.sea.se(i).st1_o;
+        cs.sea.se(cs.sea.n1-i).st2_i = cs.sea.se(cs.sea.n1+1-i).st2_o;
+        
+        cs.sea.se(i+1).st1_o = cs.sea.se(i+1).st1_i.flow();
+        cs.sea.se(i+1).st1_o.p = cs.sea.se(i+1).st1_i.p;
+        cs.sea.se(cs.sea.n1-i).st2_o = cs.sea.se(cs.sea.n1-i).st2_i.flow();
+        cs.sea.se(cs.sea.n1-i).st2_o.p = cs.sea.se(cs.sea.n1-i).st2_i.p;
+    end
+else
+    error('Uncomplished work.');
 end
 
-cs.sea.calculate(guess);
+for i = 1 : cs.sea.n1
+    cs.sea.se(i).st1_o.T.v = x(i, 1);
+    cs.sea.se(i).st2_o.T.v = x(i, 2);
+end
 
-cs.da.work;
+F = zeros(cs.sea.n1,2);
+for j = 1 : cs.sea.n1
+    F(j,1) = 1 - cs.sea.se(j).eta1() ./ cs.sea.se(j).eta2();
+    F(j,2) = 1 - cs.sea.se(j).P1() ./ cs.sea.se(j).P2();
+end
 
-cs.pu2.p = cs.tb.st_i.p;
-cs.pu2.work;
+if (strcmp(cs.sea.order, 'Same'))
+    cs.sea.st2_o.T = cs.sea.se(cs.sea.n1).st2_o.T;
+    cs.sea.st2_o.p = cs.sea.se(cs.sea.n1).st2_o.p;
+elseif (strcmp(cs.sea.order,'Reverse'))
+    cs.sea.st2_o.T = cs.sea.se(1).st2_o.T;
+    cs.sea.st2_o.p = cs.sea.se(1).st2_o.p;
+else
+    error('Uncomplished work.');
+end
 
-cs.he.work;
+T1 = cs.sea.st2_o.T.v;
+cs.da.work(cs.tb);
+F(cs.sea.n1+1, 1) = T1 - cs.da.st_i_2.T.v;
 
-% get q_m_3
-cs.ph.st1_o.x = 0;
-cs.ph.st1_o.T.v = CoolProp.PropsSI('T', 'P', cs.ph.st1_o.p, ...
-    'Q', cs.ph.st1_o.x, cs.ph.st1_o.fluid);
-cs.ph.st2_i.T.v = cs.ph.st1_o.T.v + cs.DeltaT_3_2;
-cs.ph.st2_i.q_m.v = cs.ph.st1_o.q_m.v .* (cs.sh.st1_o.h - ...
-    cs.ph.st1_o.h) ./ (cs.sh.st2_i.h - cs.ph.st2_i.h);
-
-cs.ph.calculate;
-
-cs.ev.calculate;
-
-cs.sh.calculate;
-
-cs.tca.tc.st_i = cs.tca.st_i.diverge(1);
-cs.tca.tc.st_o = cs.tca.st_o.diverge(1);
-cs.tca.tc.calculate;
-cs.tca.n1 = cs.tca.tc.n;
-cs.tca.n2 = cs.tca.st_i.q_m.v ./ cs.tca.tc.st_i.q_m.v;
-cs.tca.eta = cs.tca.tc.eta;
-
-F = [cs.tb.y - cs.da.y;];
 end

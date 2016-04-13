@@ -4,7 +4,7 @@ classdef SEA < handle
     %   them are the objects of StirlingEngine class.
     
     properties(Constant)
-        n_se = 100;       % Number of Stirling engines in the Stirling engine array
+        n_se = 30;       % Number of Stirling engines in the Stirling engine array
     end
     properties
         se;         % A row of the Stirling engine array
@@ -20,7 +20,7 @@ classdef SEA < handle
         eta;
         P;
     end
-    properties(Dependent, Access = private)
+    properties(Dependent)
         n2;         % Number of rows of the Stirling engine array
         st1_i_r;    % Inlet stream of first fluid after divergence
         st2_i_r;    % Inlet stream of second fluid after divergence
@@ -102,7 +102,7 @@ classdef SEA < handle
             else
                 error('Uncomplished work.');
             end
-            
+                        
             options = optimset('Algorithm','levenberg-marquardt','Display','iter');
             [x] = fsolve(@(x)CalcSEA(x, obj), guess, options);
             
@@ -143,6 +143,7 @@ classdef SEA < handle
                 sea.se(i).st1_o.T.v = x(i, 1);
                 sea.se(i).st2_o.T.v = x(i, 2);
             end
+
             F = zeros(sea.n1,2);
             for j = 1 : sea.n1
                 F(j,1) = 1 - sea.se(j).eta1() ./ sea.se(j).eta2();

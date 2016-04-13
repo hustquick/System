@@ -63,12 +63,19 @@ classdef Turbine < handle
                 obj.y = y1;
                 obj.st_o_1.q_m.v = st_tmp1.q_m.v .* obj.y;
                 obj.st_o_1.T.v = st_tmp1.T.v;
-                st_tmp2 = st_tmp1.diverge(1-obj.y);
-                obj.flowInTurbine(st_tmp2, obj.st_o_2, obj.st_o_2.p);
+                obj.st_o_2.q_m.v = st_tmp2.q_m.v .* (1 - obj.y);
+                obj.st_o_2.T.v = st_tmp2.T.v;
+                obj.st_o_2.x = st_tmp2.x;
             else
                 error('wrong y value of turbine');
 %                 flag = 1;
             end
+        end
+        function value = get_q_m(obj)
+            P = obj.P;
+            delta_H = obj.st_i.q_m.v .* obj.st_i.h - obj.st_o_1.q_m.v .* ...
+                obj.st_o_1.h - obj.st_o_2.q_m.v .* obj.st_o_2.h;
+            value = P / delta_H;
         end
        
         function value = get.eta_i(obj)

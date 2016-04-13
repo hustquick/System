@@ -6,9 +6,8 @@ for i = 1 : 3
     cs.st1(i).fluid = char(Const.Fluid(1));
     cs.st1(i).T = Temperature(convtemp(800, 'C', 'K'));
     cs.st1(i).p = 5e5;      % Design parameter, air pressure in dish receiver, Pa
-%     cs.st1(i).q_m.v = 3.9;          %%%%%%% To be calculated!
+    cs.st1(i).q_m.v = 1;          %%%%%%% To be automatically calculated later
 end
-%     cs.st1(1).q_m.v = 4;
 for i = 1 : 2
     cs.st1(i+1).q_m = cs.st1(1).q_m;
 end
@@ -17,11 +16,11 @@ for i = 1 : 11
     cs.st2(i).fluid = char(Const.Fluid(2));
     cs.st2(i).T = Temperature(convtemp(340, 'C', 'K'));
     cs.st2(i).p = 2.35e6;
-%     cs.st2(i).q_m.v = 9;         %%%%%%% To be calculated!
+    cs.st2(i).q_m = Q_m(6);         %%%%%%% To be automatically calculated later
 end
-    cs.st2(1).q_m.v = 7.35;
-for i = 1 : 5
-    cs.st2(i+6).q_m = cs.st2(1).q_m;
+cs.st2(1).q_m.v = 7.4;          %%%%%%%%%%
+for i = 1 : 4
+    cs.st2(i+7).q_m = cs.st2(1).q_m;
 end
 for i = 1 : 3
     cs.st2(i+3).q_m = cs.st2(3).q_m;
@@ -73,6 +72,7 @@ cs.tca.st_i = cs.st3(4);
 cs.tca.st_o = cs.st3(1);
 
 % Design parameters
+cs.dca.n = 30;
 cs.dca.st_i.T = Temperature(convtemp(350, 'C', 'K'));   % Design parameter
 cs.tb.st_o_2.p = 1.5e4;
 cs.da.p = 1e6;
@@ -82,8 +82,7 @@ cs.DeltaT_3_2 = 15;          % Minimun temperature difference between oil
 cs.dca.dc.st_i = cs.dca.st_i.diverge(1);
 cs.dca.dc.st_o = cs.dca.st_o.diverge(1);
 cs.dca.dc.calculate;
-cs.dca.n = cs.dca.st_i.q_m.v ./ cs.dca.dc.st_i.q_m.v;
-cs.dca.st_o.q_m = cs.dca.st_i.q_m;
+cs.dca.st_i.q_m.v = cs.dca.n .* cs.dca.dc.st_i.q_m.v;
 cs.dca.eta = cs.dca.dc.eta;
 
 cs.ge.P = 4e6;
@@ -92,31 +91,51 @@ cs.ge.eta = 0.975;
 cs.tb.st_o_1.p = cs.da.p;
 cs.tb.work(cs.ge);
 
-cs.cd.work;
+cs.cd.work();
 
 cs.pu1.p = cs.da.p;
-cs.pu1.work;
+cs.pu1.work();
 
 cs.da.st_i_2.p = cs.da.p;
-cs.da.work(cs.tb);
+% cs.da.work(cs.tb);
 
-guess = zeros(2,cs.sea.n1);
+%% Calculate the system
+guess = zeros(2, cs.sea.n1+1);
 
 if (strcmp(cs.sea.order, 'Same'))
     for j = 1 : cs.sea.n1
         guess(j,1) = cs.sea.st1_i.T.v - 27 * j;
-        guess(j,2) = cs.sea.st2_i.T.v + 4 * j;
+        guess(j,2) = cs.sea.st2_i.T.v + 28 / 10 * j;
     end
 elseif (strcmp(cs.sea.order, 'Reverse'))
     for j = 1 : cs.sea.n1
         guess(j,1) = cs.sea.st1_i.T.v - 27 * j;
         guess(j,2) = cs.sea.st2_i.T.v + ...
-            4 * (cs.sea.n1 + 1 - j);
+            28 / 10 * (cs.sea.n1 + 1 - j);
     end
 end
-cs.sea.calculate(guess);
+guess(cs.sea.n1+1, 1) = 7.3;
 
+options = optimset('Algorithm','levenberg-marquardt','Display','iter');
+[x] = fsolve(@(x)CalcSystem(x, cs), guess, options);
 
+cs.sea.st1_o.T = cs.sea.se(cs.sea.n1).st1_o.T;
+cs.sea.st1_o.p = cs.sea.se(cs.sea.n1).st1_o.p;
+
+P1 = zeros(cs.sea.n1,1);
+
+for i = 1 : cs.sea.n1
+    cs.sea.se(i).st1_o.T.v = x(i, 1);
+    cs.sea.se(i).st2_o.T.v = x(i, 2);
+    cs.sea.se(i).P = cs.sea.se(i).P1();
+    P1(i) = cs.sea.se(i).P2();
+end
+cs.sea.eta = sum(P1) ./ (cs.sea.st1_i_r.q_m.v * ...
+    (cs.sea.se(1).st1_i.h - cs.sea.se(cs.sea.n1).st1_o.h));
+cs.sea.st2_o.q_m = cs.sea.st2_i.q_m;
+cs.sea.P = sum(P1) .* cs.sea.n_se ./ cs.sea.n1;
+cs.sea.st1_o.q_m = cs.sea.st1_i.q_m;
+cs.sea.st2_o.q_m = cs.sea.st2_i.q_m;
 
 cs.pu2.p = cs.tb.st_i.p;
 cs.pu2.work;
@@ -143,18 +162,6 @@ cs.tca.tc.calculate;
 cs.tca.n1 = cs.tca.tc.n;
 cs.tca.n2 = cs.tca.st_i.q_m.v ./ cs.tca.tc.st_i.q_m.v;
 cs.tca.eta = cs.tca.tc.eta;
-
-% guess1 = zeros(2 * cs.sea.n1 + 1);
-% 
-% for j = 1 : cs.sea.n1
-%     guess1(j) = cs.sea.se(j).st1_o.T.v;
-%     guess1(cs.sea.n1 + j) = cs.sea.se(j).st2_o.T.v;
-% end
-% guess1(2 * cs.sea.n1 + 1) = 3.9;
-% 
-% options = optimset('Algorithm','levenberg-marquardt','Display','iter');
-% [x, fval] = fsolve(@(x)CalcSystem(x, cs), ...
-%     guess1, options);
 
 for i = 1 : 3
     T1(i) = cs.st1(i).T.v;
