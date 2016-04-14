@@ -4,7 +4,7 @@ classdef SEA < handle
     %   them are the objects of StirlingEngine class.
     
     properties(Constant)
-        n_se = 100;       % Number of Stirling engines in the Stirling engine array
+        n_se = 20;       % Number of Stirling engines in the Stirling engine array
     end
     properties
         se;         % A row of the Stirling engine array

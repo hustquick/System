@@ -1,6 +1,6 @@
 clear;
 cs = CascadeSystem;
-cs.sea = SEA(10, 'Reverse');
+cs.sea = SEA(10, 'Same');
 %% Streams
 for i = 1 : 3
     cs.st1(i).fluid = char(Const.Fluid(1));
@@ -18,7 +18,7 @@ for i = 1 : 11
     cs.st2(i).p = 2.35e6;
     cs.st2(i).q_m = Q_m(6);         %%%%%%% To be automatically calculated later
 end
-cs.st2(1).q_m.v = 7.4;          %%%%%%%%%%
+cs.st2(1).q_m.v = 7.21;          %%%%%%%%%%
 for i = 1 : 4
     cs.st2(i+7).q_m = cs.st2(1).q_m;
 end
@@ -102,14 +102,14 @@ guess = zeros(2, cs.sea.n1+1);
 
 if (strcmp(cs.sea.order, 'Same'))
     for j = 1 : cs.sea.n1
-        guess(j,1) = cs.sea.st1_i.T.v - 27 * j;
-        guess(j,2) = cs.sea.st2_i.T.v + 28 / 10 * j;
+        guess(j,1) = cs.sea.st1_i.T.v - 38 * j;
+        guess(j,2) = cs.sea.st2_i.T.v + 24 / 10 * j;
     end
 elseif (strcmp(cs.sea.order, 'Reverse'))
     for j = 1 : cs.sea.n1
-        guess(j,1) = cs.sea.st1_i.T.v - 27 * j;
+        guess(j,1) = cs.sea.st1_i.T.v - 38 * j;
         guess(j,2) = cs.sea.st2_i.T.v + ...
-            28 / 10 * (cs.sea.n1 + 1 - j);
+            24 / 10 * (cs.sea.n1 + 1 - j);
     end
 end
 guess(cs.sea.n1+1, 1) = 7.3;
@@ -161,6 +161,17 @@ cs.tca.n1 = cs.tca.tc.n;
 cs.tca.n2 = cs.tca.st_i.q_m.v ./ cs.tca.tc.st_i.q_m.v;
 cs.tca.eta = cs.tca.tc.eta;
 
+T1 = zeros(1,3);
+q_m1 = zeros(1,3);
+T2 = zeros(1,11);
+q_m2 = zeros(1,11);
+T3 = zeros(1,11);
+q_m3 = zeros(1,3);
+T1_i = zeros(1,cs.sea.n1);
+T1_o = zeros(1,cs.sea.n1);
+T2_i = zeros(1,cs.sea.n1);
+T2_o = zeros(1,cs.sea.n1);
+
 for i = 1 : 3
     T1(i) = cs.st1(i).T.v;
     q_m1(i) = cs.st1(i).q_m.v;
@@ -172,6 +183,13 @@ end
 for i = 1 : 4
     T3(i) = cs.st3(i).T.v;
     q_m3(i) = cs.st3(i).q_m.v;
+end
+
+for i = 1 : cs.sea.n1
+    T1_i(i) = cs.sea.se(i).st1_i.T.v;
+    T1_o(i) = cs.sea.se(i).st1_o.T.v;
+    T2_i(i) = cs.sea.se(i).st2_i.T.v;
+    T2_o(i) = cs.sea.se(i).st2_o.T.v;
 end
 
 %% Rankine cycle efficiency and overall efficiency
@@ -271,7 +289,7 @@ ss.st2(6).p = ss.da.p;
 ss.tb.y = (ss.st2(6).h - ss.st2(5).h) ./ (ss.st2(2).h - ss.st2(5).h);
 ss.tb.st_o_1.q_m.v = ss.tb.st_i.q_m.v .* ss.tb.y;
 ss.tb.st_o_2.q_m.v = ss.tb.st_i.q_m.v .* (1 - ss.tb.y);
-ss.ge.P = ss.tb.P ./ ss.ge.eta;
+ss.ge.P = ss.tb.P .* ss.ge.eta;
 
 ss.cd.work();
 ss.pu1.p = ss.da.p;
@@ -285,3 +303,7 @@ Q_ss = ss.dca.dc.q_tot .* ss.dca.n + cs.tca.st_o.q_m.v .* ...
     (cs.tca.st_o.h - cs.tca.st_i.h) ./ cs.tca.eta;
 P_ss = ss.ge.P + ss.se.P - ss.pu1.P - ss.pu2.P;
 eta_ss = P_ss ./ Q_ss;
+%% Comparison
+eta_diff = (eta_cs - eta_ss) ./ eta_ss;
+
+eta_sea = cs.sea.eta;
