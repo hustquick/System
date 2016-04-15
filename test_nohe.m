@@ -1,30 +1,25 @@
 clear;
-eta_diff = zeros(1,11);
-eta_cs_r = zeros(1,11);
-eta_sea = zeros(1,11);
-ratio = zeros(1,11);
-for k = 2 : 11
 cs = CascadeSystem;
 cs.sea = SEA(10, 'Same');
-cs.sea.n_se = 10 + k * 10;
 %% Streams
-for i = 1 : 3
+for i = 1 : 2
     cs.st1(i).fluid = char(Const.Fluid(1));
     cs.st1(i).T = Temperature(convtemp(800, 'C', 'K'));
     cs.st1(i).p = 5e5;      % Design parameter, air pressure in dish receiver, Pa
     cs.st1(i).q_m.v = 1;          %%%%%%% To be automatically calculated later
 end
-for i = 1 : 2
+for i = 1 : 1
     cs.st1(i+1).q_m = cs.st1(1).q_m;
 end
-for i = 1 : 11
+
+for i = 1 : 10
     cs.st2(i).fluid = char(Const.Fluid(2));
     cs.st2(i).T = Temperature(convtemp(340, 'C', 'K'));
     cs.st2(i).p = 2.35e6;
     cs.st2(i).q_m = Q_m(6);         %%%%%%% To be automatically calculated later
 end
 cs.st2(1).q_m.v = 7.21;          %%%%%%%%%%
-for i = 1 : 4
+for i = 1 : 3
     cs.st2(i+7).q_m = cs.st2(1).q_m;
 end
 for i = 1 : 3
@@ -37,16 +32,17 @@ for i = 1 : 4
     cs.st3(i).p = 2e6;
 end
 
-cs.dca.st_i = cs.st1(3);
+%%
+cs.dca.st_i = cs.st1(2);
 cs.dca.st_o = cs.st1(1);
 cs.sea.st1_i = cs.st1(1);
 cs.sea.st1_o = cs.st1(2);
 cs.sea.st2_i = cs.st2(5);
 cs.sea.st2_o = cs.st2(6);
-cs.he.st1_i = cs.st1(2);
-cs.he.st1_o = cs.st1(3);
-cs.he.st2_i = cs.st2(11);
-cs.he.st2_o = cs.st2(1);
+% cs.he.st1_i = cs.st1(2);
+% cs.he.st1_o = cs.st1(3);
+% cs.he.st2_i = cs.st2(11);
+% cs.he.st2_o = cs.st2(1);
 cs.tb.st_i = cs.st2(1);
 cs.tb.st_o_1 = cs.st2(2);
 cs.tb.st_o_2 = cs.st2(3);
@@ -68,7 +64,7 @@ cs.ev.st1_o = cs.st2(10);
 cs.ev.st2_i = cs.st3(2);
 cs.ev.st2_o = cs.st3(3);
 cs.sh.st1_i = cs.st2(10);
-cs.sh.st1_o = cs.st2(11);
+cs.sh.st1_o = cs.st2(1);
 cs.sh.st2_i = cs.st3(1);
 cs.sh.st2_o = cs.st3(2);
 cs.tca.st_i = cs.st3(4);
@@ -76,7 +72,7 @@ cs.tca.st_o = cs.st3(1);
 
 % Design parameters
 cs.dca.n = 30;
-cs.dca.st_i.T = Temperature(convtemp(350, 'C', 'K'));   % Design parameter
+% cs.dca.st_i.T = Temperature(convtemp(350, 'C', 'K'));   % Design parameter
 cs.tb.st_o_2.p = 1.5e4;
 cs.da.p = 1e6;
 cs.DeltaT_3_2 = 15;          % Minimun temperature difference between oil
@@ -100,7 +96,6 @@ cs.pu1.p = cs.da.p;
 cs.pu1.work();
 
 cs.da.st_i_2.p = cs.da.p;
-% cs.da.work(cs.tb);
 
 %% Calculate the system
 guess = zeros(2, cs.sea.n1+1);
@@ -170,8 +165,8 @@ T1 = zeros(1,3);
 q_m1 = zeros(1,3);
 T2 = zeros(1,11);
 q_m2 = zeros(1,11);
-T3 = zeros(1,11);
-q_m3 = zeros(1,3);
+T3 = zeros(1,4);
+q_m3 = zeros(1,4);
 T1_i = zeros(1,cs.sea.n1);
 T1_o = zeros(1,cs.sea.n1);
 T2_i = zeros(1,cs.sea.n1);
@@ -309,8 +304,6 @@ Q_ss = ss.dca.dc.q_tot .* ss.dca.n + cs.tca.st_o.q_m.v .* ...
 P_ss = ss.ge.P + ss.se.P - ss.pu1.P - ss.pu2.P;
 eta_ss = P_ss ./ Q_ss;
 %% Comparison
-eta_diff(k) = (eta_cs - eta_ss) ./ eta_ss;
-eta_cs_r(k) = eta_cs;
-eta_sea(k) = cs.sea.eta;
-ratio(k) = cs.sea.P ./ cs.ge.P;
-end
+eta_diff = (eta_cs - eta_ss) ./ eta_ss;
+
+eta_sea = cs.sea.eta;

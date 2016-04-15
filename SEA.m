@@ -3,8 +3,8 @@ classdef SEA < handle
     %   The array is built with the same kind of Stirling engines, all of
     %   them are the objects of StirlingEngine class.
     
-    properties(Constant)
-        n_se = 20;       % Number of Stirling engines in the Stirling engine array
+    properties
+        n_se       % Number of Stirling engines in the Stirling engine array
     end
     properties
         se;         % A row of the Stirling engine array
