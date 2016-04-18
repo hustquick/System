@@ -183,6 +183,11 @@ classdef DishCollector
             dc.airPipe.T.v = x(1);
             dc.insLayer.T.v = x(2);
             dc.st_i.q_m.v = x(3);
+%             F = cell(3,1);
+%             F{1} = dc.q_dr_1_1 - dc.q_dr_1_2;
+%             F{2} = dc.q_cond_tot - dc.q_cond_conv - dc.q_cond_rad;
+%             F{3} = dc.q_dr_1_1 + dc.q_ref + (dc.q_cond_tot ...
+%                 + dc.q_conv_tot + dc.q_rad_emit) - dc.q_in;
             F = [dc.q_dr_1_1 - dc.q_dr_1_2;
                 dc.q_cond_tot - dc.q_cond_conv - ...
                 dc.q_cond_rad;

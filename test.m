@@ -1,12 +1,15 @@
 clear;
-eta_diff = zeros(1,11);
-eta_cs_r = zeros(1,11);
-eta_sea = zeros(1,11);
-ratio = zeros(1,11);
-for k = 2 : 11
+eta_diff = zeros(1,15);
+eta_cs_r = zeros(1,15);
+eta_sea = zeros(1,15);
+ratio = zeros(1,15);
+for k = 1:10
 cs = CascadeSystem;
 cs.sea = SEA(10, 'Same');
-cs.sea.n_se = 10 + k * 10;
+cs.sea.n_se = 30 + 3 * k;
+cs.dca.dc.amb.I_r = 700;
+cs.tca.tc.amb.I_r = cs.dca.dc.amb.I_r;
+cs.dca.n = 30 + 3 * k;
 %% Streams
 for i = 1 : 3
     cs.st1(i).fluid = char(Const.Fluid(1));
@@ -75,7 +78,7 @@ cs.tca.st_i = cs.st3(4);
 cs.tca.st_o = cs.st3(1);
 
 % Design parameters
-cs.dca.n = 30;
+% cs.dca.n = 30;
 cs.dca.st_i.T = Temperature(convtemp(350, 'C', 'K'));   % Design parameter
 cs.tb.st_o_2.p = 1.5e4;
 cs.da.p = 1e6;
