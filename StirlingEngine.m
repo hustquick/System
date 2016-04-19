@@ -9,7 +9,7 @@ classdef StirlingEngine < handle
         k = 1.4;    % Specific heat ratio of the working gas in Stirling engine, for H2
         gamma = 3.375;  % Compression ratio of Stirling engine, ~\cite{Fraser2008}
         s_se = 10;  % Speed of Stirling engine, Hz
-        n_g = 8.158e-2 * 3; % Amount of working gas in each Stirling engine, mol
+        n_g = 8.158e-2; % Amount of working gas in each Stirling engine, mol
         st1_i;   % Heating stream at inlet
         st1_o;   % Heating stream at outlet
         st2_i;   % Cooling stream at inlet

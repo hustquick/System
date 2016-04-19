@@ -1,15 +1,17 @@
 clear;
-eta_diff = zeros(1,15);
-eta_cs_r = zeros(1,15);
-eta_sea = zeros(1,15);
-ratio = zeros(1,15);
-for k = 1:10
+number = 10;
+eta_diff = zeros(1,number);
+eta_cs_r = zeros(1,number);
+eta_sea = zeros(1,number);
+ratio = zeros(1,number);
+used = zeros(1,number);
+for k = 10:number
 cs = CascadeSystem;
-cs.sea = SEA(10, 'Same');
-cs.sea.n_se = 30 + 3 * k;
+cs.dca.n = 10 * k;
+cs.sea = SEA(10, 'Reverse');
+cs.sea.n_se = 5 * cs.dca.n;
 cs.dca.dc.amb.I_r = 700;
 cs.tca.tc.amb.I_r = cs.dca.dc.amb.I_r;
-cs.dca.n = 30 + 3 * k;
 %% Streams
 for i = 1 : 3
     cs.st1(i).fluid = char(Const.Fluid(1));
@@ -264,6 +266,7 @@ ss.sh.st2_i = ss.st3(1);
 ss.sh.st2_o = ss.st3(2);
 
 ss.dca.n = cs.dca.n;
+ss.dca.dc.amb = cs.dca.dc.amb;
 ss.dca.eta = cs.dca.eta;
 ss.ge.eta = cs.ge.eta;
 ss.tb.st_o_2.p = cs.tb.st_o_2.p;
@@ -316,4 +319,5 @@ eta_diff(k) = (eta_cs - eta_ss) ./ eta_ss;
 eta_cs_r(k) = eta_cs;
 eta_sea(k) = cs.sea.eta;
 ratio(k) = cs.sea.P ./ cs.ge.P;
+used(k) = (cs.sea.P ./ cs.sea.eta) ./ (cs.dca.n .* cs.dca.dc.q_tot);
 end
