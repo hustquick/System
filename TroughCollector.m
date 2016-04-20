@@ -48,12 +48,12 @@ classdef TroughCollector < handle
             if (T < 473.15)
                 U = 0.687257 + 0.001941 * (T - obj.amb.T.v) + ...
                     0.000026 * (T - obj.amb.T.v).^2;
-            elseif (T > 573.15)
-                U = 1.433242 - 0.00566 * (T - obj.amb.T.v) + ...
-                    0.000046 * (T - obj.amb.T.v).^2;
-            else
+            elseif (T > 573.15)                
                 U = 2.895474 - 0.0164 * (T - obj.amb.T.v) + ...
                     0.000065 * (T - obj.amb.T.v).^2;
+            else
+                U = 1.433242 - 0.00566 * (T - obj.amb.T.v) + ...
+                    0.000046 * (T - obj.amb.T.v).^2;
             end
         end
         function K = K(obj)
@@ -92,7 +92,7 @@ classdef TroughCollector < handle
                 obj.st_i.q_m.v = obj.n .* obj.q_use ...
                     ./ (obj.st_o.h - obj.st_i.h);
                 obj.st_o.q_m.v = obj.st_i.q_m.v;
-                L = obj.L_per_q_m * obj.st_i.q_m.v;
+%                 L = obj.L_per_q_m * obj.st_i.q_m.v;
 %             obj.n = L / (obj.A / obj.w);
             end
         end

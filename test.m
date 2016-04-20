@@ -5,12 +5,12 @@ eta_cs_r = zeros(1,number);
 eta_sea = zeros(1,number);
 ratio = zeros(1,number);
 used = zeros(1,number);
-for k = 10:number
+for k = 1:number
 cs = CascadeSystem;
-cs.dca.n = 10 * k;
-cs.sea = SEA(10, 'Reverse');
+cs.dca.n = 30;
+cs.sea = SEA(10, 'Same');
 cs.sea.n_se = 5 * cs.dca.n;
-cs.dca.dc.amb.I_r = 700;
+cs.dca.dc.amb.I_r = 500 + 50 * k;
 cs.tca.tc.amb.I_r = cs.dca.dc.amb.I_r;
 %% Streams
 for i = 1 : 3
