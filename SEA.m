@@ -41,8 +41,8 @@ classdef SEA < handle
         end
     end
     methods
-        function calculate(obj, guess)
-%             guess = zeros(2, obj.n1);   % 2 * n1 unknown parameters (outlet temperature of two fluids in each column)
+        function calculate(obj)
+            guess = zeros(2, obj.n1);   % 2 * n1 unknown parameters (outlet temperature of two fluids in each column)
             
             cp_1 = obj.st1_i.cp;
             cp_2 = obj.st2_i.cp;
@@ -68,10 +68,10 @@ classdef SEA < handle
                     obj.se(i).st2_o.p = obj.se(i).st2_i.p;
                 end
                 
-%                 for j = 1 : obj.n1
-%                     guess(j,1) = obj.se(1).st1_i.T.v - 27 * j;
-%                     guess(j,2) = obj.se(1).st2_i.T.v + 4 * j;
-%                 end
+                for j = 1 : obj.n1
+                    guess(j,1) = obj.se(1).st1_i.T.v - 20 * j;  %38
+                    guess(j,2) = obj.se(1).st2_i.T.v + 5 * j;
+                end
             elseif (strcmp(obj.order,'Reverse'))
                 %%%%% Inverse order %%%%%
                 obj.se(1).cp_2 = cp_2;
@@ -94,11 +94,11 @@ classdef SEA < handle
                     obj.se(obj.n1-i).st2_o.p = obj.se(obj.n1-i).st2_i.p;
                 end
                 
-%                 for j = 1 : obj.n1
-%                     guess(j,1) = obj.se(1).st1_i.T.v - 27 * j;
-%                     guess(j,2) = obj.se(obj.n1).st2_i.T.v + ...
-%                         4 * (obj.n1 + 1 - j);
-%                 end
+                for j = 1 : obj.n1
+                    guess(j,1) = obj.se(1).st1_i.T.v - 20 * j;  %38
+                    guess(j,2) = obj.se(obj.n1).st2_i.T.v + ...
+                        5 * (obj.n1 + 1 - j);
+                end
             else
                 error('Uncomplished work.');
             end
@@ -125,6 +125,8 @@ classdef SEA < handle
                 obj.se(i).st1_o.T.v = x(i, 1);
                 obj.se(i).st2_o.T.v = x(i, 2);
                 obj.se(i).P = obj.se(i).P1();
+                obj.se(i).eta = obj.se(i).P ./ (obj.se(i).st1_i.q_m.v .* ...
+                    (obj.se(i).st1_i.h - obj.se(i).st1_o.h));
                 P1(i) = obj.se(i).P2();
             end
             obj.eta = sum(P1) ./ (obj.st1_i_r.q_m.v * ...

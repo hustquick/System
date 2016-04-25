@@ -14,8 +14,8 @@ classdef TroughCollector < handle
         d_i = 0.066;    % Inner diameter of the absorber, m
         d_o = 0.07;    % Outer diameter of the absorber, m
         phi = degtorad(70);    % Incidence angle
-        v_min = 1;      % Minimun fluid speed in pipe, m/s
-        v_max = 3;      % Maximun fluid speed in pipe, m/s
+        v_min = 1.1;      % Minimun fluid speed in pipe, corresponding to limiting the fouling, m/s
+        v_max = 2.9;      % Maximun fluid speed in pipe, corresponding to limiting the erosion, m/s
     end
     properties
         amb;        % Ambient

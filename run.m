@@ -1,5 +1,6 @@
 clear;
-number = 10;
+%% Get results matrix
+number = 24;
 eta_diff = zeros(1,number);
 eta_cs_r = zeros(1,number);
 eta_sea = zeros(1,number);
@@ -8,9 +9,9 @@ used = zeros(1,number);
 for k = 1:number
 cs = CascadeSystem;
 cs.dca.n = 30;
-cs.sea = SEA(10, 'Same');
-cs.sea.n_se = 5 * cs.dca.n;
-cs.dca.dc.amb.I_r = 500 + 50 * k;
+cs.sea = SEA(10, 'Reverse');
+cs.sea.n_se = 3 * cs.dca.n;
+cs.dca.dc.amb.I_r = 400 + 25 * k;
 cs.tca.tc.amb.I_r = cs.dca.dc.amb.I_r;
 %% Streams
 for i = 1 : 3
@@ -206,7 +207,7 @@ end
 Q_rankine = cs.sea.st2_i.q_m.v .* (cs.sea.st2_i.h -  cs.sea.st2_o.h) ...
     + cs.sh.st1_o.q_m.v .* (cs.sh.st1_o.h - cs.ph.st1_i.h) + ...
     cs.he.st2_o.q_m.v .* (cs.he.st2_o.h - cs.he.st2_i.h);
-P_rankine = cs.ge.P - cs.pu1.P - cs.pu2.P;
+P_rankine = (cs.ge.P - cs.pu1.P - cs.pu2.P) ./ cs.ge.eta;
 eta_rankine = P_rankine ./ Q_rankine;
 
 Q_cs = cs.dca.st_o.q_m.v .* (cs.dca.st_o.h - cs.dca.st_i.h) ./ cs.dca.eta ...
@@ -309,6 +310,11 @@ ss.pu1.work();
 ss.da.work(ss.tb);
 ss.pu2.p = ss.tb.st_i.p;
 ss.pu2.work();
+
+Q_ss_rankine = ss.sh.st1_o.q_m.v .* (ss.sh.st1_o.h - ss.ph.st1_i.h);
+
+P_ss_rankine = (ss.ge.P - ss.pu1.P - cs.pu2.P) ./ ss.ge.eta;
+eta_ss_rankine = P_ss_rankine ./ Q_ss_rankine;
 
 Q_ss = ss.dca.dc.q_tot .* ss.dca.n + cs.tca.st_o.q_m.v .* ...
     (cs.tca.st_o.h - cs.tca.st_i.h) ./ cs.tca.eta;
