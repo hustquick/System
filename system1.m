@@ -1,6 +1,6 @@
 clear;
 %% Get results matrix
-number = 24;
+number = 1;
 eta_diff = zeros(1,number);
 eta_cs_r = zeros(1,number);
 eta_sea = zeros(1,number);
@@ -11,7 +11,7 @@ cs = CascadeSystem;
 cs.dca.n = 30;
 cs.sea = SEA(10, 'Reverse');
 cs.sea.n_se = 3 * cs.dca.n;
-cs.dca.dc.amb.I_r = 400 + 25 * k;
+cs.dca.dc.amb.I_r = 700;
 cs.tca.tc.amb.I_r = cs.dca.dc.amb.I_r;
 %% Streams
 for i = 1 : 3
@@ -83,6 +83,7 @@ cs.tca.st_o = cs.st3(1);
 % Design parameters
 % cs.dca.n = 30;
 cs.dca.st_i.T = Temperature(convtemp(350, 'C', 'K'));   % Design parameter
+% cs.dca.st_i.T = Temperature(convtemp(400, 'C', 'K'));   % Design parameter
 cs.tb.st_o_2.p = 1.5e4;
 cs.da.p = 1e6;
 cs.DeltaT_3_2 = 15;          % Minimun temperature difference between oil
@@ -97,6 +98,7 @@ cs.dca.eta = cs.dca.dc.eta;
 cs.ge.P = 4e6;
 cs.ge.eta = 0.975;
 
+%% Work
 cs.tb.st_o_1.p = cs.da.p;
 cs.tb.work(cs.ge);
 
@@ -126,7 +128,7 @@ end
 guess(cs.sea.n1+1, 1) = 7.3;
 
 options = optimset('Algorithm','levenberg-marquardt','Display','iter');
-[x] = fsolve(@(x)CalcSystem(x, cs), guess, options);
+[x] = fsolve(@(x)CalcSystem1(x, cs), guess, options);
 
 cs.sea.st1_o.T = cs.sea.se(cs.sea.n1).st1_o.T;
 cs.sea.st1_o.p = cs.sea.se(cs.sea.n1).st1_o.p;
@@ -287,7 +289,7 @@ ss.se.P = ss.dca.dc.q_tot .* ss.dca.eta .* ss.dca.n .* eta_ss_se;
 
 ss.st2(7).T.v = cs.st2(8).T.v;
 ss.st2(7).q_m.v = cs.st2(8).q_m.v .* (cs.st2(11).h - cs.st2(8).h) ...
-    ./ (ss.st2(1).h - ss.st2(7).h);
+    ./ (ss.st2(1).h - ss.st2(7).h);     %% Why?
 
 ss.st2(2).T.v = cs.st2(2).T.v;
 ss.st2(3).T.v = cs.st2(3).T.v;
