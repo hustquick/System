@@ -8,7 +8,6 @@ classdef Turbine < handle
         st_o_1;    % Extraction steam stream
         st_o_2;    % Exhaust steam stream
         y;      % Extraction ratio
-        eta_i;  % Isentropic efficiency
     end
     properties(Constant, Access = private)
         fluid_d = char(Const.Fluid(2));     % Designed working fluid
@@ -21,7 +20,7 @@ classdef Turbine < handle
     end
     properties(Dependent)
         P;      % Power of steam turbine, W
-        eta;    % Efficiency of the turbine
+        eta_i;    % Efficiency of the turbine
     end
     
     methods

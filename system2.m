@@ -197,7 +197,7 @@ for i = 1 : cs.sea.n1
 end
 
 %% Rankine cycle efficiency and overall efficiency
-Q_rankine = cs.sea.st2_i.q_m.v .* (cs.sea.st2_i.h -  cs.sea.st2_o.h) ...
+Q_rankine = cs.sea.st2_i.q_m.v .* (cs.sea.st2_o.h -  cs.sea.st2_i.h) ...
     + cs.sh.st1_o.q_m.v .* (cs.sh.st1_o.h - cs.ph.st1_i.h);
 P_rankine = (cs.ge.P - cs.pu1.P - cs.pu2.P) ./ cs.ge.eta;
 eta_rankine = P_rankine ./ Q_rankine;

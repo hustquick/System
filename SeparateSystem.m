@@ -4,9 +4,12 @@ classdef SeparateSystem
     properties
         st2 = Stream;
         st3 = Stream;
+        st4 = Stream;
         dca = DCA;
         se;
         tca = TCA;
+        otb = ORCTurbine;
+        he = HeatExchanger;
         tb = Turbine;
         ge = Generator;
         cd = Condenser;
@@ -23,6 +26,7 @@ classdef SeparateSystem
         function obj = SeparateSystem
             obj.st2(9) = Stream;
             obj.st3(4) = Stream;
+            obj.st4(8) = Stream;
             obj.se = StirlingEngine;
         end
     end
