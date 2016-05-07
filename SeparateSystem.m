@@ -2,9 +2,9 @@ classdef SeparateSystem
     %CascadeSystem
     
     properties
-        st2 = Stream;
-        st3 = Stream;
-        st4 = Stream;
+        st2;
+        st3;
+        st4;
         dca = DCA;
         se;
         tca = TCA;
@@ -20,13 +20,14 @@ classdef SeparateSystem
         ev = Evaporator;
         sh = Superheater;
         DeltaT_3_2;
+        DeltaT_3_4;
     end
     
     methods
         function obj = SeparateSystem
-            obj.st2(9) = Stream;
-            obj.st3(4) = Stream;
-            obj.st4(8) = Stream;
+            obj.st2 = Stream.empty(0,9);
+            obj.st3 = Stream.empty(0,4);
+            obj.st4 = Stream.empty(0,8);
             obj.se = StirlingEngine;
         end
     end

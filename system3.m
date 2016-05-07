@@ -40,6 +40,9 @@ for i = 1 : 4
     cs.st3(i).T = Temperature(convtemp(380, 'C', 'K'));    % Design parameter
     cs.st3(i).p = 2e6;
 end
+for i = 2 : 4
+    cs.st3(i).q_m = cs.st3(1).q_m;
+end
 
 cs.dca.st_i = cs.st1(2);
 cs.dca.st_o = cs.st1(1);
@@ -120,10 +123,8 @@ cs.otb2.st_o.p = 0.167e6;
 cs.oge1.eta = 0.975;
 cs.oge2.P = 140e3;
 cs.oge2.eta = 0.975;
-
-cs.he.st1_o.x = 1;
-
-cs.DeltaT_3_2 = 15;          % Minimun temperature difference between oil
+cs.he.DeltaT = 15;
+cs.DeltaT_3_4 = 15;          % Minimun temperature difference between oil
 %and water
 
 %% Dish Collector Array
@@ -138,6 +139,7 @@ cs.dca.eta = cs.dca.dc.eta;
 cs.otb2.work(cs.oge2);
 
 cs.he.st1_o.p = cs.he.st1_i.p;
+cs.he.st1_o.x = 1;
 cs.he.st1_o.T.v = CoolProp.PropsSI('T', 'P', cs.he.st1_o.p,...
     'Q', cs.he.st1_o.x, cs.he.st1_o.fluid);
 cs.cd.work();
@@ -184,14 +186,16 @@ cs.sea.P = sum(P1) .* cs.sea.n2;
 cs.sea.st1_o.q_m = cs.sea.st1_i.q_m;
 cs.sea.st2_o.q_m = cs.sea.st2_i.q_m;
 
+cs.he.st1_o.T.v = cs.he.st2_i.T.v + cs.he.DeltaT;
+
 h_5_7 = cs.st5(2).h + cs.st5(6).h - cs.st5(3).h;
 cs.st5(7).p = cs.st5(6).p;
 cs.st5(8).p = cs.st5(7).p;
+cs.st5(8).x = 0;
 cs.st5(9).p = cs.st5(8).p;
+cs.st5(9).x = 1;
 cs.st5(7).T.v = CoolProp.PropsSI('T', 'H', ...
     h_5_7, 'P', cs.st5(7).p, cs.st5(7).fluid);
-cs.st5(8).x = 0;
-cs.st5(9).x = 1;
 cs.st5(8).T.v = CoolProp.PropsSI('T', 'Q', ...
     cs.st5(8).x, 'P', cs.st5(8).p, cs.st5(8).fluid);
 cs.st5(9).T.v = CoolProp.PropsSI('T', 'Q', ...
@@ -227,15 +231,15 @@ cs.pu1.work();
 cs.ph.st1_o.x = 0;
 cs.ph.st1_o.T.v = CoolProp.PropsSI('T', 'P', cs.ph.st1_o.p, ...
     'Q', cs.ph.st1_o.x, cs.ph.st1_o.fluid);
-cs.ph.st2_i.T.v = cs.ph.st1_o.T.v + cs.DeltaT_3_2;
-cs.ph.st2_i.q_m.v = cs.ph.st1_o.q_m.v .* (cs.sh.st1_o.h - ...
-    cs.ph.st1_o.h) ./ (cs.sh.st2_i.h - cs.ph.st2_i.h);
+cs.ph.st2_o.T.v = cs.ph.st1_i.T.v + cs.DeltaT_3_4;
+cs.ph.st2_o.q_m.v = cs.ph.st1_i.q_m.v .* (cs.sh.st1_o.h - ...
+    cs.ph.st1_i.h) ./ (cs.sh.st2_i.h - cs.ph.st2_o.h);
 
-cs.ph.calculate;
+cs.ph.get_st2_i;
 
-cs.ev.calculate;
+cs.ev.get_st2_i;
 
-cs.sh.calculate;
+cs.sh.get_st1_o;
 
 cs.oge1.P = cs.otb1.P .* cs.oge1.eta;
 
@@ -343,7 +347,7 @@ ss.dca.n = cs.dca.n;
 ss.dca.dc.amb = cs.dca.dc.amb;
 ss.dca.eta = cs.dca.eta;
 ss.ge.eta = cs.oge1.eta;
-ss.DeltaT_3_2 = cs.DeltaT_3_2;
+ss.DeltaT_3_4 = cs.DeltaT_3_4;
 
 ss.otb.st_i.T.v = cs.otb1.st_i.T.v;
 ss.otb.st_i.p = cs.otb1.st_i.p;

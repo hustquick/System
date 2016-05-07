@@ -2,11 +2,11 @@ classdef CascadeSystem
     %CascadeSystem
     
     properties
-        st1 = Stream;
-        st2 = Stream;
-        st3 = Stream;
-        st4 = Stream;
-        st5 = Stream;
+        st1;
+        st2;
+        st3;
+        st4;
+        st5;
         dca = DCA;
         tca = TCA;
         tb = Turbine;
@@ -29,15 +29,16 @@ classdef CascadeSystem
         osh = Superheater;
         he = HeatExchanger;
         DeltaT_3_2;
+        DeltaT_3_4;
     end
     
     methods
         function obj = CascadeSystem
-            obj.st1(3) = Stream;
-            obj.st2(11) = Stream;
-            obj.st3(4) = Stream;
-            obj.st4(8) = Stream;
-            obj.st5(9) = Stream;
+            obj.st1 = Stream.empty(3,0);
+            obj.st2 = Stream.empty(11,0);
+            obj.st3 = Stream.empty(4,0);
+            obj.st4 = Stream.empty(8,0);
+            obj.st5 = Stream.empty(9,0);
         end
     end
 end

@@ -1,4 +1,4 @@
-function F = CalcSystem(x, cs)
+function F = CalcSystem1(x, cs)
 %CalcSystem Use expressions to calculate some parameters of the system
 %   First expression expresses eta of each Stirling engine in two ways
 %   Second expression expresses P of each Stirling engine in two ways

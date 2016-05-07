@@ -31,8 +31,7 @@ classdef SEA < handle
             % n1 is the number of columns of the Stirling engine array,
             % order is a string, 'Same' or 'Reverse'
             obj.n1 = n1;
-            se1(1, n1) = StirlingEngine;
-            obj.se = se1;
+            obj.se = StirlingEngine.empty(0,n1);
             obj.st1_i = Stream;
             obj.st1_o = Stream;
             obj.st2_i = Stream;

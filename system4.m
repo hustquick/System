@@ -8,108 +8,121 @@ ratio = zeros(1,number);
 used = zeros(1,number);
 for k = 1:number
 hs = HeatSystem;
-hs.dca.n = 3;
-% hs.sea = SEA(3, 'Reverse');
-% hs.sea.n_se = 3 * hs.dca.n;
-hs.dca.dc.amb.I_r = 700;
-hs.tca.tc.amb.I_r = hs.dca.dc.amb.I_r;
+hs.sec = SEC(3, 'Parallel');
 %% Streams
-for i = 1 : 3
+for i = 1 : 6
     hs.st1(i).fluid = char(Const.Fluid(1));
     hs.st1(i).T = Temperature(convtemp(800, 'C', 'K'));
     hs.st1(i).p = 5e5;      % Design parameter, air pressure in dish receiver, Pa
     hs.st1(i).q_m.v = 1;          %%%%%%% To be automatically calculated later
 end
-for i = 1 : 2
-    hs.st1(i+1).q_m = hs.st1(1).q_m;
+for i = 2 : 6
+    hs.st1(i).q_m = hs.st1(1).q_m;
 end
-for i = 1 : 11
-    hs.st2(i).fluid = char(Const.Fluid(2));
-    hs.st2(i).T = Temperature(convtemp(340, 'C', 'K'));
-    hs.st2(i).p = 2.35e6;
-    hs.st2(i).q_m = Q_m(6);         %%%%%%% To be automatically calculated later
+for i = 1 : 8
+    hs.st4(i).fluid = char(Const.Fluid(4));
+    hs.st4(i).T = Temperature(convtemp(300, 'C', 'K'));
+    hs.st4(i).p = 2.8842e6;
+    hs.st4(i).q_m = Q_m(2.5);         %%%%%%% To be automatically calculated later
 end
-hs.st2(1).q_m.v = 7.21;          %%%%%%%%%%
-for i = 1 : 4
-    hs.st2(i+7).q_m = hs.st2(1).q_m;
-end
-for i = 1 : 3
-    hs.st2(i+3).q_m = hs.st2(3).q_m;
+for i = 2 : 8
+    hs.st4(i).q_m = hs.st4(1).q_m;
 end
 
-for i = 1 : 4
-    hs.st3(i).fluid = char(Const.Fluid(3));
-    hs.st3(i).T = Temperature(convtemp(380, 'C', 'K'));    % Design parameter
-    hs.st3(i).p = 2e6;
-end
-
-hs.dca.st_i = hs.st1(3);
+hs.dca.st_i = hs.st1(6);
 hs.dca.st_o = hs.st1(1);
-hs.sea.st1_i = hs.st1(1);
-hs.sea.st1_o = hs.st1(2);
-hs.sea.st2_i = hs.st2(5);
-hs.sea.st2_o = hs.st2(6);
-hs.he.st1_i = hs.st1(2);
-hs.he.st1_o = hs.st1(3);
-hs.he.st2_i = hs.st2(11);
-hs.he.st2_o = hs.st2(1);
-hs.tb.st_i = hs.st2(1);
-hs.tb.st_o_1 = hs.st2(2);
-hs.tb.st_o_2 = hs.st2(3);
-hs.cd.st_i = hs.st2(3);
-hs.cd.st_o = hs.st2(4);
-hs.pu1.st_i = hs.st2(4);
-hs.pu1.st_o = hs.st2(5);
-hs.da.st_i_1 = hs.st2(2);
-hs.da.st_i_2 = hs.st2(6);
-hs.da.st_o = hs.st2(7);
-hs.pu2.st_i = hs.st2(7);
-hs.pu2.st_o = hs.st2(8);
-hs.ph.st1_i = hs.st2(8);
-hs.ph.st1_o = hs.st2(9);
-hs.ph.st2_i = hs.st3(3);
-hs.ph.st2_o = hs.st3(4);
-hs.ev.st1_i = hs.st2(9);
-hs.ev.st1_o = hs.st2(10);
-hs.ev.st2_i = hs.st3(2);
-hs.ev.st2_o = hs.st3(3);
-hs.sh.st1_i = hs.st2(10);
-hs.sh.st1_o = hs.st2(11);
-hs.sh.st2_i = hs.st3(1);
-hs.sh.st2_o = hs.st3(2);
-hs.tca.st_i = hs.st3(4);
-hs.tca.st_o = hs.st3(1);
+hs.sec.st1_i = hs.st1(1);
+hs.sec.st1_o = hs.st1(2);
+hs.sec.st2_i = hs.st2;      % Cooling water stream for each Stirling engine
+hs.otb.st_i = hs.st4(1);
+hs.otb.st_o = hs.st4(2);
+hs.he.st1_i = hs.st4(2);
+hs.he.st1_o = hs.st4(3);
+hs.he.st2_i = hs.st4(5);
+hs.he.st2_o = hs.st4(6);
+hs.cd.st_i = hs.st4(3);
+hs.cd.st_o = hs.st4(4);
+hs.pu.st_i = hs.st4(4);
+hs.pu.st_o = hs.st4(5);
+hs.ph.st1_i = hs.st4(6);
+hs.ph.st1_o = hs.st4(7);
+hs.ph.st2_i = hs.st1(4);
+hs.ph.st2_o = hs.st1(5);
+hs.ev.st1_i = hs.st4(7);
+hs.ev.st1_o = hs.st4(8);
+hs.ev.st2_i = hs.st1(3);
+hs.ev.st2_o = hs.st1(4);
+hs.sh.st1_i = hs.st4(8);
+hs.sh.st1_o = hs.st4(1);
+hs.sh.st2_i = hs.st1(2);
+hs.sh.st2_o = hs.st1(3);
+hs.tca.st_i = hs.st1(5);
+hs.tca.st_o = hs.st1(6);
 
 % Design parameters
-% cs.dca.n = 30;
-hs.dca.st_i.T = Temperature(convtemp(350, 'C', 'K'));   % Design parameter
-% cs.dca.st_i.T = Temperature(convtemp(400, 'C', 'K'));   % Design parameter
-hs.tb.st_o_2.p = 1.5e4;
-hs.da.p = 1e6;
-hs.DeltaT_3_2 = 15;          % Minimun temperature difference between oil
+hs.dca.n = 1;
+hs.dca.dc.amb.I_r = 700;
+hs.tca.tc.amb.I_r = hs.dca.dc.amb.I_r;
+
+hs.dca.st_i.T.v = convtemp(350, 'C', 'K');   % To be automatically calculated
+hs.dca.st_o.T.v = convtemp(800, 'C', 'K');  % Design parameter
+hs.tca.st_i.T.v = convtemp(200, 'C', 'K');
+
+hs.otb.fluid_d = char(Const.Fluid(4));
+hs.otb.T_s_d.v = convtemp(300, 'C', 'K');
+hs.otb.p_s_d = 2.8842e6;
+hs.otb.T_c_d.v = convtemp(228.85, 'C', 'K');
+hs.otb.p_c_d = 0.3605e6;
+hs.otb.st_i.T.v = convtemp(300, 'C', 'K');
+hs.otb.st_i.p = 2.8842e6;
+hs.otb.st_o.p = 0.3605e6;
+
+% hs.otb.fluid_d = char(Const.Fluid(5));
+% hs.otb.T_s_d.v = convtemp(141.152, 'C', 'K');
+% hs.otb.p_s_d = 1e6;
+% hs.otb.T_c_d.v = convtemp(91.35, 'C', 'K');
+% hs.otb.p_c_d = 0.167e6;
+% hs.otb.st_i.T.v = convtemp(141.152, 'C', 'K');
+% hs.otb.st_i.p = 1e6;
+% hs.otb.st_o.p = 0.167e6;
+
+hs.ge.eta = 0.975;
+hs.ge.P = 140e3;
+
+hs.he.DeltaT = 15;
+hs.DeltaT_1_4 = 15;          % Minimun temperature difference between oil
 %and water
 
+%% Dish Collector Array
 hs.dca.dc.st_i = hs.dca.st_i.diverge(1);
 hs.dca.dc.st_o = hs.dca.st_o.diverge(1);
 hs.dca.dc.calculate;
 hs.dca.st_i.q_m.v = hs.dca.n .* hs.dca.dc.st_i.q_m.v;
 hs.dca.eta = hs.dca.dc.eta;
 
-hs.ge.P = 4e6;
-hs.ge.eta = 0.975;
-
 %% Work
-hs.tb.st_o_1.p = hs.da.p;
-hs.tb.work(hs.ge);
+hs.otb.work(hs.ge);
 
+hs.he.st1_o.p = hs.he.st1_i.p;
 hs.cd.work();
 
-hs.pu1.p = hs.da.p;
-hs.pu1.work();
+hs.pu.p = hs.otb.st_i.p;
+hs.pu.work();
 
-hs.da.st_i_2.p = hs.da.p;
-% cs.da.work(cs.tb);
+hs.he.st1_o.T.v = hs.he.st2_i.T.v + hs.he.DeltaT;
 
+h_4_6 = hs.st4(2).h + hs.st4(5).h - hs.st4(3).h;
+hs.st4(6).p = hs.st4(5).p;
+hs.st4(7).p = hs.st4(6).p;
+hs.st4(7).x = 0;
+hs.st4(8).p = hs.st4(7).p;
+hs.st4(8).x = 1;
+hs.st4(6).T.v = CoolProp.PropsSI('T', 'H', ...
+    h_4_6, 'P', hs.st4(6).p, hs.st4(6).fluid);
+hs.st4(7).T.v = CoolProp.PropsSI('T', 'Q', ...
+    hs.st4(7).x, 'P', hs.st4(7).p, hs.st4(7).fluid);
+hs.st4(8).T.v = CoolProp.PropsSI('T', 'Q', ...
+    hs.st4(8).x, 'P', hs.st4(8).p, hs.st4(8).fluid);
 %% Calculate the system
 guess = zeros(2, hs.sea.n1+1);
 

@@ -25,8 +25,7 @@ classdef SEC < handle
             % n1 is the number of columns of the Stirling engine array,
             % order is a string, 'Same' or 'Reverse'
             obj.n_se = n_se;
-            se1(n_se) = StirlingEngine;
-            obj.se = se1;
+            obj.se = StirlingEngine.empty(0,n_se);
             obj.st1_i = Stream;
             obj.st1_o = Stream;
             obj.st2_i = Stream;

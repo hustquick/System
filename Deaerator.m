@@ -8,9 +8,6 @@ classdef Deaerator < handle
         st_o;
         y;
     end
-    properties(Dependent)
-%         st_o;
-    end
     
     methods
         function obj = Deaerator

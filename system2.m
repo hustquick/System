@@ -39,6 +39,9 @@ for i = 1 : 4
     cs.st3(i).T = Temperature(convtemp(380, 'C', 'K'));    % Design parameter
     cs.st3(i).p = 2e6;
 end
+for i = 2 : 4
+    cs.st3(i).q_m = cs.st3(1).q_m;
+end
 
 cs.dca.st_i = cs.st1(2);
 cs.dca.st_o = cs.st1(1);
@@ -152,11 +155,11 @@ cs.ph.st2_i.T.v = cs.ph.st1_o.T.v + cs.DeltaT_3_2;
 cs.ph.st2_i.q_m.v = cs.ph.st1_o.q_m.v .* (cs.sh.st1_o.h - ...
     cs.ph.st1_o.h) ./ (cs.sh.st2_i.h - cs.ph.st2_i.h);
 
-cs.ph.calculate;
+cs.ph.get_st2_o();
 
-cs.ev.calculate;
+cs.ev.get_st2_i();
 
-cs.sh.calculate;
+cs.sh.get_st1_o();
 
 cs.tca.tc.st_i = cs.tca.st_i.diverge(1);
 cs.tca.tc.st_o = cs.tca.st_o.diverge(1);
