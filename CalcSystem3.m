@@ -7,9 +7,7 @@ function F = CalcSystem3(x, cs)
 % cs.dca.dc.calculate();
 cs.otb2.work(cs.oge2);
 cs.cd.work();
-
-cs.pu1.work();
-
+cs.pu2.work();
 cp_1 = cs.sea.st1_i.cp;
 cp_2 = cs.sea.st2_i.cp;
 cs.sea.se(1).st1_i = cs.sea.st1_i_r;
