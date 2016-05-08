@@ -167,7 +167,7 @@ classdef DishCollector
                 (obj.airPipe.T.v .^4 - obj.amb.T.v .^ 4);
         end
         function calculate(obj)
-            obj.st_o.q_m = obj.st_i.q_m;
+%             obj.st_o = obj.st_i.flow();
             guess = [1500; 400; 0.1] ;
             options = optimset('Display','iter');
             fsolve(@(x)CalcDishCollector(x, obj), ...

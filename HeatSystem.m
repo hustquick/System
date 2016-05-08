@@ -3,6 +3,7 @@ classdef HeatSystem
     
     properties
         st1;
+        st2;
         st4;
         st5;
         dca = DCA;

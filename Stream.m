@@ -46,16 +46,16 @@ classdef Stream < handle
                 error('The two streams have different fluid types!');
             end
         end
-        function st = converge(obj, n)
-            % Get the properties of a stream converged from several streams
-            % It is converged from n equal parts
-            st = Stream;
-            st.fluid = obj.fluid;
-            st.q_m.v = obj.q_m.v .* n;
-            st.T = obj.T;
-            st.p = obj.p;
-        end
-        function st = diverge(obj, y)
+%         function st = converge(obj, n)
+%             % Get the properties of a stream converged from several streams
+%             % It is converged from n equal parts
+%             st = Stream;
+%             st.fluid = obj.fluid;
+%             st.q_m.v = obj.q_m.v .* n;
+%             st.T = obj.T;
+%             st.p = obj.p;
+%         end
+        function st = converge(obj, y)
             % Get the properties of a stream diverged from a stream
             % It is diverged into n equal parts
             st = Stream;

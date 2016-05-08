@@ -10,62 +10,48 @@ for k = 1:number
 hs = HeatSystem;
 hs.sec = SEC(3, 'Parallel');
 %% Streams
-for i = 1 : 6
-    hs.st1(i).fluid = char(Const.Fluid(1));
-    hs.st1(i).T = Temperature(convtemp(800, 'C', 'K'));
-    hs.st1(i).p = 5e5;      % Design parameter, air pressure in dish receiver, Pa
-    hs.st1(i).q_m.v = 1;          %%%%%%% To be automatically calculated later
-end
-for i = 2 : 6
-    hs.st1(i).q_m = hs.st1(1).q_m;
-end
-for i = 1 : 8
-    hs.st4(i).fluid = char(Const.Fluid(4));
-    hs.st4(i).T = Temperature(convtemp(300, 'C', 'K'));
-    hs.st4(i).p = 2.8842e6;
-    hs.st4(i).q_m = Q_m(2.5);         %%%%%%% To be automatically calculated later
-end
-for i = 2 : 8
-    hs.st4(i).q_m = hs.st4(1).q_m;
-end
+% for i = 1 : 6
+%     hs.st1(i) = Stream;
+% %     hs.st1(i).fluid = char(Const.Fluid(1));
+% % %     hs.st1(i).T = Temperature(convtemp(800, 'C', 'K'));
+% % %     hs.st1(i).p = 5e5;      % Design parameter, air pressure in dish receiver, Pa
+% %     hs.st1(i).q_m.v = 1;          %%%%%%% To be automatically calculated later
+% end
+% 
+% for i = 1 : 8
+%     hs.st4(i) = Stream;
+% %     hs.st4(i).fluid = char(Const.Fluid(4));
+% %     hs.st4(i).T = Temperature(convtemp(300, 'C', 'K'));
+% %     hs.st4(i).p = 2.8842e6;
+% %     hs.st4(i).q_m = Q_m(2.5);         %%%%%%% To be automatically calculated later
+% end
 
-hs.dca.st_i = hs.st1(6);
-hs.dca.st_o = hs.st1(1);
-hs.sec.st1_i = hs.st1(1);
-hs.sec.st1_o = hs.st1(2);
+%% State points
+hs.sec.st1_i = hs.dca.st_o;
+hs.st1(1) = hs.sec.st1_i;
+hs.sh.st2_i = hs.sec.st1_o;
+hs.st1(2) = hs.sh.st2_i;
+hs.ev.st2_i = hs.sh.st2_o;
+hs.st1(3) = hs.ev.st2_i;
+hs.ph.st2_i = hs.ev.st2_o;
+hs.st1(4) = hs.ph.st2_i;
+hs.tca.st_i = hs.ph.st2_o;
+hs.st1(5) = hs.tca.st_i;
+hs.dca.st_i = hs.tca.st_o;
+hs.st1(6) = hs.dca.st_i;
 hs.sec.st2_i = hs.st2;      % Cooling water stream for each Stirling engine
-hs.otb.st_i = hs.st4(1);
-hs.otb.st_o = hs.st4(2);
-hs.he.st1_i = hs.st4(2);
-hs.he.st1_o = hs.st4(3);
-hs.he.st2_i = hs.st4(5);
-hs.he.st2_o = hs.st4(6);
-hs.cd.st_i = hs.st4(3);
-hs.cd.st_o = hs.st4(4);
-hs.pu.st_i = hs.st4(4);
-hs.pu.st_o = hs.st4(5);
-hs.ph.st1_i = hs.st4(6);
-hs.ph.st1_o = hs.st4(7);
-hs.ph.st2_i = hs.st1(4);
-hs.ph.st2_o = hs.st1(5);
-hs.ev.st1_i = hs.st4(7);
-hs.ev.st1_o = hs.st4(8);
-hs.ev.st2_i = hs.st1(3);
-hs.ev.st2_o = hs.st1(4);
-hs.sh.st1_i = hs.st4(8);
-hs.sh.st1_o = hs.st4(1);
-hs.sh.st2_i = hs.st1(2);
-hs.sh.st2_o = hs.st1(3);
-hs.tca.st_i = hs.st1(5);
-hs.tca.st_o = hs.st1(6);
 
-% Design parameters
+%% Design parameters
 hs.dca.n = 1;
 hs.dca.dc.amb.I_r = 700;
-hs.tca.tc.amb.I_r = hs.dca.dc.amb.I_r;
+hs.dca.st_i.fluid = char(Const.Fluid(1));
+hs.dca.st_i.T.v = convtemp(350, 'C', 'K');
+hs.dca.st_i.p = 5e5;
+hs.dca.st_o = hs.dca.st_i.flow();
+hs.dca.st_o.T.v = convtemp(800, 'C', 'K');
+hs.dca.st_o.p = hs.dca.st_i.p;
 
-hs.dca.st_i.T.v = convtemp(350, 'C', 'K');   % To be automatically calculated
-hs.dca.st_o.T.v = convtemp(800, 'C', 'K');  % Design parameter
+hs.tca.tc.amb.I_r = hs.dca.dc.amb.I_r;
 hs.tca.st_i.T.v = convtemp(200, 'C', 'K');
 
 hs.otb.fluid_d = char(Const.Fluid(4));
@@ -73,6 +59,8 @@ hs.otb.T_s_d.v = convtemp(300, 'C', 'K');
 hs.otb.p_s_d = 2.8842e6;
 hs.otb.T_c_d.v = convtemp(228.85, 'C', 'K');
 hs.otb.p_c_d = 0.3605e6;
+
+hs.otb.st_i.fluid = hs.otb.fluid_d;
 hs.otb.st_i.T.v = convtemp(300, 'C', 'K');
 hs.otb.st_i.p = 2.8842e6;
 hs.otb.st_o.p = 0.3605e6;
@@ -82,6 +70,7 @@ hs.otb.st_o.p = 0.3605e6;
 % hs.otb.p_s_d = 1e6;
 % hs.otb.T_c_d.v = convtemp(91.35, 'C', 'K');
 % hs.otb.p_c_d = 0.167e6;
+% hs.otb.st_i.fluid = hs.otb.fluid_d;
 % hs.otb.st_i.T.v = convtemp(141.152, 'C', 'K');
 % hs.otb.st_i.p = 1e6;
 % hs.otb.st_o.p = 0.167e6;
@@ -92,10 +81,9 @@ hs.ge.P = 140e3;
 hs.he.DeltaT = 15;
 hs.DeltaT_1_4 = 15;          % Minimun temperature difference between oil
 %and water
-
 %% Dish Collector Array
-hs.dca.dc.st_i = hs.dca.st_i.diverge(1);
-hs.dca.dc.st_o = hs.dca.st_o.diverge(1);
+hs.dca.dc.st_i = hs.dca.st_i.converge(1);
+hs.dca.dc.st_o = hs.dca.st_o.converge(1);
 hs.dca.dc.calculate;
 hs.dca.st_i.q_m.v = hs.dca.n .* hs.dca.dc.st_i.q_m.v;
 hs.dca.eta = hs.dca.dc.eta;
@@ -180,8 +168,8 @@ hs.ev.calculate;
 
 hs.sh.calculate;
 
-hs.tca.tc.st_i = hs.tca.st_i.diverge(1);
-hs.tca.tc.st_o = hs.tca.st_o.diverge(1);
+hs.tca.tc.st_i = hs.tca.st_i.converge(1);
+hs.tca.tc.st_o = hs.tca.st_o.converge(1);
 hs.tca.tc.calculate;
 hs.tca.n1 = hs.tca.tc.n;
 hs.tca.n2 = hs.tca.st_i.q_m.v ./ hs.tca.tc.st_i.q_m.v;

@@ -69,7 +69,7 @@ classdef SEC < handle
                 %%%%% Parallel connection %%%%%
                 
                 for i = 1 : obj.n_se
-                    obj.se(i).st1_i = obj.st1_i.diverge(1/obj.n_se);
+                    obj.se(i).st1_i = obj.st1_i.converge(1/obj.n_se);
                     obj.se(i).st1_o = obj.se(i).st1_i.flow();
                     obj.se(i).st1_o.p = obj.se(i).st1_i.p;
                     obj.se(i).st2_o = obj.se(i).st2_i.flow();

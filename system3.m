@@ -128,8 +128,8 @@ cs.DeltaT_3_4 = 15;          % Minimun temperature difference between oil
 %and water
 
 %% Dish Collector Array
-cs.dca.dc.st_i = cs.dca.st_i.diverge(1);
-cs.dca.dc.st_o = cs.dca.st_o.diverge(1);
+cs.dca.dc.st_i = cs.dca.st_i.converge(1);
+cs.dca.dc.st_o = cs.dca.st_o.converge(1);
 cs.dca.dc.calculate;
 cs.dca.st_i.q_m.v = cs.dca.n .* cs.dca.dc.st_i.q_m.v;
 cs.dca.eta = cs.dca.dc.eta;
@@ -243,8 +243,8 @@ cs.sh.get_st1_o;
 
 cs.oge1.P = cs.otb1.P .* cs.oge1.eta;
 
-cs.tca.tc.st_i = cs.tca.st_i.diverge(1);
-cs.tca.tc.st_o = cs.tca.st_o.diverge(1);
+cs.tca.tc.st_i = cs.tca.st_i.converge(1);
+cs.tca.tc.st_o = cs.tca.st_o.converge(1);
 cs.tca.tc.calculate;
 cs.tca.n1 = cs.tca.tc.n;
 cs.tca.n2 = cs.tca.st_i.q_m.v ./ cs.tca.tc.st_i.q_m.v;

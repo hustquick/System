@@ -30,7 +30,6 @@ classdef SeparateSystem
             obj.st4 = Stream.empty(0,8);
             obj.se = StirlingEngine;
         end
-    end
-    
+    end    
 end
 
