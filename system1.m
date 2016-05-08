@@ -80,88 +80,6 @@ cs.DeltaT_3_2 = 15;          % Minimun temperature difference between oil
 %and water
 
 cs.sea.n_se = 3 * cs.dca.n;
-% %% Streams
-% for i = 1 : 3
-%     cs.st1(i).fluid = char(Const.Fluid(1));
-%     cs.st1(i).T = Temperature(convtemp(800, 'C', 'K'));
-%     cs.st1(i).p = 5e5;      % Design parameter, air pressure in dish receiver, Pa
-%     cs.st1(i).q_m.v = 1;          %%%%%%% To be automatically calculated later
-% end
-% for i = 1 : 2
-%     cs.st1(i+1).q_m = cs.st1(1).q_m;
-% end
-% for i = 1 : 11
-%     cs.st2(i).fluid = char(Const.Fluid(2));
-%     cs.st2(i).T = Temperature(convtemp(340, 'C', 'K'));
-%     cs.st2(i).p = 2.35e6;
-%     cs.st2(i).q_m = Q_m(6);         %%%%%%% To be automatically calculated later
-% end
-% cs.st2(1).q_m.v = 7.21;          %%%%%%%%%%
-% for i = 1 : 4
-%     cs.st2(i+7).q_m = cs.st2(1).q_m;
-% end
-% for i = 1 : 3
-%     cs.st2(i+3).q_m = cs.st2(3).q_m;
-% end
-% 
-% for i = 1 : 4
-%     cs.st3(i).fluid = char(Const.Fluid(3));
-%     cs.st3(i).T = Temperature(convtemp(380, 'C', 'K'));    % Design parameter
-%     cs.st3(i).p = 2e6;
-% end
-% for i = 2 : 4
-%     cs.st3(i).q_m = cs.st3(1).q_m;
-% end
-% 
-% cs.dca.st_i = cs.st1(3);
-% cs.dca.st_o = cs.st1(1);
-% cs.sea.st1_i = cs.st1(1);
-% cs.sea.st1_o = cs.st1(2);
-% cs.sea.st2_i = cs.st2(5);
-% cs.sea.st2_o = cs.st2(6);
-% cs.he.st1_i = cs.st1(2);
-% cs.he.st1_o = cs.st1(3);
-% cs.he.st2_i = cs.st2(11);
-% cs.he.st2_o = cs.st2(1);
-% cs.tb.st_i = cs.st2(1);
-% cs.tb.st_o_1 = cs.st2(2);
-% cs.tb.st_o_2 = cs.st2(3);
-% cs.cd.st_i = cs.st2(3);
-% cs.cd.st_o = cs.st2(4);
-% cs.pu1.st_i = cs.st2(4);
-% cs.pu1.st_o = cs.st2(5);
-% cs.da.st_i_1 = cs.st2(2);
-% cs.da.st_i_2 = cs.st2(6);
-% cs.da.st_o = cs.st2(7);
-% cs.pu2.st_i = cs.st2(7);
-% cs.pu2.st_o = cs.st2(8);
-% cs.ph.st1_i = cs.st2(8);
-% cs.ph.st1_o = cs.st2(9);
-% cs.ph.st2_i = cs.st3(3);
-% cs.ph.st2_o = cs.st3(4);
-% cs.ev.st1_i = cs.st2(9);
-% cs.ev.st1_o = cs.st2(10);
-% cs.ev.st2_i = cs.st3(2);
-% cs.ev.st2_o = cs.st3(3);
-% cs.sh.st1_i = cs.st2(10);
-% cs.sh.st1_o = cs.st2(11);
-% cs.sh.st2_i = cs.st3(1);
-% cs.sh.st2_o = cs.st3(2);
-% cs.tca.st_i = cs.st3(4);
-% cs.tca.st_o = cs.st3(1);
-% 
-% % Design parameters
-% % cs.dca.n = 30;
-
-
-% cs.dca.dc.st_i = cs.dca.st_i.converge(1);
-% cs.dca.dc.st_o = cs.dca.st_o.converge(1);
-% cs.dca.dc.calculate;
-% cs.dca.st_i.q_m.v = cs.dca.n .* cs.dca.dc.st_i.q_m.v;
-% cs.dca.eta = cs.dca.dc.eta;
-
-
-
 %% Work
 cs.dca.dc.work();
 cs.dca.work();
@@ -327,58 +245,7 @@ ss.DeltaT_3_2 = cs.DeltaT_3_2;
 
 for i = 1 : 9
     ss.st2(i).fluid = char(Const.Fluid(2));
-%     ss.st2(i).T = Temperature(convtemp(340, 'C', 'K'));
-%     ss.st2(i).p = 2.35e6;
-%     ss.st2(i).q_m = Q_m(6);         %%%%%%% To be automatically calculated later
 end
-% 
-% ss.st2(1).q_m.v = 7.4;          %%%%%%%%%%
-% for i = 1 : 4
-%     ss.st2(i+5).q_m = ss.st2(1).q_m;
-% end
-% 
-% for i = 1 : 2
-%     ss.st2(i+3).q_m = ss.st2(3).q_m;
-% end
-% 
-% for i = 1 : 4
-%     ss.st3(i).fluid = char(Const.Fluid(3));
-%     ss.st3(i).T = Temperature(convtemp(380, 'C', 'K'));    % Design parameter
-%     ss.st3(i).p = 2e6;
-% end
-% 
-% ss.tb.st_i = ss.st2(1);
-% ss.tb.st_o_1 = ss.st2(2);
-% ss.tb.st_o_2 = ss.st2(3);
-% ss.cd.st_i = ss.st2(3);
-% ss.cd.st_o = ss.st2(4);
-% ss.pu1.st_i = ss.st2(4);
-% ss.pu1.st_o = ss.st2(5);
-% ss.da.st_i_1 = ss.st2(2);
-% ss.da.st_i_2 = ss.st2(5);
-% ss.da.st_o = ss.st2(6);
-% ss.pu2.st_i = ss.st2(6);
-% ss.pu2.st_o = ss.st2(7);
-% ss.ph.st1_i = ss.st2(7);
-% ss.ph.st1_o = ss.st2(8);
-% ss.ph.st2_i = ss.st3(3);
-% ss.ph.st2_o = ss.st3(4);
-% ss.ev.st1_i = ss.st2(8);
-% ss.ev.st1_o = ss.st2(9);
-% ss.ev.st2_i = ss.st3(2);
-% ss.ev.st2_o = ss.st3(3);
-% ss.sh.st1_i = ss.st2(9);
-% ss.sh.st1_o = ss.st2(1);
-% ss.sh.st2_i = ss.st3(1);
-% ss.sh.st2_o = ss.st3(2);
-% 
-% ss.dca.n = cs.dca.n;
-% ss.dca.dc.amb = cs.dca.dc.amb;
-% ss.dca.eta = cs.dca.eta;
-% ss.ge.eta = cs.ge.eta;
-% ss.tb.st_o_2.p = cs.tb.st_o_2.p;
-% ss.da.p = cs.da.p;
-% ss.DeltaT_3_2 = cs.DeltaT_3_2;
 
 q_se = cs.sea.se(1).P ./ cs.sea.se(1).eta;  % Heat absorbed by the first
     % Stirling engine in SEA of cascade sysem
