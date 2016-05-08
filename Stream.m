@@ -54,14 +54,15 @@ classdef Stream < handle
 %             st.T = obj.T;
 %             st.p = obj.p;
 %         end
-        function st = converge(obj, y)
+        function convergeTo(obj, st, y)
             % Get the properties of a stream diverged from a stream
             % It is diverged into n equal parts
-            st = Stream;
             st.fluid = obj.fluid;
-            st.q_m.v = obj.q_m.v .* y;
             st.T = obj.T;
             st.p = obj.p;
+            st.x = obj.x;
+            st.q_m.v = obj.q_m.v .* y;
+    
         end
     end
     methods

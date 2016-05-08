@@ -157,10 +157,12 @@ classdef SEA < handle
             value = obj.n_se / obj.n1;
         end
         function value = get.st1_i_r(obj)
-            value = obj.st1_i.converge(obj.n1/obj.n_se);
+            value = Stream;
+            obj.st1_i.convergeTo(value, obj.n1/obj.n_se);
         end
         function value = get.st2_i_r(obj)
-            value = obj.st2_i.converge(obj.n1/obj.n_se);
+            value = Stream;
+            obj.st2_i.convergeTo(value, obj.n1/obj.n_se);
         end
     end
     

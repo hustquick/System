@@ -60,11 +60,8 @@ classdef Turbine < handle
                 / (obj.st_i.q_m.v .* (st_tmp2.h - st_tmp1.h));
             if (y1 >= 0 && y1 <= 1)
                 obj.y = y1;
-                obj.st_o_1.q_m.v = st_tmp1.q_m.v .* obj.y;
-                obj.st_o_1.T.v = st_tmp1.T.v;
-                obj.st_o_2.q_m.v = st_tmp2.q_m.v .* (1 - obj.y);
-                obj.st_o_2.T.v = st_tmp2.T.v;
-                obj.st_o_2.x = st_tmp2.x;
+                st_tmp1.convergeTo(obj.st_o_1, obj.y);
+                st_tmp2.convergeTo(obj.st_o_2,1 - obj.y);
             else
                 error('wrong y value of turbine');
 %                 flag = 1;

@@ -16,8 +16,8 @@ classdef DCA < handle
             obj.dc = DishCollector;
         end
         function work(obj)
-            obj.st_i = obj.dc.st_i.converge(obj.n);
-            obj.st_o = obj.dc.st_o.converge(obj.n);
+            obj.dc.st_i.convergeTo(obj.st_i, obj.n);
+            obj.dc.st_o.convergeTo(obj.st_o, obj.n);
             obj.st_i.q_m.v = obj.n .* obj.dc.st_i.q_m.v;
             obj.eta = obj.dc.eta;
         end

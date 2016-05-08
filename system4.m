@@ -8,9 +8,8 @@ ratio = zeros(1,number);
 used = zeros(1,number);
 for k = 1:number
 hs = HeatSystem;
-%% State points
+%% Connection and State points
 hs.sec.st1_i = hs.dca.st_o;
-
 hs.sh.st2_i = hs.sec.st1_o;
 hs.ev.st2_i = hs.sh.st2_o;
 hs.ph.st2_i = hs.ev.st2_o;
@@ -43,18 +42,17 @@ hs.st4(6) = hs.ph.st1_i;
 hs.st4(7) = hs.ev.st1_i;
 hs.st4(8) = hs.sh.st1_i;
 %% Design parameters
-
 hs.sec = SEC(3, 'Parallel');
+
 hs.dca.n = 2;
+hs.dca.dc.amb.I_r = 700;
 hs.dca.dc.st_i.fluid = char(Const.Fluid(1));
 hs.dca.dc.st_i.T.v = convtemp(350, 'C', 'K');
 hs.dca.dc.st_i.p = 5e5;
-% hs.dca.st_o = hs.dca.st_i.flow();
 hs.dca.dc.st_o.T.v = convtemp(800, 'C', 'K');
 
-hs.dca.dc.amb.I_r = 700;
-
 hs.tca.tc.amb.I_r = hs.dca.dc.amb.I_r;
+hs.tca.st_i.fluid = char(Const.Fluid(3));
 hs.tca.st_i.T.v = convtemp(200, 'C', 'K');
 
 hs.otb.fluid_d = char(Const.Fluid(4));
@@ -78,8 +76,8 @@ hs.otb.st_o.p = 0.3605e6;
 % hs.otb.st_i.p = 1e6;
 % hs.otb.st_o.p = 0.167e6;
 
-hs.ge.eta = 0.975;
 hs.ge.P = 140e3;
+hs.ge.eta = 0.975;
 
 hs.he.DeltaT = 15;
 hs.DeltaT_1_4 = 15;          % Minimun temperature difference between oil
@@ -101,7 +99,6 @@ hs.he.st1_o.T.v = hs.he.st2_i.T.v + hs.he.DeltaT;
 hs.he.get_st2_o();
 
 hs.ph.calcSt1_o();
-
 hs.ev.calcSt1_o();
 
 
