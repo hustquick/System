@@ -21,7 +21,7 @@ classdef Pump < handle
     end
     methods
         function work(obj)
-%             obj.st_o.fluid = obj.st_i.fluid;
+            obj.st_i.flowTo(obj.st_o);
             obj.st_o.p = obj.p;
             s_i = obj.st_i.s;
             h_i = CoolProp.PropsSI('H', 'S', s_i, 'P', obj.st_o.p, obj.st_o.fluid);

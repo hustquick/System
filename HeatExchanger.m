@@ -63,6 +63,14 @@ classdef HeatExchanger < handle
                     obj.st2_o.p, obj.st2_o.fluid);
             end
         end
+        function calcSt1_o(obj)
+            obj.st1_i.flowTo(obj.st1_o);
+            obj.st1_o.p = obj.st1_i.p;
+            if ~isempty(obj.st1_o.x)
+                obj.st1_o.T.v = CoolProp.PropsSI('T', 'P', obj.st1_o.p, ...
+                    'Q', obj.st1_o.x, obj.st1_o.fluid);
+            end
+        end
     end    
 end
 

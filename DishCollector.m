@@ -166,8 +166,9 @@ classdef DishCollector
             q_rad_emit = epsilon_cav .* A_ap * Const.SIGMA .* ...
                 (obj.airPipe.T.v .^4 - obj.amb.T.v .^ 4);
         end
-        function calculate(obj)
-%             obj.st_o = obj.st_i.flow();
+        function work(obj)
+            obj.st_i.flowTo(obj.st_o);
+            obj.st_o.p = obj.st_i.p;
             guess = [1500; 400; 0.1] ;
             options = optimset('Display','iter');
             fsolve(@(x)CalcDishCollector(x, obj), ...

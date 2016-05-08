@@ -1,4 +1,4 @@
-classdef DCA
+classdef DCA < handle
     %DCA This class defines the dish collector array
     
     properties
@@ -14,6 +14,12 @@ classdef DCA
             obj.st_i = Stream;
             obj.st_o = Stream;
             obj.dc = DishCollector;
+        end
+        function work(obj)
+            obj.st_i = obj.dc.st_i.converge(obj.n);
+            obj.st_o = obj.dc.st_o.converge(obj.n);
+            obj.st_i.q_m.v = obj.n .* obj.dc.st_i.q_m.v;
+            obj.eta = obj.dc.eta;
         end
     end
     

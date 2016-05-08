@@ -8,10 +8,10 @@ classdef SEC < handle
     end
     properties
         se;         % Stirling engines
-        st1_i;      % Inlet stream of first fluid to the Stirling engine array
-        st1_o;      % Outlet stream of first fluid to the Stirling engine array
-        st2_i;      % Inlet stream of second fluid to the Stirling engine array
-        st2_o;      % Outlet stream of second fluid to the Stirling engine array
+        st1_i = Stream;      % Inlet stream of first fluid to the Stirling engine array
+        st1_o = Stream;      % Outlet stream of first fluid to the Stirling engine array
+        st2_i = Stream;      % Inlet stream of second fluid to the Stirling engine array
+        st2_o = Stream;      % Outlet stream of second fluid to the Stirling engine array
         connection;      % Flow order of the heating flow and cooling flow to the
         % Stirling engines, 'Same' means the two flows have the same
         % order, 'Reverse' means the two flows have reverse
@@ -26,10 +26,10 @@ classdef SEC < handle
             % order is a string, 'Same' or 'Reverse'
             obj.n_se = n_se;
             obj.se = StirlingEngine.empty(0,n_se);
-            obj.st1_i = Stream;
-            obj.st1_o = Stream;
-            obj.st2_i = Stream;
-            obj.st2_o = Stream;
+%             obj.st1_i = Stream;
+%             obj.st1_o = Stream;
+%             obj.st2_i = Stream;
+%             obj.st2_o = Stream;
             obj.connection = connection;
         end
     end
