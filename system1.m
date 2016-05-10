@@ -9,7 +9,7 @@ used = zeros(1,number);
 for k = 1:number
 cs = CascadeSystem;
 %% Connection and State points
-cs.sea = SEA(10, 'Reverse');
+cs.sea = SEA(10, 'Same');
 cs.sea.st1_i = cs.dca.st_o;
 cs.he.st1_i = cs.sea.st1_o;
 cs.dca.st_i = cs.he.st1_o;
@@ -91,7 +91,7 @@ guess = zeros(2, cs.sea.n1+1);
 if (strcmp(cs.sea.order, 'Same'))
     for j = 1 : cs.sea.n1
         guess(j,1) = cs.sea.st1_i.T.v - 38 * j;
-        guess(j,2) = cs.sea.st2_i.T.v + 24 / 10 * j;
+        guess(j,2) = 320 + 24 / 10 * j;
     end
 elseif (strcmp(cs.sea.order, 'Reverse'))
     for j = 1 : cs.sea.n1
@@ -142,9 +142,9 @@ cs.ph.st2_i.p = cs.sh.st2_i.p;
 cs.ph.st2_i.q_m.v = cs.ph.st1_o.q_m.v .* (cs.sh.st1_o.h - ...
     cs.ph.st1_o.h) ./ (cs.sh.st2_i.h - cs.ph.st2_i.h);
 
-cs.ph.get_st2_o();
+cs.ph.get_imcprs_st2_o();
 cs.ev.calcSt1_o();
-cs.ev.get_st2_i();
+cs.ev.get_imcprs_st2_i();
 
 cs.sh.get_st1_o();
 

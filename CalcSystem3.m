@@ -5,20 +5,18 @@ function F = CalcSystem3(x, cs)
 %     x = zeros(sea.n1,2);
 % cs.otb2.st_i.q_m.v = x(cs.sea.n1 + 1, 1);
 % cs.dca.dc.calculate();
-cs.otb2.work(cs.oge2);
-cs.cd.work();
-cs.pu2.work();
+
 cp_1 = cs.sea.st1_i.cp;
 cp_2 = cs.sea.st2_i.cp;
 cs.sea.se(1).st1_i = cs.sea.st1_i_r;
-cs.sea.se(1).st1_o = cs.sea.se(1).st1_i.flow();
+cs.sea.se(1).st1_i.flowTo(cs.sea.se(1).st1_o);
 cs.sea.se(1).st1_o.p = cs.sea.se(1).st1_i.p;
 cs.sea.se(1).cp_1 = cp_1;
 
 if (strcmp(cs.sea.order, 'Same'))
     %%%%% Same order %%%%%
     cs.sea.se(1).st2_i = cs.sea.st2_i_r;
-    cs.sea.se(1).st2_o = cs.sea.se(1).st2_i.flow();
+    cs.sea.se(1).st2_i.flowTo(cs.sea.se(1).st2_o);
     cs.sea.se(1).st2_o.p = cs.sea.se(1).st2_i.p;
     cs.sea.se(1).cp_2 = cp_2;
     for i = 2 : cs.sea.n1
@@ -26,9 +24,9 @@ if (strcmp(cs.sea.order, 'Same'))
         cs.sea.se(i).cp_2 = cp_2;
         cs.sea.se(i).st1_i = cs.sea.se(i-1).st1_o;
         cs.sea.se(i).st2_i = cs.sea.se(i-1).st2_o;
-        cs.sea.se(i).st1_o = cs.sea.se(i).st1_i.flow();
+        cs.sea.se(i).st1_i.flowTo(cs.sea.se(i).st1_o);
         cs.sea.se(i).st1_o.p = cs.sea.se(i).st1_i.p;
-        cs.sea.se(i).st2_o = cs.sea.se(i).st2_i.flow();
+        cs.sea.se(i).st2_i.flowTo(cs.sea.se(i).st2_o);
         cs.sea.se(i).st2_o.p = cs.sea.se(i).st2_i.p;
     end
 elseif (strcmp(cs.sea.order,'Reverse'))
@@ -40,16 +38,16 @@ elseif (strcmp(cs.sea.order,'Reverse'))
         cs.sea.se(i).cp_2 = cp_2;
     end
     cs.sea.se(cs.sea.n1).st2_i = cs.sea.st2_i_r;
-    cs.sea.se(cs.sea.n1).st2_o = cs.sea.se(cs.sea.n1).st2_i.flow();
+    cs.sea.se(cs.sea.n1).st2_i.flowTo(cs.sea.se(cs.sea.n1).st2_o);
     cs.sea.se(cs.sea.n1).st2_o.p = cs.sea.se(cs.sea.n1).st2_i.p;
     
     for i = 1 : cs.sea.n1-1
         cs.sea.se(i+1).st1_i = cs.sea.se(i).st1_o;
         cs.sea.se(cs.sea.n1-i).st2_i = cs.sea.se(cs.sea.n1+1-i).st2_o;
         
-        cs.sea.se(i+1).st1_o = cs.sea.se(i+1).st1_i.flow();
+        cs.sea.se(i+1).st1_i.flowTo(cs.sea.se(i+1).st1_o);
         cs.sea.se(i+1).st1_o.p = cs.sea.se(i+1).st1_i.p;
-        cs.sea.se(cs.sea.n1-i).st2_o = cs.sea.se(cs.sea.n1-i).st2_i.flow();
+        cs.sea.se(cs.sea.n1-i).st2_i.flowTo(cs.sea.se(cs.sea.n1-i).st2_o);
         cs.sea.se(cs.sea.n1-i).st2_o.p = cs.sea.se(cs.sea.n1-i).st2_i.p;
     end
 else
@@ -68,11 +66,9 @@ for j = 1 : cs.sea.n1
 end
 
 if (strcmp(cs.sea.order, 'Same'))
-    cs.sea.st2_o.T = cs.sea.se(cs.sea.n1).st2_o.T;
-    cs.sea.st2_o.p = cs.sea.se(cs.sea.n1).st2_o.p;
+    cs.sea.se(cs.sea.n1).st2_o.convergeTo(cs.sea.st2_o, cs.sea.n2);
 elseif (strcmp(cs.sea.order,'Reverse'))
-    cs.sea.st2_o.T = cs.sea.se(1).st2_o.T;
-    cs.sea.st2_o.p = cs.sea.se(1).st2_o.p;
+    cs.sea.se(1).st2_o.convergeTo(cs.sea.st2_o, cs.sea.n2);
 else
     error('Uncomplished work.');
 end
