@@ -7,7 +7,8 @@ st1.T = Temperature(convtemp(120, 'C', 'K'));
 st1.p = 5e5;
 st1.q_m.v = 0.06;
 
-st2 = st1.flow();
+st2 = Stream;
+st1.flowTo(st2);
 st2.p = st1.p;
 st2.T = Temperature(convtemp(300, 'C', 'K'));
 

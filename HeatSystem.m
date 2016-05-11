@@ -27,7 +27,7 @@ classdef HeatSystem
             obj.st4 = Stream.empty(0,8);
             obj.st5 = Stream.empty(0,8);
             obj.dca = DCA;
-            obj.tca = TCA;
+            obj.tca = ATCA;
             obj.otb = ORCTurbine;
             obj.ge = Generator;
             obj.he = HeatExchanger;

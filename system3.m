@@ -189,16 +189,16 @@ cs.pu1.work();
 cs.ph.calcSt1_o();
 cs.ev.calcSt1_o();
 
-cs.ph.st2_i.T.v = cs.ph.st1_o.T.v + cs.DeltaT_3_4;
-cs.sh.st2_i.flowTo(cs.ph.st2_i);
-cs.ph.st2_i.p = cs.sh.st2_i.p;
-cs.ph.st2_i.q_m.v = cs.ph.st1_o.q_m.v .* (cs.sh.st1_o.h - ...
-    cs.ph.st1_o.h) ./ (cs.sh.st2_i.h - cs.ph.st2_i.h);
-cs.sh.st2_i.q_m = cs.ph.st2_i.q_m;
+cs.ph.st2_o.T.v = cs.ph.st1_i.T.v + cs.DeltaT_3_4;
+cs.sh.st2_i.flowTo(cs.ph.st2_o);
+cs.ph.st2_o.p = cs.sh.st2_i.p;
+cs.ph.st2_o.q_m.v = cs.ph.st1_o.q_m.v .* (cs.sh.st1_o.h - ...
+    cs.ph.st1_i.h) ./ (cs.sh.st2_i.h - cs.ph.st2_o.h);
+cs.sh.st2_i.q_m = cs.ph.st2_o.q_m;
 
 cs.sh.get_imcprs_st2_o;
 
-cs.ph.get_imcprs_st2_o;
+cs.ev.get_imcprs_st2_o;
 
 cs.oge1.P = cs.otb1.P .* cs.oge1.eta;
 
