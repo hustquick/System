@@ -81,7 +81,7 @@ cs.DeltaT_3_2 = 15;          % Minimun temperature difference between oil
 
 cs.sea.n_se = 3 * cs.dca.n;
 %% Work
-cs.dca.dc.work();
+cs.dca.dc.get_q_m();
 cs.dca.work();
 cs.da.getP();
 
@@ -202,6 +202,21 @@ eta_cs = P_cs ./ Q_cs;
 %% Seperate System Part
 ss = SeparateSystem;
 
+%% Design parameters
+ss.dca.n = cs.dca.n;
+ss.dca.dc.amb = cs.dca.dc.amb;
+ss.dca.dc.st_i.fluid = cs.dca.dc.st_i.fluid;
+ss.dca.dc.st_i.T.v = cs.dca.dc.st_i.T.v;
+ss.dca.eta = cs.dca.eta;
+ss.ge.eta = cs.ge.eta;
+ss.tb.st_o_2.p = cs.tb.st_o_2.p;
+ss.da.p = cs.da.p;
+ss.DeltaT_3_2 = cs.DeltaT_3_2;
+
+for i = 1 : 9
+    ss.st2(i).fluid = char(Const.Fluid(2));
+end
+
 ss.tb.st_i = ss.sh.st1_o;
 ss.da.st_i_1 = ss.tb.st_o_1;
 ss.cd.st_i = ss.tb.st_o_2;
@@ -232,21 +247,6 @@ ss.st3(2) = ss.ev.st2_i;
 ss.st3(3) = ss.ph.st2_i;
 ss.st3(4) = ss.tca.st_i;
 
-%% Design parameters
-ss.dca.n = cs.dca.n;
-ss.dca.dc.amb = cs.dca.dc.amb;
-ss.dca.dc.st_i.fluid = cs.dca.dc.st_i.fluid;
-ss.dca.dc.st_i.T.v = cs.dca.dc.st_i.T.v;
-ss.dca.eta = cs.dca.eta;
-ss.ge.eta = cs.ge.eta;
-ss.tb.st_o_2.p = cs.tb.st_o_2.p;
-ss.da.p = cs.da.p;
-ss.DeltaT_3_2 = cs.DeltaT_3_2;
-
-for i = 1 : 9
-    ss.st2(i).fluid = char(Const.Fluid(2));
-end
-
 q_se = cs.sea.se(1).P ./ cs.sea.se(1).eta;  % Heat absorbed by the first
     % Stirling engine in SEA of cascade sysem
 T_H = cs.dca.dc.airPipe.T.v - q_se ./ (cs.sea.se(1).U_1 .* ...
@@ -259,8 +259,10 @@ eta_ss_se = (T_H - T_L) ./ (T_H + (1 - e) .* (T_H - T_L) ...
 ss.se.P = ss.dca.dc.q_tot .* ss.dca.eta .* ss.dca.n .* eta_ss_se;
 
 ss.st2(7).T.v = cs.st2(8).T.v;
+ss.st2(7).p = cs.st2(8).p;
 ss.st2(7).q_m.v = cs.st2(8).q_m.v .* (cs.st2(11).h - cs.st2(8).h) ...
-    ./ (ss.st2(1).h - ss.st2(7).h);     %% Why?
+    ./ (ss.st2(1).h - ss.st2(7).h);
+ss.tb.st_i.q_m = ss.st2(7).q_m;
 
 ss.st2(2).T.v = cs.st2(2).T.v;
 ss.st2(3).T.v = cs.st2(3).T.v;
@@ -283,7 +285,10 @@ ss.da.work(ss.tb);
 ss.pu2.p = ss.tb.st_i.p;
 ss.pu2.work();
 
-
+ss.st2(8).q_m.v = ss.st2(7).q_m.v;
+ss.st2(8).T.v = cs.st2(9).T.v;
+ss.st2(9).q_m.v = ss.st2(8).q_m.v;
+ss.st2(9).T.v = cs.st2(10).T.v;
 
 Q_ss_rankine = ss.sh.st1_o.q_m.v .* (ss.sh.st1_o.h - ss.ph.st1_i.h);
 

@@ -54,8 +54,7 @@ classdef ATCA < handle
                 else
                     obj.n1 = (obj.st_o.h - obj.st_i.h) .* ...
                         obj.st_i.q_m.v ./ (obj.tc.q_use) ./ obj.n2;
-                    obj.tc.st_i.q_m.v = obj.tc.q_use ...
-                        ./ (obj.st_o.h - obj.st_i.h) ./ obj.n2;  
+                    obj.tc.st_i.q_m.v = obj.st_i.q_m.v ./ obj.n2;  
                     obj.tc.st_i.flowTo(obj.tc.st_o);
                     obj.tc.v = v;
                 end

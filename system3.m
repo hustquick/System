@@ -107,7 +107,7 @@ cs.DeltaT_3_4 = 15;          % Minimun temperature difference between oil
 %and water
 
 %% Work
-cs.dca.dc.work();
+cs.dca.dc.get_q_m();
 cs.dca.work();
 
 % cs.otb1.work(cs.oge1);
