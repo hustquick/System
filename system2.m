@@ -97,14 +97,14 @@ guess = zeros(2, cs.sea.n1+1);
 
 if (strcmp(cs.sea.order, 'Same'))
     for j = 1 : cs.sea.n1
-        guess(j,1) = cs.sea.st1_i.T.v - 27 * j;
-        guess(j,2) = 320 + 24 / 10 * j;
+        guess(j,1) = cs.sea.st1_i.T.v - 50 * j;
+        guess(j,2) = 320 + 3.2 / 10 * j;
     end
 elseif (strcmp(cs.sea.order, 'Reverse'))
     for j = 1 : cs.sea.n1
-        guess(j,1) = cs.sea.st1_i.T.v - 27 * j;
+        guess(j,1) = cs.sea.st1_i.T.v - 50 * j;
         guess(j,2) = 320 + ...
-            24 / 10 * (cs.sea.n1 + 1 - j);
+            3.2 / 10 * (cs.sea.n1 + 1 - j);
     end
 end
 guess(cs.sea.n1+1, 1) = 7.3;
@@ -199,17 +199,6 @@ eta_cs = P_cs ./ Q_cs;
 %% Seperate System Part
 ss = SeparateSystem;
 
-%% Design parameters
-ss.dca.n = cs.dca.n;
-ss.dca.dc.amb = cs.dca.dc.amb;
-ss.dca.dc.st_i.fluid = cs.dca.dc.st_i.fluid;
-ss.dca.dc.st_i.T.v = cs.dca.dc.st_i.T.v;
-ss.dca.eta = cs.dca.eta;
-ss.ge.eta = cs.ge.eta;
-ss.tb.st_o_2.p = cs.tb.st_o_2.p;
-ss.da.p = cs.da.p;
-ss.DeltaT_3_2 = cs.DeltaT_3_2;
-
 ss.tb.st_i = ss.sh.st1_o;
 ss.da.st_i_1 = ss.tb.st_o_1;
 ss.cd.st_i = ss.tb.st_o_2;
@@ -240,7 +229,22 @@ ss.st3(2) = ss.ev.st2_i;
 ss.st3(3) = ss.ph.st2_i;
 ss.st3(4) = ss.tca.st_i;
 
+for i = 1 : 9
+    ss.st2(i).fluid = char(Const.Fluid(2));
+end
 
+%% Design parameters
+ss.dca.n = cs.dca.n;
+ss.dca.dc.amb = cs.dca.dc.amb;
+ss.dca.dc.st_i.fluid = cs.dca.dc.st_i.fluid;
+ss.dca.dc.st_i.T.v = cs.dca.dc.st_i.T.v;
+ss.dca.eta = cs.dca.eta;
+ss.ge.eta = cs.ge.eta;
+ss.tb.st_i.T = cs.tb.st_i.T;
+ss.tb.st_i.p = cs.tb.st_i.p;
+ss.tb.st_o_2.p = cs.tb.st_o_2.p;
+ss.da.p = cs.da.p;
+ss.DeltaT_3_2 = cs.DeltaT_3_2;
 
 q_se = cs.sea.se(1).P ./ cs.sea.se(1).eta;  % Heat absorbed by the first
     % Stirling engine in SEA of cascade sysem

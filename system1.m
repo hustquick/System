@@ -209,13 +209,11 @@ ss.dca.dc.st_i.fluid = cs.dca.dc.st_i.fluid;
 ss.dca.dc.st_i.T.v = cs.dca.dc.st_i.T.v;
 ss.dca.eta = cs.dca.eta;
 ss.ge.eta = cs.ge.eta;
+ss.tb.st_i.T = cs.tb.st_i.T;
+ss.tb.st_i.p = cs.tb.st_i.p;
 ss.tb.st_o_2.p = cs.tb.st_o_2.p;
 ss.da.p = cs.da.p;
 ss.DeltaT_3_2 = cs.DeltaT_3_2;
-
-for i = 1 : 9
-    ss.st2(i).fluid = char(Const.Fluid(2));
-end
 
 ss.tb.st_i = ss.sh.st1_o;
 ss.da.st_i_1 = ss.tb.st_o_1;
@@ -246,6 +244,10 @@ ss.st3(1) = ss.sh.st2_i;
 ss.st3(2) = ss.ev.st2_i;
 ss.st3(3) = ss.ph.st2_i;
 ss.st3(4) = ss.tca.st_i;
+
+for i = 1 : 9
+    ss.st2(i).fluid = char(Const.Fluid(2));
+end
 
 q_se = cs.sea.se(1).P ./ cs.sea.se(1).eta;  % Heat absorbed by the first
     % Stirling engine in SEA of cascade sysem
