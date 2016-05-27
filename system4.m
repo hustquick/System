@@ -1,7 +1,7 @@
 clear;
 %% Get results matrix
 number = 1;
-eta_diff = zeros(1,number);
+% eta_diff = zeros(1,number);
 eta_cs_r = zeros(1,number);
 eta_sea = zeros(1,number);
 ratio = zeros(1,number);
@@ -44,7 +44,7 @@ hs.st4(7) = hs.ev.st1_i;
 hs.st4(8) = hs.sh.st1_i;
 %% Design parameters
 hs.dca.n = 2;
-hs.dca.dc.amb.I_r = 700;
+hs.dca.dc.amb.I_r = 400;
 hs.dca.dc.st_i.fluid = char(Const.Fluid(1));
 hs.dca.dc.st_i.T.v = convtemp(350, 'C', 'K');
 hs.dca.dc.st_i.p = 5e5;
@@ -174,12 +174,13 @@ Q_rankine = hs.sec.st2_i.q_m.v .* (hs.sec.st2_o.h -  hs.sec.st2_i.h) ...
 P_rankine = (hs.ge.P - hs.pu.P) ./ hs.ge.eta;
 eta_rankine = P_rankine ./ Q_rankine;
 
-Q_cs = hs.dca.st_o.q_m.v .* (hs.dca.st_o.h - hs.dca.st_i.h) ./ hs.dca.eta ...
+Q_hs = hs.dca.st_o.q_m.v .* (hs.dca.st_o.h - hs.dca.st_i.h) ./ hs.dca.eta ...
     + hs.tca.st_o.q_m.v .* (hs.tca.st_o.h - hs.tca.st_i.h) ./ hs.tca.eta;
-P_cs = hs.ge.P + hs.sec.P - hs.pu.P;
-eta_cs = P_cs ./ Q_cs;
+P_hs = hs.ge.P + hs.sec.P - hs.pu.P;
+eta_hs = P_hs ./ Q_hs;
 
 end
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Comparison system
@@ -224,7 +225,8 @@ cs.st4(8) = cs.sh.st1_i;
 cs.dca.n = hs.dca.n;
 cs.dca.dc.amb.I_r = hs.dca.dc.amb.I_r;
 cs.dca.dc.st_i.fluid = hs.dca.dc.st_i.fluid;
-cs.dca.dc.st_i.T.v = hs.ph.st2_o.T.v;
+cs.dca.dc.st_i.T.v = hs.ph.st2_o.T.v;   % the same parameters of SEP 
+% between HeatSystem and ComparisonSystem
 cs.dca.dc.st_i.p = hs.dca.dc.st_i.p;
 cs.dca.dc.st_i.q_m.v= hs.dca.dc.st_i.q_m.v;
 
@@ -264,3 +266,9 @@ cs.tca.st_o.convergeTo(cs.tca.tc.st_o, 1);
 % hs.tca.tc.L_per_q_m;
 cs.tca.calculate();
 cs.tca.eta = cs.tca.tc.eta;
+
+P_cs = hs.ge.P + cs.sec.P - hs.pu.P;
+Q_cs = cs.dca.st_o.q_m.v .* (cs.dca.st_o.h - cs.dca.st_i.h) ./ cs.dca.eta ...
+    + cs.tca.st_o.q_m.v .* (cs.tca.st_o.h - cs.tca.st_i.h) ./ cs.tca.eta;
+eta_cs = P_cs ./ Q_cs;
+eta_diff = (eta_hs - eta_cs) ./ eta_cs;

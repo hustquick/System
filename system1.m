@@ -55,7 +55,7 @@ cs.st3(4) = cs.tca.st_i;
 %% Design parameters
 
 cs.dca.n = 30;
-cs.dca.dc.amb.I_r = 700;
+cs.dca.dc.amb.I_r = 400;
 cs.dca.dc.st_i.fluid = char(Const.Fluid(1));
 cs.dca.dc.st_i.T.v = convtemp(350, 'C', 'K');   % Design parameter
 cs.dca.dc.st_i.p = 5e5;
@@ -71,6 +71,7 @@ cs.tb.st_i.T.v = convtemp(340, 'C', 'K');
 cs.tb.st_i.p = 2.35e6;
 cs.tb.st_o_2.p = 1.5e4;
 
+% cs.ge.P = 4e6;  
 cs.ge.P = 4e6;
 cs.ge.eta = 0.975;
 
@@ -100,7 +101,9 @@ elseif (strcmp(cs.sea.order, 'Reverse'))
             24 / 10 * (cs.sea.n1 + 1 - j);
     end
 end
-guess(cs.sea.n1+1, 1) = 7.3;
+% guess(cs.sea.n1+1, 1) = 7.3;
+h_0 = CoolProp.PropsSI('H', 'P', cs.tb.st_o_2.p, 'Q', 1, cs.tb.st_i.fluid);
+guess(cs.sea.n1+1, 1) = cs.ge.P  ./ (cs.tb.st_i.h - h_0);
 
 options = optimset('Algorithm','levenberg-marquardt','Display','iter');
 [x] = fsolve(@(x)CalcSystem1(x, cs), guess, options);
@@ -203,18 +206,6 @@ eta_cs = P_cs ./ Q_cs;
 ss = SeparateSystem;
 
 %% Design parameters
-ss.dca.n = cs.dca.n;
-ss.dca.dc.amb = cs.dca.dc.amb;
-ss.dca.dc.st_i.fluid = cs.dca.dc.st_i.fluid;
-ss.dca.dc.st_i.T.v = cs.dca.dc.st_i.T.v;
-ss.dca.eta = cs.dca.eta;
-ss.ge.eta = cs.ge.eta;
-ss.tb.st_i.T = cs.tb.st_i.T;
-ss.tb.st_i.p = cs.tb.st_i.p;
-ss.tb.st_o_2.p = cs.tb.st_o_2.p;
-ss.da.p = cs.da.p;
-ss.DeltaT_3_2 = cs.DeltaT_3_2;
-
 ss.tb.st_i = ss.sh.st1_o;
 ss.da.st_i_1 = ss.tb.st_o_1;
 ss.cd.st_i = ss.tb.st_o_2;
@@ -248,6 +239,18 @@ ss.st3(4) = ss.tca.st_i;
 for i = 1 : 9
     ss.st2(i).fluid = char(Const.Fluid(2));
 end
+
+ss.dca.n = cs.dca.n;
+ss.dca.dc.amb = cs.dca.dc.amb;
+ss.dca.dc.st_i.fluid = cs.dca.dc.st_i.fluid;
+ss.dca.dc.st_i.T.v = cs.dca.dc.st_i.T.v;
+ss.dca.eta = cs.dca.eta;
+ss.ge.eta = cs.ge.eta;
+ss.tb.st_i.T = cs.tb.st_i.T;
+ss.tb.st_i.p = cs.tb.st_i.p;
+ss.tb.st_o_2.p = cs.tb.st_o_2.p;
+ss.da.p = cs.da.p;
+ss.DeltaT_3_2 = cs.DeltaT_3_2;
 
 q_se = cs.sea.se(1).P ./ cs.sea.se(1).eta;  % Heat absorbed by the first
     % Stirling engine in SEA of cascade sysem

@@ -27,6 +27,7 @@ classdef DishCollector
         eta;        % Thermal efficiency of the collector
     end
     properties(Dependent, Access = protected)
+        d_bar_cav;
         A_ins;      % Insulating layer outside area, m^2
         A_cav;      % Cavity area, m^2
     end
@@ -136,9 +137,6 @@ classdef DishCollector
             T = (obj.airPipe.T.v + obj.amb.T.v) / 2;   % Film temperature is used
             k = CoolProp.PropsSI('L', 'T', T, 'P', obj.amb.p, obj.amb.fluid);
             
-            d_bar_cav = obj.d_cav - 2 * obj.airPipe.d_i - 4 * ...
-                obj.airPipe.delta_a;
-            
             beta = CoolProp.PropsSI('ISOBARIC_EXPANSION_COEFFICIENT', ...
                 'T', T, 'P', obj.amb.p, obj.amb.fluid);
             mu = CoolProp.PropsSI('V', 'T', T, 'P', obj.amb.p, obj.amb.fluid);
@@ -146,11 +144,11 @@ classdef DishCollector
                 obj.amb.p, obj.amb.fluid);
             nu = mu ./ density;
             Gr = Const.G * beta .* (obj.airPipe.T.v - obj.amb.T.v) .* ...
-                d_bar_cav .^ 3 ./ nu .^ 2;
+                obj.d_bar_cav .^ 3 ./ nu .^ 2;
             
             Nu = Const.Nu_nat_conv(Gr, obj.airPipe.T.v, obj.amb.T.v, ...
-                obj.theta, obj.d_ap, d_bar_cav);
-            h_nat = k .* Nu ./ d_bar_cav;
+                obj.theta, obj.d_ap, obj.d_bar_cav);
+            h_nat = k .* Nu ./ obj.d_bar_cav;
             
             h_for = 0.1967 * obj.amb.w .^ 1.849;
             
@@ -234,12 +232,17 @@ classdef DishCollector
             d_o = obj.insLayer.d_i + 2 * obj.insLayer.delta;
             value = pi * d_o .* (obj.dep_cav + obj.insLayer.delta);
         end
+        function value = get.d_bar_cav(obj)
+            % Get the effective diameter of the cavity, m
+            value = obj.d_cav - obj.airPipe.d_i ...
+                - 2 * obj.airPipe.delta_a;
+%             value = obj.d_cav - 2 * obj.airPipe.d_i ...
+%                 - 4 * obj.airPipe.delta_a;
+        end
         function value = get.A_cav(obj)
             % Get the cavity area, m^2
-            d_bar_cav = obj.d_cav - 2 * obj.airPipe.d_i ...
-                - 4 * obj.airPipe.delta_a;
-            value = pi * d_bar_cav .^ 2 / 4 + pi * d_bar_cav ...
-                * obj.dep_cav + pi * (d_bar_cav .^ 2 - obj.d_ap .^ 2) / 4;
+            value = pi * obj.d_bar_cav .^ 2 / 4 + pi * obj.d_bar_cav ...
+                * obj.dep_cav + pi * (obj.d_bar_cav .^ 2 - obj.d_ap .^ 2) / 4;
         end
         function value = get.q_use(obj)
             value = obj.st_i.q_m.v .* (obj.st_o.h - obj.st_i.h);

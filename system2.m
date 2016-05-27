@@ -51,7 +51,7 @@ cs.st3(4) = cs.tca.st_i;
 %% Design parameters
 cs.dca.n = 30;
 
-cs.dca.dc.amb.I_r = 700;
+cs.dca.dc.amb.I_r = 400;
 cs.dca.dc.st_i.fluid = char(Const.Fluid(1));
 cs.dca.dc.st_i.T.v = convtemp(350, 'C', 'K');   % Design parameter
 cs.dca.dc.st_i.p = 5e5;
