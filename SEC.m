@@ -88,6 +88,7 @@ classdef SEC < handle
             
             if (strcmp(obj.connection, 'Series'))
                 obj.st1_o = obj.se(obj.n_se).st1_o;
+                obj.st2_o = obj.se(obj.n_se).st2_o;
             elseif (strcmp(obj.connection,'Parallel'))
                 obj.se(1).st1_o.convergeTo(obj.st1_o, obj.n_se);
                 obj.st2_o.T.v = obj.se(1).st2_o.T.v;

@@ -168,7 +168,7 @@ classdef DishCollector
             %Known inlet and outlet temperature to calculate the flow rate
             obj.st_i.flowTo(obj.st_o);
             obj.st_o.p = obj.st_i.p;
-            guess = [1500; 400; 0.1] ;
+            guess = [1500; 400; 0.1];
             options = optimset('Display','iter');
             fsolve(@(x)CalcDishCollector1(x, obj), ...
                 guess, options);

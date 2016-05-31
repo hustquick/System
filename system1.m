@@ -9,7 +9,7 @@ used = zeros(1,number);
 for k = 1:number
 cs = CascadeSystem;
 %% Connection and State points
-cs.sea = SEA(10, 'Same');
+cs.sea = SEA(10, 'Reverse');
 cs.sea.st1_i = cs.dca.st_o;
 cs.he.st1_i = cs.sea.st1_o;
 cs.dca.st_i = cs.he.st1_o;
@@ -243,7 +243,7 @@ end
 ss.dca.n = cs.dca.n;
 ss.dca.dc.amb = cs.dca.dc.amb;
 ss.dca.dc.st_i.fluid = cs.dca.dc.st_i.fluid;
-ss.dca.dc.st_i.T.v = cs.dca.dc.st_i.T.v;
+ss.dca.st_i.T.v = cs.dca.st_i.T.v;
 ss.dca.eta = cs.dca.eta;
 ss.ge.eta = cs.ge.eta;
 ss.tb.st_i.T = cs.tb.st_i.T;

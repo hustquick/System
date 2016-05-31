@@ -1,14 +1,14 @@
 clear;
 %% Get results matrix
 number = 1;
-% eta_diff = zeros(1,number);
-eta_cs_r = zeros(1,number);
+eta_diff = zeros(1,number);
+eta_hs_r = zeros(1,number);
 eta_sea = zeros(1,number);
 ratio = zeros(1,number);
 used = zeros(1,number);
 for k = 1 : number
 hs = HeatSystem;
-hs.sec = SEC(6, 'Parallel');
+hs.sec = SEC(3, 'Series');
 %% Connection and State points
 hs.sec.st1_i = hs.dca.st_o;
 hs.sh.st2_i = hs.sec.st1_o;
@@ -43,8 +43,9 @@ hs.st4(6) = hs.ph.st1_i;
 hs.st4(7) = hs.ev.st1_i;
 hs.st4(8) = hs.sh.st1_i;
 %% Design parameters
-hs.dca.n = 2;
+hs.dca.n = 1;
 hs.dca.dc.amb.I_r = 400;
+% hs.dca.dc.amb.I_r = 300 + 70 * k;
 hs.dca.dc.st_i.fluid = char(Const.Fluid(1));
 hs.dca.dc.st_i.T.v = convtemp(350, 'C', 'K');
 hs.dca.dc.st_i.p = 5e5;
@@ -114,7 +115,9 @@ hs.ph.calcSt1_o();
 hs.ev.calcSt1_o();
 
 hs.ph.st2_o.T.v = hs.ph.st1_i.T.v + hs.DeltaT_1_4;
+hs.sh.st2_i = hs.sec.st1_o;
 hs.sh.st2_i.flowTo(hs.ph.st2_o);
+hs.st1(2) = hs.sh.st2_i;
 hs.ph.st2_o.p = hs.sh.st2_i.p;
 hs.ph.st1_o.q_m.v = hs.ph.st2_o.q_m.v .* (hs.sh.st2_i.h - ...
     hs.ph.st2_o.h) ./ (hs.sh.st1_o.h - hs.ph.st1_i.h);
@@ -179,96 +182,123 @@ Q_hs = hs.dca.st_o.q_m.v .* (hs.dca.st_o.h - hs.dca.st_i.h) ./ hs.dca.eta ...
 P_hs = hs.ge.P + hs.sec.P - hs.pu.P;
 eta_hs = P_hs ./ Q_hs;
 
-end
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Comparison system
-cs = HeatSystem;
-cs.sec = SEC(hs.sec.n_se, 'Parallel');
-% Cooling water stream for each Stirling engine
-cs.st2 = hs.st2;
-%% Connection and State points
-cs.sec.st1_i = cs.dca.st_o;
-cs.tca.st_i = cs.sec.st1_o;
-cs.sh.st2_i = cs.tca.st_o;
-cs.ev.st2_i = cs.sh.st2_o;
-cs.ph.st2_i = cs.ev.st2_o;
-cs.dca.st_i = cs.ph.st2_o;
-cs.sec.st2_i = cs.st2;      % Cooling water stream for each Stirling engine
+%% Seperate System Part
+ss = SeparateSystem;
 
-cs.st1(1) = cs.sec.st1_i;
-cs.st1(2) = cs.tca.st_i;
-cs.st1(3) = cs.sh.st2_i;
-cs.st1(4) = cs.ev.st2_i;
-cs.st1(5) = cs.ph.st2_i;
-cs.st1(6) = cs.dca.st_i;
+for i = 1 : 8
+    ss.st4(i).fluid = char(Const.Fluid(4));
+    ss.st4(i).T = Temperature(convtemp(340, 'C', 'K'));
+    ss.st4(i).p = 2.8842e6;
+    ss.st4(i).q_m.v = 6;         %%%%%%% To be automatically calculated later
+end
 
-cs.otb.st_i = cs.sh.st1_o;
-cs.he.st1_i = cs.otb.st_o;
-cs.cd.st_i = cs.he.st1_o;
-cs.pu.st_i = cs.cd.st_o;
-cs.he.st2_i = cs.pu.st_o;
-cs.ph.st1_i = cs.he.st2_o;
-cs.ev.st1_i = cs.ph.st1_o;
-cs.sh.st1_i = cs.ev.st1_o;
+ss.st2(1).q_m.v = 7.4;          %%%%%%%%%%
+for i = 1 : 7
+    ss.st4(i+1).q_m = ss.st4(1).q_m;
+end
 
-cs.st4(1) = cs.otb.st_i;
-cs.st4(2) = cs.he.st1_i;
-cs.st4(3) = cs.cd.st_i;
-cs.st4(4) = cs.pu.st_i;
-cs.st4(5) = cs.he.st2_i;
-cs.st4(6) = cs.ph.st1_i;
-cs.st4(7) = cs.ev.st1_i;
-cs.st4(8) = cs.sh.st1_i;
-%% Design parameters
-cs.dca.n = hs.dca.n;
-cs.dca.dc.amb.I_r = hs.dca.dc.amb.I_r;
-cs.dca.dc.st_i.fluid = hs.dca.dc.st_i.fluid;
-cs.dca.dc.st_i.T.v = hs.ph.st2_o.T.v;   % the same parameters of SEP 
-% between HeatSystem and ComparisonSystem
-cs.dca.dc.st_i.p = hs.dca.dc.st_i.p;
-cs.dca.dc.st_i.q_m.v= hs.dca.dc.st_i.q_m.v;
+for i = 1 : 4
+    ss.st3(i).fluid = char(Const.Fluid(3));
+    ss.st3(i).T.v = convtemp(380, 'C', 'K');    % Design parameter
+    ss.st3(i).p = 2e6;
+end
 
-cs.tca.tc.amb.I_r = hs.tca.tc.amb.I_r;
-cs.tca.st_i.fluid = hs.tca.st_i.fluid;
+ss.otb.st_i = ss.st4(1);
+ss.otb.st_o = ss.st4(2);
+ss.he.st1_i = ss.st4(2);
+ss.he.st1_o = ss.st4(3);
+ss.he.st2_i = ss.st4(5);
+ss.he.st2_o = ss.st4(6);
+ss.cd.st_i = ss.st4(3);
+ss.cd.st_o = ss.st4(4);
+ss.pu1.st_i = ss.st4(4);
+ss.pu1.st_o = ss.st4(5);
+ss.ph.st1_i = ss.st4(6);
+ss.ph.st1_o = ss.st4(7);
+ss.ph.st2_i = ss.st3(3);
+ss.ph.st2_o = ss.st3(4);
+ss.ev.st1_i = ss.st4(7);
+ss.ev.st1_o = ss.st4(8);
+ss.ev.st2_i = ss.st3(2);
+ss.ev.st2_o = ss.st3(3);
+ss.sh.st1_i = ss.st4(8);
+ss.sh.st1_o = ss.st4(1);
+ss.sh.st2_i = ss.st3(1);
+ss.sh.st2_o = ss.st3(2);
 
-cs.otb.st_i.fluid = hs.otb.st_i.fluid;
-cs.otb.st_i.T.v = hs.otb.st_i.T.v;
-cs.otb.st_i.p = hs.otb.st_i.p;
-cs.otb.st_o.p = hs.otb.st_o.p;
+ss.dca.n = hs.dca.n;
+ss.dca.dc.amb = hs.dca.dc.amb;
+ss.dca.eta = hs.dca.eta;
+ss.ge.eta = hs.ge.eta;
+ss.DeltaT_3_4 = hs.DeltaT_1_4;
 
-cs.ge.eta = hs.ge.eta;
+ss.otb.st_i.T.v = hs.otb.st_i.T.v;
+ss.otb.st_i.p = hs.otb.st_i.p;
+ss.otb.st_o.p = hs.otb.st_o.p;
 
-cs.he.DeltaT = hs.he.DeltaT;
-cs.DeltaT_1_4 = hs.DeltaT_1_4;          % Minimun temperature difference between air
-%and water
+q_se = hs.sec.se(1).P ./ hs.sec.se(1).eta;  % Heat absorbed by the first
+    % Stirling engine in sec of cascade sysem
+T_H = hs.dca.dc.airPipe.T.v - q_se ./ (hs.sec.se(1).U_1 .* ...
+    hs.sec.se(1).A_1);
+T_L = 310;  % Parameter of 4-95 MKII engine
+T_R = Const.LogMean(T_H, T_L);
+e = (T_R - T_L) ./ (T_H - T_L);
+eta_ss_se = (T_H - T_L) ./ (T_H + (1 - e) .* (T_H - T_L) ...
+                ./ (ss.se.k -1) ./ log(ss.se.gamma));
+ss.se.P = hs.sec.st1_i.q_m.v * ...
+    (hs.sec.st1_i.h - hs.sec.st1_o.h) .* eta_ss_se;
 
-cs.sh.st2_i.fluid = hs.sh.st2_i.fluid;
-cs.sh.st2_i.q_m.v = hs.sh.st2_i.q_m.v;
-cs.sh.st2_i.p = hs.sh.st2_i.p;
-cs.sh.st2_i.x = hs.sh.st2_i.x;
-cs.sh.st2_i.T = hs.sh.st2_i.T;
+% ss.st4(6).T.v = hs.st4(6).T.v;
+% ss.st4(6).p = hs.st4(6).p;
+% ss.st4(6).q_m.v = hs.st4(6).q_m.v .* (hs.st4(1).h - hs.st4(6).h) ...
+%     ./ (ss.st4(1).h - ss.st4(6).h);
 
-cs.ph.st2_o.fluid = hs.ph.st2_o.fluid;
-cs.ph.st2_i.p = hs.ph.st2_i.p;
-cs.ph.st2_i.x = hs.ph.st2_i.x;
-cs.ph.st2_i.T = hs.ph.st2_i.T;
-%% Work
-cs.dca.dc.get_T_o();
-cs.dca.work();
+ss.st4(2).T.v = hs.st4(2).T.v;
+ss.st4(3).p = ss.st4(2).p;
+ss.st4(3).x = 1;
+ss.st4(3).T.v = CoolProp.PropsSI('T', 'Q', ss.st4(3).x, ...
+    'P', ss.st4(3).p, ss.st4(3).fluid);
+ss.st4(4).p = ss.st4(3).p;
+ss.st4(4).x = 0;
+ss.st4(4).T.v = CoolProp.PropsSI('T', 'Q', ss.st4(4).x, ...
+    'P', ss.st4(4).p, ss.st4(4).fluid);
+ss.pu1.p = ss.otb.st_i.p;
+ss.pu1.work();
 
-cs.sec.calculate();
-% Calculate tca
-% Assume it has the same performance of using oil as HTF
-cs.tca.st_i.convergeTo(cs.tca.tc.st_i, 1);
-cs.tca.st_o.convergeTo(cs.tca.tc.st_o, 1);
-% hs.tca.tc.L_per_q_m;
-cs.tca.calculate();
-cs.tca.eta = cs.tca.tc.eta;
+h_s_4_6 = ss.st4(2).h + ss.st4(5).h - ss.st4(3).h;
+ss.st4(6).p = ss.st4(5).p;
+ss.st4(7).p = ss.st4(6).p;
+ss.st4(8).p = ss.st4(7).p;
+ss.st4(6).T.v = CoolProp.PropsSI('T', 'H', ...
+    h_s_4_6, 'P', ss.st4(6).p, ss.st4(6).fluid);
+ss.st4(7).x = 0;
+ss.st4(8).x = 1;
+ss.st4(7).T.v = CoolProp.PropsSI('T', 'Q', ...
+    ss.st4(7).x, 'P', ss.st4(7).p, ss.st4(7).fluid);
+ss.st4(8).T.v = CoolProp.PropsSI('T', 'Q', ...
+    ss.st4(8).x, 'P', ss.st4(8).p, ss.st4(8).fluid);
 
-P_cs = hs.ge.P + cs.sec.P - hs.pu.P;
-Q_cs = cs.dca.st_o.q_m.v .* (cs.dca.st_o.h - cs.dca.st_i.h) ./ cs.dca.eta ...
-    + cs.tca.st_o.q_m.v .* (cs.tca.st_o.h - cs.tca.st_i.h) ./ cs.tca.eta;
-eta_cs = P_cs ./ Q_cs;
-eta_diff = (eta_hs - eta_cs) ./ eta_cs;
+ss.st4(6).q_m.v = hs.st4(6).q_m.v .* (hs.st4(1).h - hs.st4(6).h) ...
+    ./ (ss.st4(1).h - ss.st4(6).h);
+
+ss.ge.P = ss.otb.P .* ss.ge.eta;
+
+ss.pu1.work();
+
+Q_ss_rankine = ss.sh.st1_o.q_m.v .* (ss.sh.st1_o.h - ss.ph.st1_i.h);
+
+P_ss_rankine = (ss.ge.P - ss.pu1.P) ./ ss.ge.eta;
+eta_ss_rankine = P_ss_rankine ./ Q_ss_rankine;
+
+Q_ss = ss.dca.dc.q_tot .* ss.dca.n + hs.tca.st_o.q_m.v .* ...
+    (hs.tca.st_o.h - hs.tca.st_i.h) ./ hs.tca.eta;
+P_ss = ss.ge.P + ss.se.P - ss.pu1.P;
+eta_ss = P_ss ./ Q_ss;
+%% Comparison
+eta_diff(k) = (eta_hs - eta_ss) ./ eta_ss;
+eta_hs_r(k) = eta_hs;
+eta_sea(k) = hs.sec.eta;
+used(k) = (hs.sec.P ./ hs.sec.eta) ./ (hs.dca.n .* hs.dca.dc.q_tot);
+end

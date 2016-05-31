@@ -67,7 +67,7 @@ cs.st5(9) = cs.osh.st1_i;
 
 cs.dca.n = 1;
 cs.sea.n_se = 3 * cs.dca.n;
-cs.dca.dc.amb.I_r = 400;
+cs.dca.dc.amb.I_r = 330 + k * 70;
 cs.dca.dc.st_i.fluid = char(Const.Fluid(1));
 cs.dca.dc.st_i.T.v = convtemp(500, 'C', 'K');   % Design parameter
 cs.dca.dc.st_i.p = 5e5;
@@ -321,7 +321,8 @@ T_R = Const.LogMean(T_H, T_L);
 e = (T_R - T_L) ./ (T_H - T_L);
 eta_ss_se = (T_H - T_L) ./ (T_H + (1 - e) .* (T_H - T_L) ...
                 ./ (ss.se.k -1) ./ log(ss.se.gamma));
-ss.se.P = ss.dca.dc.q_tot .* ss.dca.eta .* ss.dca.n .* eta_ss_se;
+ss.se.P = cs.sea.st1_i.q_m.v * ...
+    (cs.sea.st1_i.h - cs.sea.st1_o.h) .* eta_ss_se;
 
 % ss.st4(6).T.v = cs.st4(6).T.v;
 % ss.st4(6).p = cs.st4(6).p;
