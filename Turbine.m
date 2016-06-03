@@ -35,18 +35,18 @@ classdef Turbine < handle
             st2.fluid = st1.fluid;
             st2.q_m = st1.q_m;
             st2.p = p;
-            h2_i = CoolProp.PropsSI('H', 'P', st2.p, 'S', st1.s, st2.fluid);
+            h2_i = CoolProp.PropsSI('H', 'P', st2.p.v, 'S', st1.s, st2.fluid);
             h2 = st1.h - obj.eta_i .* (st1.h - h2_i);
-            h2_l = CoolProp.PropsSI('H', 'P', st2.p, 'Q', 0, st2.fluid);
-            h2_g = CoolProp.PropsSI('H', 'P', st2.p, 'Q', 1, st2.fluid);
+            h2_l = CoolProp.PropsSI('H', 'P', st2.p.v, 'Q', 0, st2.fluid);
+            h2_g = CoolProp.PropsSI('H', 'P', st2.p.v, 'Q', 1, st2.fluid);
             if (h2 >= h2_l && h2 <= h2_g)
 %                 st2.x = (h2 - h2_l) ./ (h2_g - h2_l);
-                st2.x = CoolProp.PropsSI('Q', 'P', st2.p, ...
+                st2.x = CoolProp.PropsSI('Q', 'P', st2.p.v, ...
                     'H', h2, st2.fluid);
-                st2.T.v = CoolProp.PropsSI('T', 'P', st2.p, ...
+                st2.T.v = CoolProp.PropsSI('T', 'P', st2.p.v, ...
                     'Q', st2.x, st2.fluid);
             else
-                st2.T.v = CoolProp.PropsSI('T', 'P', st2.p,'H', ...
+                st2.T.v = CoolProp.PropsSI('T', 'P', st2.p.v,'H', ...
                     h2, st2.fluid);
             end
         end

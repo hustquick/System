@@ -48,7 +48,7 @@ hs.dca.dc.amb.I_r = 400;
 % hs.dca.dc.amb.I_r = 300 + 70 * k;
 hs.dca.dc.st_i.fluid = char(Const.Fluid(1));
 hs.dca.dc.st_i.T.v = convtemp(470, 'C', 'K');
-hs.dca.dc.st_i.p = 5e5;
+hs.dca.dc.st_i.p.v = 5e5;
 hs.dca.dc.st_o.T.v = convtemp(800, 'C', 'K');
 
 hs.tca.tc.amb.I_r = hs.dca.dc.amb.I_r;
@@ -63,8 +63,8 @@ hs.otb.p_c_d = 0.3605e6;
 
 hs.otb.st_i.fluid = hs.otb.fluid_d;
 hs.otb.st_i.T.v = convtemp(300, 'C', 'K');
-hs.otb.st_i.p = 2.8842e6;
-hs.otb.st_o.p = 0.3605e6;
+hs.otb.st_i.p.v = 2.8842e6;
+hs.otb.st_o.p.v = 0.3605e6;
 
 % hs.otb.fluid_d = char(Const.Fluid(5));
 % hs.otb.T_s_d.v = convtemp(141.152, 'C', 'K');
@@ -85,7 +85,7 @@ hs.DeltaT_1_4 = 15;          % Minimun temperature difference between air
 % Cooling water stream for each Stirling engine
 hs.st2.fluid = char(Const.Fluid(2));
 hs.st2.T.v = 293.15;
-hs.st2.p = 1.01325e5;
+hs.st2.p.v = 1.01325e5;
 hs.st2.q_m.v = 0.67;
 %% Work
 % hs.ge.P = 50e3;     % Will be automatically corrected
@@ -109,7 +109,7 @@ h_4_6 = hs.he.st1_i.h + hs.he.st2_i.h - hs.he.st1_o.h;
 hs.he.st2_i.flowTo(hs.he.st2_o);
 hs.he.st2_o.p = hs.he.st2_i.p;
 hs.he.st2_o.T.v = CoolProp.PropsSI('T', 'H', h_4_6, 'P', ...
-    hs.he.st2_o.p, hs.he.st2_o.fluid);
+    hs.he.st2_o.p.v, hs.he.st2_o.fluid);
 
 hs.ph.calcSt1_o();
 hs.ev.calcSt1_o();
@@ -190,7 +190,7 @@ ss = SeparateSystem;
 for i = 1 : 8
     ss.st4(i).fluid = char(Const.Fluid(4));
     ss.st4(i).T = Temperature(convtemp(340, 'C', 'K'));
-    ss.st4(i).p = 2.8842e6;
+    ss.st4(i).p.v = 2.8842e6;
     ss.st4(i).q_m.v = 6;         %%%%%%% To be automatically calculated later
 end
 
@@ -202,7 +202,7 @@ end
 for i = 1 : 4
     ss.st3(i).fluid = char(Const.Fluid(3));
     ss.st3(i).T.v = convtemp(380, 'C', 'K');    % Design parameter
-    ss.st3(i).p = 2e6;
+    ss.st3(i).p.v = 2e6;
 end
 
 ss.otb.st_i = ss.st4(1);
@@ -259,11 +259,11 @@ ss.st4(2).T.v = hs.st4(2).T.v;
 ss.st4(3).p = ss.st4(2).p;
 ss.st4(3).x = 1;
 ss.st4(3).T.v = CoolProp.PropsSI('T', 'Q', ss.st4(3).x, ...
-    'P', ss.st4(3).p, ss.st4(3).fluid);
+    'P', ss.st4(3).p.v, ss.st4(3).fluid);
 ss.st4(4).p = ss.st4(3).p;
 ss.st4(4).x = 0;
 ss.st4(4).T.v = CoolProp.PropsSI('T', 'Q', ss.st4(4).x, ...
-    'P', ss.st4(4).p, ss.st4(4).fluid);
+    'P', ss.st4(4).p.v, ss.st4(4).fluid);
 ss.pu1.p = ss.otb.st_i.p;
 ss.pu1.work();
 
@@ -272,13 +272,13 @@ ss.st4(6).p = ss.st4(5).p;
 ss.st4(7).p = ss.st4(6).p;
 ss.st4(8).p = ss.st4(7).p;
 ss.st4(6).T.v = CoolProp.PropsSI('T', 'H', ...
-    h_s_4_6, 'P', ss.st4(6).p, ss.st4(6).fluid);
+    h_s_4_6, 'P', ss.st4(6).p.v, ss.st4(6).fluid);
 ss.st4(7).x = 0;
 ss.st4(8).x = 1;
 ss.st4(7).T.v = CoolProp.PropsSI('T', 'Q', ...
-    ss.st4(7).x, 'P', ss.st4(7).p, ss.st4(7).fluid);
+    ss.st4(7).x, 'P', ss.st4(7).p.v, ss.st4(7).fluid);
 ss.st4(8).T.v = CoolProp.PropsSI('T', 'Q', ...
-    ss.st4(8).x, 'P', ss.st4(8).p, ss.st4(8).fluid);
+    ss.st4(8).x, 'P', ss.st4(8).p.v, ss.st4(8).fluid);
 
 ss.st4(6).q_m.v = hs.st4(6).q_m.v .* (hs.st4(1).h - hs.st4(6).h) ...
     ./ (ss.st4(1).h - ss.st4(6).h);

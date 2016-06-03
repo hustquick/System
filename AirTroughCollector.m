@@ -70,7 +70,7 @@ classdef AirTroughCollector < handle
             q = obj.amb.I_r .* obj.w .* eta_opt_0 .* obj.K() ...
                 .* obj.Fe ./ para;
             T = (obj.st_i.T.v + obj.st_o.T.v) / 2;
-            p = (obj.st_i.p + obj.st_o.p) / 2;
+            p = (obj.st_i.p.v + obj.st_o.p.v) / 2;
             cp = CoolProp.PropsSI('C', 'T', T, 'P', ...
                 p, obj.st_i.fluid);
             U = obj.U();

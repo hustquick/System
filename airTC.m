@@ -4,7 +4,7 @@ tc = TroughCollector;
 st1 = Stream;
 st1.fluid = char(Const.Fluid(1));
 st1.T = Temperature(convtemp(120, 'C', 'K'));
-st1.p = 5e5;
+st1.p.v = 5e5;
 st1.q_m.v = 0.06;
 
 st2 = Stream;

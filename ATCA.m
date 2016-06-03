@@ -64,7 +64,7 @@ classdef ATCA < handle
             % Minimum speed that can achieved, if only one trough collector is used in a row
             fluid = obj.st_i.fluid;
             T = (obj.st_i.T.v + obj.st_o.T.v) / 2;
-            p = (obj.st_i.p + obj.st_o.p) / 2;
+            p = (obj.st_i.p.v + obj.st_o.p.v) / 2;
             density = CoolProp.PropsSI('D', 'T', T, 'P', p, fluid);
             q_m_basic = obj.tc.q_use ./ (obj.st_o.h - obj.st_i.h);  
             value = 4 * q_m_basic / (density * pi * obj.tc.d_i^2);

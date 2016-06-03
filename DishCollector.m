@@ -49,15 +49,15 @@ classdef DishCollector
         function q_dr_1 = q_dr_1_1(obj)
             % Heat absorbed by the fluid, W
             h_o = CoolProp.PropsSI('H', 'T', obj.st_o.T.v,...
-                'P', obj.st_o.p, obj.st_o.fluid);
+                'P', obj.st_o.p.v, obj.st_o.fluid);
             h_i = CoolProp.PropsSI('H', 'T', obj.st_i.T.v,...
-                'P', obj.st_i.p, obj.st_i.fluid);
+                'P', obj.st_i.p.v, obj.st_i.fluid);
             q_dr_1 = obj.st_i.q_m.v .* (h_o - h_i);
         end
         function q_dr_1 = q_dr_1_2(obj)
             % Heat transferred from the air pipe to the air, W
             T = (obj.st_i.T.v + obj.st_o.T.v)/2;
-            p = (obj.st_i.p + obj.st_o.p)/2;
+            p = (obj.st_i.p.v + obj.st_o.p.v)/2;
             density = CoolProp.PropsSI('D', 'T', T, 'P', p, obj.st_i.fluid);
             v = 4 .* obj.st_i.q_m.v ./ (pi * obj.airPipe.d_i .^2 .* density);
             mu = CoolProp.PropsSI('V', 'T', T, 'P', p, obj.st_i.fluid);
@@ -99,9 +99,9 @@ classdef DishCollector
         function q_cond_conv = q_cond_conv(obj)
             % Convection loss from the insulating layer, W
             mu = CoolProp.PropsSI('V', 'T', obj.amb.T.v, ...
-                'P', obj.amb.p, obj.amb.fluid);
+                'P', obj.amb.p.v, obj.amb.fluid);
             density = CoolProp.PropsSI('D', 'T', obj.amb.T.v,...
-                'P', obj.amb.p, obj.amb.fluid);
+                'P', obj.amb.p.v, obj.amb.fluid);
             nu = mu ./ density;
             
             d_o = obj.insLayer.d_i + 2 * obj.insLayer.delta;
@@ -109,9 +109,9 @@ classdef DishCollector
             Re = obj.amb.w .* d_o ./ nu;
             
             Cp = CoolProp.PropsSI('C', 'T', obj.amb.T.v, ...
-                'P', obj.amb.p, obj.amb.fluid);
+                'P', obj.amb.p.v, obj.amb.fluid);
             k = CoolProp.PropsSI('L', 'T', obj.amb.T.v, ...
-                'P', obj.amb.p, obj.amb.fluid);
+                'P', obj.amb.p.v, obj.amb.fluid);
             Pr = Cp .* mu ./ k;
             
             Nu = Const.NuOfExternalCylinder(Re, Pr);
@@ -135,13 +135,13 @@ classdef DishCollector
         function q_conv_tot = q_conv_tot(obj)
             % Total covection loss, W
             T = (obj.airPipe.T.v + obj.amb.T.v) / 2;   % Film temperature is used
-            k = CoolProp.PropsSI('L', 'T', T, 'P', obj.amb.p, obj.amb.fluid);
+            k = CoolProp.PropsSI('L', 'T', T, 'P', obj.amb.p.v, obj.amb.fluid);
             
             beta = CoolProp.PropsSI('ISOBARIC_EXPANSION_COEFFICIENT', ...
-                'T', T, 'P', obj.amb.p, obj.amb.fluid);
-            mu = CoolProp.PropsSI('V', 'T', T, 'P', obj.amb.p, obj.amb.fluid);
+                'T', T, 'P', obj.amb.p.v, obj.amb.fluid);
+            mu = CoolProp.PropsSI('V', 'T', T, 'P', obj.amb.p.v, obj.amb.fluid);
             density = CoolProp.PropsSI('D', 'T', T, 'P', ...
-                obj.amb.p, obj.amb.fluid);
+                obj.amb.p.v, obj.amb.fluid);
             nu = mu ./ density;
             Gr = Const.G * beta .* (obj.airPipe.T.v - obj.amb.T.v) .* ...
                 obj.d_bar_cav .^ 3 ./ nu .^ 2;

@@ -12,7 +12,7 @@ st1 = Stream;
 st1.fluid = char(Const.Fluid(1));
 st1.T.v = 1073.15;
 st1.p.v = 5e5;
-st1.q_m.v = 0.5;
+st1.q_m.v = 0.3 * k;
 
 st2 = Stream;
 st2.fluid = char(Const.Fluid(2));

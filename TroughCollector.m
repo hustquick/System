@@ -70,7 +70,7 @@ classdef TroughCollector < handle
             q = obj.amb.I_r .* obj.w .* eta_opt_0 .* obj.K() ...
                 .* obj.Fe ./ para;
             T = (obj.st_i.T.v + obj.st_o.T.v) / 2;
-            p = (obj.st_i.p + obj.st_o.p) / 2;
+            p = (obj.st_i.p.v + obj.st_o.p.v) / 2;
             cp = CoolProp.PropsSI('C', 'T', T, 'P', ...
                 p, obj.st_i.fluid);
             U = obj.U();
@@ -111,7 +111,7 @@ classdef TroughCollector < handle
         function value = get.v_s(obj)
             fluid = obj.st_i.fluid;
             T = (obj.st_i.T.v + obj.st_o.T.v) / 2;
-            p = (obj.st_i.p + obj.st_o.p) / 2;
+            p = (obj.st_i.p.v + obj.st_o.p.v) / 2;
             density = CoolProp.PropsSI('D', 'T', T, 'P', p, fluid);
             q_m_basic = obj.q_use ./ (obj.st_o.h - obj.st_i.h);
             value = 4 * q_m_basic / (density * pi * obj.d_i^2);

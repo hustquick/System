@@ -20,14 +20,14 @@ st1_i.fluid = char(Const.Fluid(1));
 % st1_i.q_m.v = 2.6678;
 st1_i.q_m.v = 2 * k;
 st1_i.T.v = 1073.15;
-st1_i.p = 5e5;
+st1_i.p.v = 5e5;
 st1_o = st1_i.flow();
 
 st2_i.fluid = char(Const.Fluid(2));
 st2_i.q_m.v = 6.0764;
 % st2_i.q_m.v = 0.1 * 10^(0.2 * k);
 st2_i.T.v = 327.2;
-st2_i.p = 1e6;
+st2_i.p.v = 1e6;
 st2_o = st2_i.flow();
 
 sea.st1_i = st1_i;

@@ -17,7 +17,7 @@ classdef Condenser < handle
         function work(obj)
             obj.st_i.flowTo(obj.st_o);
             obj.st_o.p = obj.st_i.p;
-            obj.st_o.T.v = CoolProp.PropsSI('T', 'P', obj.st_o.p, 'Q', ...
+            obj.st_o.T.v = CoolProp.PropsSI('T', 'P', obj.st_o.p.v, 'Q', ...
                 obj.st_o.x, obj.st_o.fluid);
         end
     end

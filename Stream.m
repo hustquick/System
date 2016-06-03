@@ -18,6 +18,7 @@ classdef Stream < handle
         function obj = Stream
             obj.T = Temperature;
             obj.q_m = Q_m;
+            obj.p = Pressure;
         end
         function flowTo(obj, st)
             % st2 is another state of the same stream st1 after a flow
@@ -29,15 +30,15 @@ classdef Stream < handle
             % Get the properties of a stream mixed by two streams converged
             % The two streams have the same fluid type
             if obj.fluid == st1.fluid
-                if  obj.p == st1.p
-                    st2 = Stream;
+                if  obj.p.v == st1.p.v
+%                     obj.p = st1.p;
+                    st2 = Stream;       % Create a new stream
                     st2.fluid = obj.fluid;
                     st2.p = obj.p;
-                    st2.q_m = obj.q_m + st1.q_m;
-                    h_1 = CoolProp.PropsSI('H', 'T', obj.T.v, 'P', obj.p, obj.fluid);
-                    h_2 = CoolProp.PropsSI('H', 'T', st1.T.v, 'P', st1.p, st1.fluid);
-                    h_3 = (obj.q_m .* h_1 + st1.q_m .* h_2) ./ (obj.q_m + st1.q_m);
-                    st2.T.v = CoolProp.PropsSI('T', 'H', h_3, 'P', st2.p);
+                    st2.q_m.v = obj.q_m.v + st1.q_m.v;
+                    h = (obj.q_m.v .* obj.h + st1.q_m.v .* st1.h)...
+                        ./ (obj.q_m.v + st1.q_m.v);
+                    st2.T.v = CoolProp.PropsSI('T', 'H', h, 'P', st2.p.v);
                 else
                     error('The two streams have different pressures!');
                 end
@@ -45,18 +46,11 @@ classdef Stream < handle
                 error('The two streams have different fluid types!');
             end
         end
-%         function st = converge(obj, n)
-%             % Get the properties of a stream converged from several streams
-%             % It is converged from n equal parts
-%             st = Stream;
-%             st.fluid = obj.fluid;
-%             st.q_m.v = obj.q_m.v .* n;
-%             st.T = obj.T;
-%             st.p = obj.p;
-%         end
         function convergeTo(obj, st, y)
-            % Get the properties of a stream diverged from a stream
-            % It is diverged into n equal parts
+            % Get another stream converged (or diverged)
+            % from the original stream state.
+            % If y < 1, the original stream is diverged
+            % If y > 1, the original stream is converged
             st.fluid = obj.fluid;
             st.T = obj.T;
             st.p = obj.p;
@@ -69,25 +63,25 @@ classdef Stream < handle
         function value = get.h(obj)
             if isempty(obj.x)
                 value = CoolProp.PropsSI('H', 'T', obj.T.v, ...
-                    'P', obj.p, obj.fluid);
+                    'P', obj.p.v, obj.fluid);
             else
-                value = CoolProp.PropsSI('H', 'P', obj.p, 'Q', ...
+                value = CoolProp.PropsSI('H', 'P', obj.p.v, 'Q', ...
                     obj.x, obj.fluid);
             end
         end
         function value = get.s(obj)
             if isempty(obj.x)
                 value = CoolProp.PropsSI('S', 'T', obj.T.v, ...
-                    'P', obj.p, obj.fluid);
+                    'P', obj.p.v, obj.fluid);
             else
-                value = CoolProp.PropsSI('S', 'P', obj.p, 'Q', ...
+                value = CoolProp.PropsSI('S', 'P', obj.p.v, 'Q', ...
                     obj.x, obj.fluid);
             end
         end
         function value = get.cp(obj)
             if isempty(obj.x)
                 value = CoolProp.PropsSI('C', 'T', obj.T.v, ...
-                    'P', obj.p, obj.fluid);
+                    'P', obj.p.v, obj.fluid);
             else
                 value = inf;
             end

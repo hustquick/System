@@ -70,14 +70,14 @@ cs.sea.n_se = 3 * cs.dca.n;
 cs.dca.dc.amb.I_r = 330 + k * 70;
 cs.dca.dc.st_i.fluid = char(Const.Fluid(1));
 cs.dca.dc.st_i.T.v = convtemp(500, 'C', 'K');   % Design parameter
-cs.dca.dc.st_i.p = 5e5;
+cs.dca.dc.st_i.p.v = 5e5;
 cs.dca.dc.st_o.T.v = convtemp(800, 'C', 'K');
 
 cs.tca.tc.amb.I_r = cs.dca.dc.amb.I_r;
 
 cs.tca.st_o.fluid = char(Const.Fluid(3));
 cs.tca.st_o.T.v = convtemp(380, 'C', 'K');
-cs.tca.st_o.p = 2e6;
+cs.tca.st_o.p.v = 2e6;
 
 cs.otb1.fluid_d = char(Const.Fluid(4));
 cs.otb1.T_s_d.v = convtemp(300, 'C', 'K');
@@ -86,8 +86,8 @@ cs.otb1.T_c_d.v = convtemp(228.85, 'C', 'K');
 cs.otb1.p_c_d = 0.3605e6;
 cs.otb1.st_i.fluid = cs.otb1.fluid_d;
 cs.otb1.st_i.T.v = convtemp(300, 'C', 'K');
-cs.otb1.st_i.p = 2.8842e6;
-cs.otb1.st_o.p = 0.3605e6;
+cs.otb1.st_i.p.v = 2.8842e6;
+cs.otb1.st_o.p.v = 0.3605e6;
 
 cs.otb2.fluid_d = char(Const.Fluid(5));
 cs.otb2.T_s_d.v = convtemp(141.152, 'C', 'K');
@@ -96,8 +96,8 @@ cs.otb2.T_c_d.v = convtemp(91.35, 'C', 'K');
 cs.otb2.p_c_d = 0.167e6;
 cs.otb2.st_i.fluid = cs.otb2.fluid_d;
 cs.otb2.st_i.T.v = convtemp(141.152, 'C', 'K');
-cs.otb2.st_i.p = 1e6;
-cs.otb2.st_o.p = 0.167e6;
+cs.otb2.st_i.p.v = 1e6;
+cs.otb2.st_o.p.v = 0.167e6;
 
 cs.oge1.eta = 0.975;
 cs.oge2.P = 140e3;
@@ -172,7 +172,7 @@ cs.st4(5).p = cs.st4(4).p;
 cs.st4(5).fluid = cs.st4(2).fluid;
 cs.st4(5).x = 0;
 cs.st4(5).T.v = CoolProp.PropsSI('T', 'Q', ...
-    cs.st4(5).x, 'P', cs.st4(5).p, cs.st4(5).fluid);
+    cs.st4(5).x, 'P', cs.st4(5).p.v, cs.st4(5).fluid);
 
 cs.st4(2).q_m.v = cs.st5(1).q_m.v .* (cs.st5(1).h - ...
     cs.st5(7).h) ./ (cs.st4(2).h - cs.st4(5).h);
@@ -264,7 +264,7 @@ ss = SeparateSystem;
 for i = 1 : 8
     ss.st4(i).fluid = char(Const.Fluid(4));
     ss.st4(i).T = Temperature(convtemp(340, 'C', 'K'));
-    ss.st4(i).p = 2.8842e6;
+    ss.st4(i).p.v = 2.8842e6;
     ss.st4(i).q_m.v = 6;         %%%%%%% To be automatically calculated later
 end
 
@@ -276,7 +276,7 @@ end
 for i = 1 : 4
     ss.st3(i).fluid = char(Const.Fluid(3));
     ss.st3(i).T.v = convtemp(380, 'C', 'K');    % Design parameter
-    ss.st3(i).p = 2e6;
+    ss.st3(i).p.v = 2e6;
 end
 
 ss.otb.st_i = ss.st4(1);
@@ -333,11 +333,11 @@ ss.st4(2).T.v = cs.st4(2).T.v;
 ss.st4(3).p = ss.st4(2).p;
 ss.st4(3).x = 1;
 ss.st4(3).T.v = CoolProp.PropsSI('T', 'Q', ss.st4(3).x, ...
-    'P', ss.st4(3).p, ss.st4(3).fluid);
+    'P', ss.st4(3).p.v, ss.st4(3).fluid);
 ss.st4(4).p = ss.st4(3).p;
 ss.st4(4).x = 0;
 ss.st4(4).T.v = CoolProp.PropsSI('T', 'Q', ss.st4(4).x, ...
-    'P', ss.st4(4).p, ss.st4(4).fluid);
+    'P', ss.st4(4).p.v, ss.st4(4).fluid);
 ss.pu1.p = ss.otb.st_i.p;
 ss.pu1.work();
 
@@ -346,13 +346,13 @@ ss.st4(6).p = ss.st4(5).p;
 ss.st4(7).p = ss.st4(6).p;
 ss.st4(8).p = ss.st4(7).p;
 ss.st4(6).T.v = CoolProp.PropsSI('T', 'H', ...
-    h_s_4_6, 'P', ss.st4(6).p, ss.st4(6).fluid);
+    h_s_4_6, 'P', ss.st4(6).p.v, ss.st4(6).fluid);
 ss.st4(7).x = 0;
 ss.st4(8).x = 1;
 ss.st4(7).T.v = CoolProp.PropsSI('T', 'Q', ...
-    ss.st4(7).x, 'P', ss.st4(7).p, ss.st4(7).fluid);
+    ss.st4(7).x, 'P', ss.st4(7).p.v, ss.st4(7).fluid);
 ss.st4(8).T.v = CoolProp.PropsSI('T', 'Q', ...
-    ss.st4(8).x, 'P', ss.st4(8).p, ss.st4(8).fluid);
+    ss.st4(8).x, 'P', ss.st4(8).p.v, ss.st4(8).fluid);
 
 ss.st4(6).q_m.v = cs.st4(6).q_m.v .* (cs.st4(1).h - cs.st4(6).h) ...
     ./ (ss.st4(1).h - ss.st4(6).h);

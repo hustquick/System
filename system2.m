@@ -54,24 +54,24 @@ cs.dca.n = 30;
 cs.dca.dc.amb.I_r = 330 + k * 70;
 cs.dca.dc.st_i.fluid = char(Const.Fluid(1));
 cs.dca.dc.st_i.T.v = convtemp(350, 'C', 'K');   % Design parameter
-cs.dca.dc.st_i.p = 5e5;
+cs.dca.dc.st_i.p.v = 5e5;
 cs.dca.dc.st_o.T.v = convtemp(800, 'C', 'K');
 
 cs.tca.tc.amb.I_r = cs.dca.dc.amb.I_r;
 
 cs.tca.st_o.fluid = char(Const.Fluid(3));
 cs.tca.st_o.T.v = convtemp(380, 'C', 'K');
-cs.tca.st_o.p = 2e6;
+cs.tca.st_o.p.v = 2e6;
 
 cs.tb.st_i.fluid = char(Const.Fluid(2));
 cs.tb.st_i.T.v = convtemp(340, 'C', 'K');
-cs.tb.st_i.p = 2.35e6;
-cs.tb.st_o_2.p = 1.5e4;
+cs.tb.st_i.p.v = 2.35e6;
+cs.tb.st_o_2.p.v = 1.5e4;
 
 cs.ge.P = 4e6;
 cs.ge.eta = 0.975;
 
-cs.da.p = 1e6;
+cs.da.p.v = 1e6;
 
 cs.DeltaT_3_2 = 15;          % Minimun temperature difference between oil
 %and water
