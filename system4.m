@@ -43,11 +43,11 @@ hs.st4(6) = hs.ph.st1_i;
 hs.st4(7) = hs.ev.st1_i;
 hs.st4(8) = hs.sh.st1_i;
 %% Design parameters
-hs.dca.n = 1;
+hs.dca.n = 3;
 hs.dca.dc.amb.I_r = 400;
 % hs.dca.dc.amb.I_r = 300 + 70 * k;
 hs.dca.dc.st_i.fluid = char(Const.Fluid(1));
-hs.dca.dc.st_i.T.v = convtemp(350, 'C', 'K');
+hs.dca.dc.st_i.T.v = convtemp(470, 'C', 'K');
 hs.dca.dc.st_i.p = 5e5;
 hs.dca.dc.st_o.T.v = convtemp(800, 'C', 'K');
 

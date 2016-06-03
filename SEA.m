@@ -46,14 +46,17 @@ classdef SEA < handle
             cp_1 = obj.st1_i.cp;
             cp_2 = obj.st2_i.cp;
             obj.se(1).st1_i = obj.st1_i_r;
-            obj.se(1).st1_o = obj.se(1).st1_i.flow();
+            obj.se(1).st1_i.flowTo(obj.se(1).st1_o);
             obj.se(1).st1_o.p = obj.se(1).st1_i.p;
             obj.se(1).cp_1 = cp_1;
+            
+            DeltaT1 = 5000 / (cp_1 .* obj.se(1).st1_i.q_m.v * 0.35);
+            DeltaT2 = 5000 / (cp_2 .* obj.st2_i.q_m.v./ obj.n2 * 0.35);
             
             if (strcmp(obj.order, 'Same'))
                 %%%%% Same order %%%%%
                 obj.se(1).st2_i = obj.st2_i_r;
-                obj.se(1).st2_o = obj.se(1).st2_i.flow();
+                obj.se(1).st2_i.flowTo(obj.se(1).st2_o);
                 obj.se(1).st2_o.p = obj.se(1).st2_i.p;
                 obj.se(1).cp_2 = cp_2;
                 for i = 2 : obj.n1
@@ -61,15 +64,17 @@ classdef SEA < handle
                     obj.se(i).cp_2 = cp_2;
                     obj.se(i).st1_i = obj.se(i-1).st1_o;
                     obj.se(i).st2_i = obj.se(i-1).st2_o;
-                    obj.se(i).st1_o = obj.se(i).st1_i.flow();
+                    obj.se(i).st1_i.flowTo(obj.se(i).st1_o);
                     obj.se(i).st1_o.p = obj.se(i).st1_i.p;
-                    obj.se(i).st2_o = obj.se(i).st2_i.flow();
+                    obj.se(i).st2_i.flowTo(obj.se(i).st2_o);
                     obj.se(i).st2_o.p = obj.se(i).st2_i.p;
                 end
                 
                 for j = 1 : obj.n1
-                    guess(j,1) = obj.se(1).st1_i.T.v - 20 * j;  %38
-                    guess(j,2) = obj.se(1).st2_i.T.v + 5 * j;
+                    guess(j,1) = obj.se(1).st1_i.T.v - 30 * j;
+%                     guess(j,1) = obj.se(1).st1_i.T.v - DeltaT1 * j;  %38
+                    guess(j,2) = obj.se(1).st2_i.T.v + 6 * j;
+%                     guess(j,2) = obj.se(1).st2_i.T.v + DeltaT2 * j;
                 end
             elseif (strcmp(obj.order,'Reverse'))
                 %%%%% Inverse order %%%%%
@@ -80,23 +85,28 @@ classdef SEA < handle
                     obj.se(i).cp_2 = cp_2;
                 end
                 obj.se(obj.n1).st2_i = obj.st2_i_r;
-                obj.se(obj.n1).st2_o = obj.se(obj.n1).st2_i.flow();
+                obj.se(obj.n1).st2_i.flowTo(obj.se(obj.n1).st2_o);
                 obj.se(obj.n1).st2_o.p = obj.se(obj.n1).st2_i.p;
                 
                 for i = 1 : obj.n1-1
                     obj.se(i+1).st1_i = obj.se(i).st1_o;
                     obj.se(obj.n1-i).st2_i = obj.se(obj.n1+1-i).st2_o;
                     
-                    obj.se(i+1).st1_o = obj.se(i+1).st1_i.flow();
+                    obj.se(i+1).st1_i.flowTo(obj.se(i+1).st1_o);
                     obj.se(i+1).st1_o.p = obj.se(i+1).st1_i.p;
-                    obj.se(obj.n1-i).st2_o = obj.se(obj.n1-i).st2_i.flow();
+                    obj.se(obj.n1-i).st2_i.flowTo(obj.se(obj.n1-i).st2_o);
                     obj.se(obj.n1-i).st2_o.p = obj.se(obj.n1-i).st2_i.p;
                 end
                 
                 for j = 1 : obj.n1
-                    guess(j,1) = obj.se(1).st1_i.T.v - 20 * j;  %38
-                    guess(j,2) = obj.se(obj.n1).st2_i.T.v + ...
-                        5 * (obj.n1 + 1 - j);
+                    guess(j,1) = obj.se(1).st1_i.T.v - 50 * j;  %38
+%                     guess(j,1) = obj.se(1).st1_i.T.v - 4000 * j / ...
+%                         (obj.se(1).cp_1 .* obj.se(1).st1_i.q_m.v ...
+%                         * 0.35);  %38
+                    guess(j,2) = obj.se(obj.n1).st2_i.T.v + 5 * (obj.n1 + 1 - j);
+%                     guess(j,2) = obj.se(obj.n1).st2_i.T.v + 4000 * (obj.n1 + 1 - j) / ...
+%                         (obj.se(1).cp_2 .* obj.se(obj.n1).st2_i.q_m.v ...
+%                         * 0.35);
                 end
             else
                 error('Uncomplished work.');
