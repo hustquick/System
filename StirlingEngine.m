@@ -14,13 +14,10 @@ classdef StirlingEngine < handle
         st1_o;   % Heating stream at outlet
         st2_i;   % Cooling stream at inlet
         st2_o;   % Cooling stream at outlet
-        cp_1;   % Specific heat of fluid 1 under constant pressure, assume to be constant, J/kg-K
-        cp_2;   % Specific heat of fluid 2 under constant pressure, assume to be constant, J/kg-K
         P;      % Power of the Stirling engine, W
-        flowType;   % Flow type of the Stirling engine, 'Parallel' or 'Counter'
-        eta;
-        T_H;
-        T_L;
+        eta;    % Efficiency of the Stirling enine
+        T_H;    % Temperature of compression, K
+        T_L;    % Temperature of expansion, K
     end
     
     methods
@@ -33,12 +30,12 @@ classdef StirlingEngine < handle
         function T_H = get.T_H(obj)
             % Highest temperature of expansion space, K
             T_H = obj.st1_i.T.v - (obj.st1_i.T.v - obj.st1_o.T.v) ./ (1 - ...
-                exp(- obj.U_1 .* obj.A_1 ./ (obj.st1_i.q_m.v .* obj.cp_1)));
+                exp(- obj.U_1 .* obj.A_1 ./ (obj.st1_i.q_m.v .* obj.st1_i.cp)));
         end
         function T_L = get.T_L(obj)
             % Lowest temperature of compression space, K
             T_L = obj.st2_i.T.v - (obj.st2_i.T.v - obj.st2_o.T.v) ./ (1 - ...
-                exp(- obj.U_2 .* obj.A_2 ./ (obj.st2_i.q_m.v .* obj.cp_2)));
+                exp(- obj.U_2 .* obj.A_2 ./ (obj.st2_i.q_m.v .* obj.st2_i.cp)));
         end
         function T_R = T_R(obj)
             % Regenerator temperature, K
@@ -56,7 +53,7 @@ classdef StirlingEngine < handle
                 (1 - e) .* (obj.T_H - obj.T_L) ...
                 ./ (obj.k -1) ./ log(obj.gamma));
         end
-        function eta = eta2(obj)
+        function eta = get.eta(obj)
             % Efficiency of the Stirling engine using definition
             Q_1 = obj.st1_i.q_m.v .* (obj.st1_i.h - obj.st1_o.h);
             Q_2 = obj.st2_i.q_m.v .* (obj.st2_o.h - obj.st2_i.h);
@@ -64,14 +61,47 @@ classdef StirlingEngine < handle
         end
         function P = P1(obj)
             % Power of the Stirling engine using the efficiency
-            eta2 = obj.eta2();
+            eta2 = obj.eta();
             % P = obj.st1_i.q_m.v .* obj.cp_1 .* (obj.st1_i.T.v - obj.st1_o.T.v) .* eta;
             P = obj.st1_i.q_m.v .* (obj.st1_i.h - obj.st1_o.h) .* eta2;
         end
-        function P = P2(obj)
+        function P = get.P(obj)
             % Power of the Stirling engine using the speed of engine
             P = obj.n_g .* Const.R .* (obj.T_H - obj.T_L) .* ...
                 log(obj.gamma) .* obj.s_se;
+        end
+        function get_o(obj)
+            obj.st1_i.flowTo(obj.st1_o);
+            obj.st1_o.p = obj.st1_i.p;
+            obj.st2_i.flowTo(obj.st2_o);
+            obj.st2_o.p = obj.st2_i.p;
+            guess = [obj.st1_i.T.v - 14300 / (obj.st1_i.cp * obj.st1_i.q_m.v);
+                obj.st2_i.T.v + 9300 / (obj.st2_i.cp * obj.st2_i.q_m.v)]; 
+            % Guess value of temperatures of two outlet streams
+            options = optimset('Display', 'off');
+            fsolve(@(x)Calc_o(x, obj), guess, options);
+        end
+        function F = Calc_o(x, se)
+            se.st1_o.T.v = x(1);
+            se.st2_o.T.v = x(2);
+            F = [se.P1 - se.P;
+                se.eta1 - se.eta];
+        end
+        function get_i(obj)
+            obj.st1_i.flowTo(obj.st1_o);
+            obj.st1_o.p = obj.st1_i.p;
+            obj.st2_o.flowTo(obj.st2_i);
+            obj.st2_i.p = obj.st2_o.p;
+            guess = [obj.st1_i.T.v - 14300 / (obj.st1_i.cp * obj.st1_i.q_m.v);
+                obj.st2_o.T.v - 9300 / (obj.st2_o.cp * obj.st2_o.q_m.v)];
+            options = optimset('DisPlay', 'off');
+            fsolve(@(x)Calc_i(x, obj), guess, options);
+        end
+        function F = Calc_i(x, se)
+            se.st1_o.T.v = x(1);
+            se.st2_i.T.v = x(2);
+            F = [se.P1 - se.P;
+                se.eta1 - se.eta];
         end
     end
 end

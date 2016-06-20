@@ -31,11 +31,11 @@ classdef Stream < handle
             % The two streams have the same fluid type
             if obj.fluid == st1.fluid
                 if  obj.p.v == st1.p.v
-%                     obj.p = st1.p;
-                    st2 = Stream;       % Create a new stream
+                    obj.p = st1.p;
+%                     st2 = Stream;       % Create a new stream
                     st2.fluid = obj.fluid;
                     st2.p = obj.p;
-                    st2.q_m.v = obj.q_m.v + st1.q_m.v;
+                    st2.q_m.v = obj.q_m.v + st1.q_m.v;  % How to make sure it is always true?
                     h = (obj.q_m.v .* obj.h + st1.q_m.v .* st1.h)...
                         ./ (obj.q_m.v + st1.q_m.v);
                     st2.T.v = CoolProp.PropsSI('T', 'H', h, 'P', st2.p.v);
@@ -55,8 +55,8 @@ classdef Stream < handle
             st.T = obj.T;
             st.p = obj.p;
             st.x = obj.x;
-            st.q_m.v = obj.q_m.v .* y;
-    
+            st.q_m.v = obj.q_m.v .* y; % How to make sure it is always true?
+            % that if y or obj.q_m.v changed, st.q_m.v automatically change
         end
     end
     methods

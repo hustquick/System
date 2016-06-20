@@ -6,14 +6,11 @@ classdef Const
         G = 9.807;
         R = 8.314;
     end
-    
-    properties (Constant)
-        flag = 0;
-    end
-    
+        
     properties (Constant = true)
         Fluid = cellstr(char('Air', 'Water', 'INCOMP::TVP1', 'Toluene', 'R123'));	% Fluids' name
-        FlowType = cellstr(char('Parallel', 'Counter'));
+        FlowType = cellstr(char('Same', 'Reverse'));
+        ConnectType = cellstr(char('Series', 'Parallel'));
     end
     methods(Static)
         function c  = LogMean(a, b)

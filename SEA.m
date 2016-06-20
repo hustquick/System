@@ -1,14 +1,13 @@
 classdef SEA < handle
     %SEA This class defines the Stirling engine array
     %   The array is built with the same kind of Stirling engines, all of
-    %   them are the objects of StirlingEngine class.
-    
+    %   them are the objects of StirlingEngine class.    
     properties
-        n_se;       % Number of Stirling engines in the Stirling engine array
+        se = StirlingEngine;         % Stirling engine array
     end
     properties
-        se;         % A row of the Stirling engine array
-        n1;         % Number of columns of the Stirling engine array
+        n1;         % Rows of Stirling engine array
+        n2;         % Columns of Stirling engine array
         st1_i;      % Inlet stream of first fluid to the Stirling engine array
         st1_o;      % Outlet stream of first fluid to the Stirling engine array
         st2_i;      % Inlet stream of second fluid to the Stirling engine array
@@ -20,18 +19,21 @@ classdef SEA < handle
         eta;
         P;
     end
-    properties(Dependent)
-        n2;         % Number of rows of the Stirling engine array
-        st1_i_r;    % Inlet stream of first fluid after divergence
-        st2_i_r;    % Inlet stream of second fluid after divergence
-    end
     
     methods
-        function obj = SEA(n1, order)
-            % n1 is the number of columns of the Stirling engine array,
+        function obj = SEA(n1, n2, order)
             % order is a string, 'Same' or 'Reverse'
             obj.n1 = n1;
-            obj.se = StirlingEngine.empty(0,n1);
+            obj.n2 = n2;
+            obj.se(n1, n2) = StirlingEngine;
+            for i = 1 : numel(obj.se(1,:))
+                for j = 1 : numel(obj.se(:,1))
+                    obj.se(j,i).st1_i = Stream;
+                    obj.se(j,i).st1_o = Stream;
+                    obj.se(j,i).st2_i = Stream;
+                    obj.se(j,i).st2_o = Stream;
+                end
+            end
             obj.st1_i = Stream;
             obj.st1_o = Stream;
             obj.st2_i = Stream;
@@ -41,140 +43,70 @@ classdef SEA < handle
     end
     methods
         function calculate(obj)
-            guess = zeros(2, obj.n1);   % 2 * n1 unknown parameters (outlet temperature of two fluids in each column)
-            
-            cp_1 = obj.st1_i.cp;
-            cp_2 = obj.st2_i.cp;
-            obj.se(1).st1_i = obj.st1_i_r;
-            obj.se(1).st1_i.flowTo(obj.se(1).st1_o);
-            obj.se(1).st1_o.p = obj.se(1).st1_i.p;
-            obj.se(1).cp_1 = cp_1;
-            
-            DeltaT1 = 5000 / (cp_1 .* obj.se(1).st1_i.q_m.v * 0.35);
-            DeltaT2 = 5000 / (cp_2 .* obj.st2_i.q_m.v./ obj.n2 * 0.35);
-            
+            obj.st1_i.convergeTo(obj.se(1,1).st1_i, 1 / obj.n1);
             if (strcmp(obj.order, 'Same'))
                 %%%%% Same order %%%%%
-                obj.se(1).st2_i = obj.st2_i_r;
-                obj.se(1).st2_i.flowTo(obj.se(1).st2_o);
-                obj.se(1).st2_o.p = obj.se(1).st2_i.p;
-                obj.se(1).cp_2 = cp_2;
-                for i = 2 : obj.n1
-                    obj.se(i).cp_1 = cp_1;
-                    obj.se(i).cp_2 = cp_2;
-                    obj.se(i).st1_i = obj.se(i-1).st1_o;
-                    obj.se(i).st2_i = obj.se(i-1).st2_o;
-                    obj.se(i).st1_i.flowTo(obj.se(i).st1_o);
-                    obj.se(i).st1_o.p = obj.se(i).st1_i.p;
-                    obj.se(i).st2_i.flowTo(obj.se(i).st2_o);
-                    obj.se(i).st2_o.p = obj.se(i).st2_i.p;
-                end
+                obj.st2_i.convergeTo(obj.se(1,1).st2_i, 1 / obj.n1);
+                obj.se(1,1).get_o;
                 
-                for j = 1 : obj.n1
-                    guess(j,1) = obj.se(1).st1_i.T.v - 30 * j;
-%                     guess(j,1) = obj.se(1).st1_i.T.v - DeltaT1 * j;  %38
-                    guess(j,2) = obj.se(1).st2_i.T.v + 6 * j;
-%                     guess(j,2) = obj.se(1).st2_i.T.v + DeltaT2 * j;
-                end
+                % Calculate each engine in first row
+                for i = 2 : obj.n2
+                    obj.se(1, i).st1_i = obj.se(1, i-1).st1_o;
+                    obj.se(1, i).st2_i = obj.se(1, i-1).st2_o;
+                    obj.se(1, i).get_o;
+                end        
             elseif (strcmp(obj.order,'Reverse'))
-                %%%%% Inverse order %%%%%
-                obj.se(1).cp_2 = cp_2;
-                for i = 2 : obj.n1
-                    %                     obj.se(i) = StirlingEngine;
-                    obj.se(i).cp_1 = cp_1;
-                    obj.se(i).cp_2 = cp_2;
-                end
-                obj.se(obj.n1).st2_i = obj.st2_i_r;
-                obj.se(obj.n1).st2_i.flowTo(obj.se(obj.n1).st2_o);
-                obj.se(obj.n1).st2_o.p = obj.se(obj.n1).st2_i.p;
-                
-                for i = 1 : obj.n1-1
-                    obj.se(i+1).st1_i = obj.se(i).st1_o;
-                    obj.se(obj.n1-i).st2_i = obj.se(obj.n1+1-i).st2_o;
-                    
-                    obj.se(i+1).st1_i.flowTo(obj.se(i+1).st1_o);
-                    obj.se(i+1).st1_o.p = obj.se(i+1).st1_i.p;
-                    obj.se(obj.n1-i).st2_i.flowTo(obj.se(obj.n1-i).st2_o);
-                    obj.se(obj.n1-i).st2_o.p = obj.se(obj.n1-i).st2_i.p;
-                end
-                
-                for j = 1 : obj.n1
-                    guess(j,1) = obj.se(1).st1_i.T.v - 50 * j;  %38
-%                     guess(j,1) = obj.se(1).st1_i.T.v - 4000 * j / ...
-%                         (obj.se(1).cp_1 .* obj.se(1).st1_i.q_m.v ...
-%                         * 0.35);  %38
-                    guess(j,2) = obj.se(obj.n1).st2_i.T.v + 5 * (obj.n1 + 1 - j);
-%                     guess(j,2) = obj.se(obj.n1).st2_i.T.v + 4000 * (obj.n1 + 1 - j) / ...
-%                         (obj.se(1).cp_2 .* obj.se(obj.n1).st2_i.q_m.v ...
-%                         * 0.35);
-                end
+                %%%%% Reverse order %%%%%
+                T0 = obj.st2_i.T.v;
+                obj.st2_i.convergeTo(obj.se(1,1).st2_o, 1 / obj.n1);
+                guess = T0 + obj.n2 * 9300 / (obj.st2_i.cp * ...
+                    obj.se(1,1).st2_o.q_m.v);
+                options = optimset('Algorithm','levenberg-marquardt','Display','iter');
+                fsolve(@(x)CalcReverse(x, obj, T0), guess, options);
             else
                 error('Uncomplished work.');
             end
+            
+            % Copy the attributes of engines in the first row to the engines in
+            % other rows
+            for i = 2 : obj.n1
+                for j = 1 : obj.n2
+                    obj.se(1, j).st1_i.convergeTo(obj.se(i, j).st1_i,1);
+                    obj.se(1, j).st1_o.convergeTo(obj.se(i, j).st1_o,1);
+                    obj.se(1, j).st2_i.convergeTo(obj.se(i, j).st2_i,1);
+                    obj.se(1, j).st2_o.convergeTo(obj.se(i, j).st2_o,1);
+                end
+            end
+
+            % get the properties of st1_o and st2_o
+            obj.se(1,obj.n2).st1_o.convergeTo(obj.st1_o, obj.n1);
+            obj.se(1,obj.n2).st2_o.convergeTo(obj.st2_o, obj.n1);
+            
+            % get eta and P of sea
+            obj.P = 0;
+            for i = 1 : obj.n2
+                obj.P = obj.P + obj.se(1,i).P;
+            end
+            obj.P = obj.n1 * obj.P;
+            obj.eta = obj.P ./ (obj.st1_i.q_m.v .* (obj.st1_i.h - ...
+                obj.st1_o.h));
+        end
                         
-            options = optimset('Algorithm','levenberg-marquardt','Display','iter');
-            [x] = fsolve(@(x)CalcSEA(x, obj), guess, options);
-            
-            obj.st1_o.T = obj.se(obj.n1).st1_o.T;
-            obj.st1_o.p = obj.se(obj.n1).st1_o.p;
-            
-            if (strcmp(obj.order, 'Same'))
-                obj.st2_o.T = obj.se(obj.n1).st2_o.T;
-                obj.st2_o.p = obj.se(obj.n1).st2_o.p;
-            elseif (strcmp(obj.order,'Reverse'))
-                obj.st2_o.T = obj.se(1).st2_o.T;
-                obj.st2_o.p = obj.se(1).st2_o.p;
-            else
-                error('Uncomplished work.');
-            end
-            
-            P1 = zeros(obj.n1,1);
-            
-            for i = 1 : obj.n1
-                obj.se(i).st1_o.T.v = x(i, 1);
-                obj.se(i).st2_o.T.v = x(i, 2);
-                obj.se(i).P = obj.se(i).P1();
-                obj.se(i).eta = obj.se(i).P ./ (obj.se(i).st1_i.q_m.v .* ...
-                    (obj.se(i).st1_i.h - obj.se(i).st1_o.h));
-                P1(i) = obj.se(i).P2();
-            end
-            obj.eta = sum(P1) ./ (obj.st1_i_r.q_m.v * ...
-                (obj.se(1).st1_i.h - obj.se(obj.n1).st1_o.h));
-            obj.st2_o.q_m = obj.st2_i.q_m;
-            obj.P = sum(P1) .* obj.n_se ./ obj.n1;
-            obj.st1_o.q_m = obj.st1_i.q_m;
-            obj.st2_o.q_m = obj.st2_i.q_m;
-        end
-        function F = CalcSEA(x, sea)
-            %CalcSEA Use expressions to calculate Temperatures of Stirling Engine Array
-            %   First expression expresses eta of each Stirling engine in two ways
-            %   Second expression expresses P of each Stirling engine in two ways
-            %     x = zeros(sea.n1,2);
-            for i = 1 : sea.n1
-                sea.se(i).st1_o.T.v = x(i, 1);
-                sea.se(i).st2_o.T.v = x(i, 2);
-            end
 
-            F = zeros(sea.n1,2);
-            for j = 1 : sea.n1
-                F(j,1) = 1 - sea.se(j).eta1() ./ sea.se(j).eta2();
-                F(j,2) = 1 - sea.se(j).P1() ./ sea.se(j).P2();
-            end
-        end
-    end
-    methods
-        function value = get.n2(obj)
-            value = obj.n_se / obj.n1;
-        end
-        function value = get.st1_i_r(obj)
-            value = Stream;
-            obj.st1_i.convergeTo(value, obj.n1/obj.n_se);
-        end
-        function value = get.st2_i_r(obj)
-            value = Stream;
-            obj.st2_i.convergeTo(value, obj.n1/obj.n_se);
-        end
-    end
+        function F = CalcReverse(x, sea, T0)
+            %CalcReverse Use expressions to calculate Stirling Engine Array
+            % with 'Reverse' connection
+            sea.se(1,1).st2_o.T.v = x;
+            sea.se(1,1).get_i;
     
+            % Calculate each engine in first row
+            for i = 2 : sea.n2
+                sea.se(1, i).st1_i = sea.se(1, i-1).st1_o;
+                sea.se(1, i).st2_o = sea.se(1, i-1).st2_i;
+                sea.se(1, i).get_i;
+            end
+    
+            F = sea.se(1, numel(sea(1,:))).st2_i.T.v - T0;
+        end
+    end    
 end
-

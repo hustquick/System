@@ -33,8 +33,8 @@ classdef AirTroughCollector < handle
     end
     
     methods
-        function obj = AirTroughCollector
-            obj.amb = Ambient;
+        function obj = AirTroughCollector(amb)
+            obj.amb = amb;
             obj.st_i = Stream;
             obj.st_o = Stream;
         end
