@@ -9,7 +9,7 @@ used = zeros(1,number);
 for k = 1:number
 cs = CascadeSystem;
 %% Connection and State points
-cs.sea = SEA(3, 'Reverse');
+cs.sea = SEA(1, 3, 'Reverse');
 cs.sea.st1_i = cs.dca.st_o;
 cs.dca.st_i = cs.sea.st1_o;
 

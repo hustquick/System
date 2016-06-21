@@ -9,7 +9,7 @@ used = zeros(1,number);
 for k = 1:number
 cs = CascadeSystem;
 %% Connection and State points
-cs.sea = SEA(10, 'Same');
+cs.sea = SEA(3, 30, 'Same');
 cs.sea.st1_i = cs.dca.st_o;
 cs.dca.st_i = cs.sea.st1_o;
 
@@ -76,58 +76,18 @@ cs.da.p.v = 1e6;
 cs.DeltaT_3_2 = 15;          % Minimun temperature difference between oil
 %and water
 
-cs.sea.n_se = 3 * cs.dca.n;
+cs.sea.n2 = cs.dca.n;
 
 %% Work
 cs.dca.dc.get_q_m();
 cs.dca.work();
 cs.da.getP();
-% 
-% cs.tb.work(cs.ge);
-% 
-% cs.cd.work();
-% 
-% cs.pu1.p = cs.da.p;
-% cs.pu1.work();
-% 
-% cs.da.st_i_2.p = cs.da.p;
 
-%% Calculate the system
-guess = zeros(2, cs.sea.n1+1);
 
-if (strcmp(cs.sea.order, 'Same'))
-    for j = 1 : cs.sea.n1
-        guess(j,1) = cs.sea.st1_i.T.v - 50 * j;
-        guess(j,2) = 320 + 3.2 / 10 * j;
-    end
-elseif (strcmp(cs.sea.order, 'Reverse'))
-    for j = 1 : cs.sea.n1
-        guess(j,1) = cs.sea.st1_i.T.v - 50 * j;
-        guess(j,2) = 320 + ...
-            3.2 / 10 * (cs.sea.n1 + 1 - j);
-    end
-end
-guess(cs.sea.n1+1, 1) = 7.3;
-% guess(cs.sea.n1+1, 2) = cs.dca.st_i.q_m.v;
-guess(cs.sea.n1+1, 2) = 4;
-
+% Guess the value of cs.tb.st_i.q_m.v
+guess = 7.3; % This initial value can be obtained by the power of turbine
 options = optimset('Algorithm','levenberg-marquardt','Display','iter');
-[x] = fsolve(@(x)CalcSystem2(x, cs), guess, options);
-
-cs.sea.se(cs.sea.n1).st1_o.convergeTo(cs.sea.st1_o, cs.sea.n2);
-
-P1 = zeros(cs.sea.n1,1);
-
-for i = 1 : cs.sea.n1
-    cs.sea.se(i).P = cs.sea.se(i).P1();
-    cs.sea.se(i).eta = cs.sea.se(i).P ./ (cs.sea.se(i).st1_i.q_m.v .* ...
-        (cs.sea.se(i).st1_i.h - cs.sea.se(i).st1_o.h));
-    P1(i) = cs.sea.se(i).P2();
-end
-cs.sea.eta = sum(P1) ./ (cs.sea.st1_i_r.q_m.v * ...
-    (cs.sea.se(1).st1_i.h - cs.sea.se(cs.sea.n1).st1_o.h));
-cs.sea.st2_o.q_m = cs.sea.st2_i.q_m;
-cs.sea.P = sum(P1) .* cs.sea.n2;
+fsolve(@(x)Calc_SEA_da(x, cs), guess, options);
 
 cs.pu2.p = cs.tb.st_i.p;
 cs.pu2.work;
@@ -255,7 +215,7 @@ T_R = Const.LogMean(T_H, T_L);
 e = (T_R - T_L) ./ (T_H - T_L);
 eta_ss_se = (T_H - T_L) ./ (T_H + (1 - e) .* (T_H - T_L) ...
                 ./ (ss.se.k -1) ./ log(ss.se.gamma));
-ss.se.P = ss.dca.dc.q_tot .* ss.dca.eta .* ss.dca.n .* eta_ss_se;
+P_ss_se = ss.dca.dc.q_tot .* ss.dca.eta .* ss.dca.n .* eta_ss_se;
 
 ss.st2(7).T.v = cs.st2(8).T.v;
 ss.st2(7).p = cs.st2(8).p;
@@ -296,7 +256,7 @@ eta_ss_rankine = P_ss_rankine ./ Q_ss_rankine;
 
 Q_ss = ss.dca.dc.q_tot .* ss.dca.n + cs.tca.st_o.q_m.v .* ...
     (cs.tca.st_o.h - cs.tca.st_i.h) ./ cs.tca.eta;
-P_ss = ss.ge.P + ss.se.P - ss.pu1.P - ss.pu2.P;
+P_ss = ss.ge.P + P_ss_se - ss.pu1.P - ss.pu2.P;
 eta_ss = P_ss ./ Q_ss;
 %% Comparison
 eta_diff(k) = (eta_cs - eta_ss) ./ eta_ss;

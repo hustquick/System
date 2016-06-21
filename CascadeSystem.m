@@ -49,7 +49,7 @@ classdef CascadeSystem
             obj.cd = Condenser;
             obj.pu1 = Pump;
             obj.pu2 = Pump;
-            obj.sea = SEA(0,'');
+            obj.sea = SEA(1,1,'');
             obj.da = Deaerator;
             obj.ph = Preheater;
             obj.oph = Preheater;
