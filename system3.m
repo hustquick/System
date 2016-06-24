@@ -6,7 +6,7 @@ eta_cs_r = zeros(1,number);
 eta_sea = zeros(1,number);
 ratio = zeros(1,number);
 used = zeros(1,number);
-for k = 1:number
+for k = 1 : number
 cs = CascadeSystem;
 %% Connection and State points
 cs.sea = SEA(1, 3, 'Reverse');
@@ -66,7 +66,7 @@ cs.st5(9) = cs.osh.st1_i;
 
 
 cs.dca.n = 1;
-cs.sea.n_se = 3 * cs.dca.n;
+cs.sea.n2 = 3 * cs.dca.n;
 cs.dca.dc.amb.I_r = 330 + k * 70;
 cs.dca.dc.st_i.fluid = char(Const.Fluid(1));
 cs.dca.dc.st_i.T.v = convtemp(500, 'C', 'K');   % Design parameter
@@ -121,43 +121,7 @@ cs.pu2.p = cs.otb2.st_i.p;
 cs.pu2.work();
 
 %% Calculate the Stirling engine array
-guess = zeros(2, cs.sea.n1+1);
-
-if (strcmp(cs.sea.order, 'Same'))
-    for j = 1 : cs.sea.n1
-        guess(j,1) = cs.sea.st1_i.T.v - 27 * j;
-        guess(j,2) = cs.sea.st2_i.T.v + 24 / 10 * j;
-    end
-elseif (strcmp(cs.sea.order, 'Reverse'))
-    for j = 1 : cs.sea.n1
-        guess(j,1) = cs.sea.st1_i.T.v - 27 * j;
-        guess(j,2) = cs.sea.st2_i.T.v + ...
-            24 / 10 * (cs.sea.n1 + 1 - j);
-    end
-end
-% guess(cs.sea.n1+1, 1) = 5;
-% guess(cs.sea.n1+1, 2) = cs.dca.st_i.q_m.v;
-
-options = optimset('Algorithm','levenberg-marquardt','Display','iter');
-[x] = fsolve(@(x)CalcSystem3(x, cs), guess, options);
-
-cs.sea.st1_o.T = cs.sea.se(cs.sea.n1).st1_o.T;
-cs.sea.st1_o.p = cs.sea.se(cs.sea.n1).st1_o.p;
-
-P1 = zeros(cs.sea.n1,1);
-
-for i = 1 : cs.sea.n1
-    cs.sea.se(i).P = cs.sea.se(i).P1();
-    cs.sea.se(i).eta = cs.sea.se(i).P ./ (cs.sea.se(i).st1_i.q_m.v .* ...
-        (cs.sea.se(i).st1_i.h - cs.sea.se(i).st1_o.h));
-    P1(i) = cs.sea.se(i).P2();
-end
-cs.sea.eta = sum(P1) ./ (cs.sea.st1_i_r.q_m.v * ...
-    (cs.sea.se(1).st1_i.h - cs.sea.se(cs.sea.n1).st1_o.h));
-cs.sea.st2_o.q_m = cs.sea.st2_i.q_m;
-cs.sea.P = sum(P1) .* cs.sea.n2;
-cs.sea.st1_o.q_m = cs.sea.st1_i.q_m;
-cs.sea.st2_o.q_m = cs.sea.st2_i.q_m;
+cs.sea.calculate();
 
 cs.he.st1_o.T.v = cs.he.st2_i.T.v + cs.he.DeltaT;
 
@@ -321,7 +285,7 @@ T_R = Const.LogMean(T_H, T_L);
 e = (T_R - T_L) ./ (T_H - T_L);
 eta_ss_se = (T_H - T_L) ./ (T_H + (1 - e) .* (T_H - T_L) ...
                 ./ (ss.se.k -1) ./ log(ss.se.gamma));
-ss.se.P = cs.sea.st1_i.q_m.v * ...
+P_ss_se = cs.sea.st1_i.q_m.v * ...
     (cs.sea.st1_i.h - cs.sea.st1_o.h) .* eta_ss_se;
 
 % ss.st4(6).T.v = cs.st4(6).T.v;
@@ -368,7 +332,7 @@ eta_ss_rankine = P_ss_rankine ./ Q_ss_rankine;
 
 Q_ss = ss.dca.dc.q_tot .* ss.dca.n + cs.tca.st_o.q_m.v .* ...
     (cs.tca.st_o.h - cs.tca.st_i.h) ./ cs.tca.eta;
-P_ss = ss.ge.P + ss.se.P - ss.pu1.P;
+P_ss = ss.ge.P + P_ss_se - ss.pu1.P;
 eta_ss = P_ss ./ Q_ss;
 %% Comparison
 eta_diff(k) = (eta_cs - eta_ss) ./ eta_ss;

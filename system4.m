@@ -16,7 +16,7 @@ hs.ev.st2_i = hs.sh.st2_o;
 hs.ph.st2_i = hs.ev.st2_o;
 hs.tca.st_i = hs.ph.st2_o;
 hs.dca.st_i = hs.tca.st_o;
-hs.sec.st2_i = hs.st2;      % Cooling water stream for each Stirling engine
+hs.sec.st2 = hs.st2;      % Cooling water stream for each Stirling engine
 
 hs.st1(1) = hs.sec.st1_i;
 hs.st1(2) = hs.sh.st2_i;
@@ -171,7 +171,7 @@ for i = 1 : hs.sec.n_se
 end
 
 %% Rankine cycle efficiency and overall efficiency
-Q_rankine = hs.sec.st2_i.q_m.v .* (hs.sec.st2_o.h -  hs.sec.st2_i.h) ...
+Q_rankine = hs.sec.st1_i.q_m.v .* (hs.sec.st1_i.h -  hs.sec.st1_o.h) - hs.sec.P ...
     + hs.sh.st1_o.q_m.v .* (hs.sh.st1_o.h - hs.ph.st1_i.h) + ...
     hs.he.st2_o.q_m.v .* (hs.he.st2_o.h - hs.he.st2_i.h);
 P_rankine = (hs.ge.P - hs.pu.P) ./ hs.ge.eta;
@@ -247,7 +247,7 @@ T_R = Const.LogMean(T_H, T_L);
 e = (T_R - T_L) ./ (T_H - T_L);
 eta_ss_se = (T_H - T_L) ./ (T_H + (1 - e) .* (T_H - T_L) ...
                 ./ (ss.se.k -1) ./ log(ss.se.gamma));
-ss.se.P = hs.sec.st1_i.q_m.v * ...
+P_ss_se = hs.sec.st1_i.q_m.v * ...
     (hs.sec.st1_i.h - hs.sec.st1_o.h) .* eta_ss_se;
 
 % ss.st4(6).T.v = hs.st4(6).T.v;
@@ -294,7 +294,7 @@ eta_ss_rankine = P_ss_rankine ./ Q_ss_rankine;
 
 Q_ss = ss.dca.dc.q_tot .* ss.dca.n + hs.tca.st_o.q_m.v .* ...
     (hs.tca.st_o.h - hs.tca.st_i.h) ./ hs.tca.eta;
-P_ss = ss.ge.P + ss.se.P - ss.pu1.P;
+P_ss = ss.ge.P + P_ss_se - ss.pu1.P;
 eta_ss = P_ss ./ Q_ss;
 %% Comparison
 eta_diff(k) = (eta_hs - eta_ss) ./ eta_ss;

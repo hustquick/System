@@ -33,7 +33,7 @@ classdef HeatSystem
             obj.he = HeatExchanger;
             obj.cd = Condenser;
             obj.pu = Pump;
-            obj.sec = SEC(0, '');
+            obj.sec = SEC(1, '');
             obj.ph = Preheater;
             obj.ev = Evaporator;
             obj.sh = Superheater;

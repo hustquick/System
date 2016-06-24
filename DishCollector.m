@@ -1,9 +1,9 @@
-classdef DishCollector
+classdef DishCollector < handle
     %DishCollector is a kind of Collector which uses dish mirror as the reflector
     %and uses volumetric receiver
     
     properties(Constant)
-        A = 87.7;         % Aperture area of the collector, m^2
+        
         gamma = 0.97;       % Intercept factor of the collector
         rho = 0.91;         % Reflectance of the collector
         shading = 0.95;     % Shading factor of the collector
@@ -13,6 +13,8 @@ classdef DishCollector
         theta = degtorad(45);% Dish aperture angle(0 is horizontal, 90 is vertically down), rad
     end
     properties
+        A = 87.7;         % Aperture area of the collector, m^2
+%         A;
         amb;        % Ambient
         %         airPipe.T;        % Temperature of the fluid pipe, K
         %         insLayer.T;      % Outside temperature of the insulating layer, K
@@ -214,6 +216,38 @@ classdef DishCollector
             dc.airPipe.T.v = x(1);
             dc.insLayer.T.v = x(2);
             dc.st_o.T.v = x(3);
+%             F = cell(3,1);
+%             F{1} = dc.q_dr_1_1 - dc.q_dr_1_2;
+%             F{2} = dc.q_cond_tot - dc.q_cond_conv - dc.q_cond_rad;
+%             F{3} = dc.q_dr_1_1 + dc.q_ref + (dc.q_cond_tot ...
+%                 + dc.q_conv_tot + dc.q_rad_emit) - dc.q_in;
+            F = [dc.q_dr_1_1 - dc.q_dr_1_2;
+                dc.q_cond_tot - dc.q_cond_conv - ...
+                dc.q_cond_rad;
+                dc.q_dr_1_1 + dc.q_ref + (dc.q_cond_tot ...
+                + dc.q_conv_tot + dc.q_rad_emit) - dc.q_in];
+        end
+        function get_A(obj)
+            %Known inlet temperature and flow rate to calculate outlet
+            %temperature
+            obj.st_i.flowTo(obj.st_o);
+            obj.st_o.p = obj.st_i.p;
+            guess = [1500; 400; 19] ;
+            options = optimset('Display','iter');
+            x = fsolve(@(x)CalcDishCollector3(x, obj), ...
+                guess, options);
+            obj.A = x(3);
+        end
+        function F = CalcDishCollector3(x, dc)
+            %CalcDishCollector Use expressions to calculation parameters of dish
+            %collector
+            %   First expression expresses q_dr_1 in two different forms
+            %   Second expression expresses q_cond_tot = q_cond_conv + q_cond_rad
+            %   Third expression expresses q_in = q_ref + q_dr_1 + q_cond_tot +
+            %   q_conv_tot + q_rad_emit
+            dc.airPipe.T.v = x(1);
+            dc.insLayer.T.v = x(2);
+            dc.A = x(3);
 %             F = cell(3,1);
 %             F{1} = dc.q_dr_1_1 - dc.q_dr_1_2;
 %             F{2} = dc.q_cond_tot - dc.q_cond_conv - dc.q_cond_rad;
