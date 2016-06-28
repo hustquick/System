@@ -40,6 +40,31 @@ classdef Const
             %AND APPLICATIONS".
             Nu = 0.3 + 0.62 * Re .^ (1/2) .* Pr .^ (1/3) / (1 + (0.4 / Pr) .^ (2/3)) .^ (1/4) ...
                 .* (1 + (Re / 282000) .^ (5/8)) .^ (4/5);
-        end        
+        end  
+        function Nu = NuOfExternalCylinder2(Re, Pr_1, Pr_2)
+            if (0.7 < Pr_1) && (Pr_1 < 500) && (1 < Re) && (Re < 10^6)
+                if (Pr_1 > 10)
+                    n = 0.36;
+                else
+                    n = 0.37;
+                end
+                if (Re < 40)
+                    C = 0.75;
+                    m = 0.4;
+                elseif (Re < 1000)
+                    C = 0.51;
+                    m = 0.5;
+                elseif (Re < 20000)
+                    C = 0.26;
+                    m = 0.6;
+                else
+                    C = 0.076;
+                    m = 0.7;
+                end
+            else
+                error('Unproper Re number or Pr number');
+            end
+            Nu = C * Re^m * Pr_1^n * (Pr_1/Pr_2)^0.25;
+        end
     end
 end

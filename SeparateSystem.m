@@ -21,6 +21,9 @@ classdef SeparateSystem
         sh = Superheater;
         DeltaT_3_2;
         DeltaT_3_4;
+        P;
+        Q;
+        eta;
     end
     
     methods

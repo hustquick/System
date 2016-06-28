@@ -29,6 +29,9 @@ classdef CascadeSystem
         he;
         DeltaT_3_2;
         DeltaT_3_4;
+        Q;
+        P;
+        eta;
     end
     
     methods
