@@ -67,11 +67,11 @@ classdef Turbine < handle
 %                 flag = 1;
             end
         end
-        function value = get_q_m(obj)
-            P = obj.P;
-            delta_H = obj.st_i.q_m.v .* obj.st_i.h - obj.st_o_1.q_m.v .* ...
-                obj.st_o_1.h - obj.st_o_2.q_m.v .* obj.st_o_2.h;
-            value = P / delta_H;
+        function value = get_q_m(obj, ge)
+            P = ge.P ./ ge.eta;
+            delta_h = obj.st_i.h - obj.y .* ...
+                obj.st_o_1.h - (1 - obj.y) .* obj.st_o_2.h;
+            value = P / delta_h;
         end
        
         function value = get.eta_i(obj)

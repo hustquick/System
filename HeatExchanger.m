@@ -122,6 +122,10 @@ classdef HeatExchanger < handle
                     'Q', obj.st1_o.x, obj.st1_o.fluid);
             end
         end
+        function get_q_m_2(obj)
+            obj.st2_i.q_m.v = obj.st1_i.q_m.v .* (obj.st1_o.h - ...
+                obj.st1_i.h) ./ (obj.st2_i.h - obj.st2_o.h);
+        end
     end    
 end
 

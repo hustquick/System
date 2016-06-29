@@ -1,4 +1,4 @@
-classdef TCA
+classdef TCA < handle
     %TCA This class defines the trough collector array
     
     properties
