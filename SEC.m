@@ -10,7 +10,7 @@ classdef SEC < handle
         se = StirlingEngine;         % Stirling engine array
         st1_i;      % Inlet stream of hot fluid to the Stirling engine array
         st1_o;      % Outlet stream of hot fluid to the Stirling engine array
-        st2;       % Inlet stream of cooling fluid to the Stirling engine array
+        st2_i;       % Inlet stream of cooling fluid to the Stirling engine array
         connection;      % Flow order of the heating flow and cooling flow to the
         % Stirling engines, 'Same' means the two flows have the same
         % order, 'Reverse' means the two flows have reverse
@@ -33,32 +33,35 @@ classdef SEC < handle
             end
             obj.st1_i = Stream;
             obj.st1_o = Stream;
-            obj.st2 = Stream;
+            obj.st2_i = Stream;
             obj.connection = connection;
             
-            obj.st2.fluid = char(Const.Fluid(2));
-            obj.st2.T.v = 293.15;
-            obj.st2.p.v = 1.01325e5;
-            obj.st2.q_m.v = 0.67;
+%             obj.st2_i.fluid = char(Const.Fluid(2));
+%             obj.st2_i.T.v = 293.15;
+%             obj.st2_i.p.v = 1.01325e5;
+%             obj.st2_i.q_m.v = 0.67;
         end
     end
     methods
-        function calculate(obj)                        
+        function calculate(obj)
+            for i = 1 : obj.n_se
+                obj.st2_i.convergeTo(obj.se(i).st2_i, 1 / obj.n_se);
+            end
             if (strcmp(obj.connection, 'Series'))
                 %%%%% Series connection %%%%%
                 obj.se(1).st1_i = obj.st1_i;
-                obj.se(1).st2_i = obj.st2;
+%                 obj.se(1).st2_i = obj.st2_i;
                 obj.se(1).get_o;
                 for i = 2 : obj.n_se
                     obj.se(i).st1_i = obj.se(i-1).st1_o;
-                    obj.se(i).st2_i = obj.st2;
+%                     obj.se(i).st2_i = obj.st2_i;
                     obj.se(i).get_o;
                 end
                 obj.st1_o = obj.se(obj.n_se).st1_o;
             elseif (strcmp(obj.connection,'Parallel'))
                 %%%%% Parallel connection %%%%%                
                 obj.st1_i.convergeTo(obj.se(1).st1_i, 1 / obj.n_se);
-                obj.se(1).st2_i = obj.st2;
+%                 obj.se(1).st2_i = obj.st2_i;
                 obj.se(1).get_o;
                 
                 for i = 2 : obj.n_se

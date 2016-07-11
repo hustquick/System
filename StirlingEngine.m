@@ -3,7 +3,7 @@ classdef StirlingEngine < handle
     
     properties
         U_1 = 30;   % Overall heat transfer coefficient of Stirling engine at air side, W/m^2-K
-        U_2 = 150;  % Overall heat transfer coefficient of Stirling engine at water side, W/m^2-K
+        U_2 = 30;  % Overall heat transfer coefficient of Stirling engine at water side, W/m^2-K
         A_1 = 6;    % Heat transfer area of Stirling engine at air side, m^2
         A_2 = 6;    % Heat transfer area of Stirling engine at water side, m^2
         k = 1.4;    % Specific heat ratio of the working gas in Stirling engine, for H2
@@ -46,14 +46,14 @@ classdef StirlingEngine < handle
             e = (obj.T_R() - obj.T_L()) ...
                 ./ (obj.T_H() - obj.T_L());
         end
-        function eta = eta1(obj)
+        function eta = get.eta(obj)
             % Efficiency of the Stirling engine using formula
             e = obj.e();
             eta = (obj.T_H - obj.T_L) ./ (obj.T_H + ...
                 (1 - e) .* (obj.T_H - obj.T_L) ...
                 ./ (obj.k -1) ./ log(obj.gamma));
         end
-        function eta = get.eta(obj)
+        function eta = eta1(obj)
             % Efficiency of the Stirling engine using definition
             Q_1 = obj.st1_i.q_m.v .* (obj.st1_i.h - obj.st1_o.h);
             Q_2 = obj.st2_i.q_m.v .* (obj.st2_o.h - obj.st2_i.h);

@@ -17,6 +17,7 @@ classdef Pump < handle
         function obj = Pump
             obj.st_i = Stream;
             obj.st_o = Stream;
+            obj.p = Pressure;
         end
     end
     methods

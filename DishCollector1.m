@@ -1,4 +1,4 @@
-classdef DishCollector < Collector
+classdef DishCollector1 < Collector
     %DishCollector is a kind of Collector which uses dish mirror as the reflector
     %and uses volumetric receiver
     

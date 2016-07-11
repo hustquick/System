@@ -58,9 +58,11 @@ classdef SEA < handle
             elseif (strcmp(obj.order,'Reverse'))
                 %%%%% Reverse order %%%%%
                 T0 = obj.st2_i.T.v;
-                obj.st2_i.convergeTo(obj.se(1,1).st2_o, 1 / obj.n1);
+                obj.st2_i.convergeTo(obj.se(1,obj.n2).st2_i, 1 / obj.n1);
+                obj.se(1,obj.n2).st2_i.flowTo(obj.se(1,1).st2_o);
+                obj.se(1,1).st2_o.p = obj.st2_i.p;
                 guess = T0 + obj.n2 * 9300 / (obj.st2_i.cp * ...
-                    obj.se(1,1).st2_o.q_m.v);
+                    obj.se(1,obj.n2).st2_i.q_m.v);
                 options = optimset('Algorithm','levenberg-marquardt','Display','iter');
                 fsolve(@(x)CalcReverse(x, obj, T0), guess, options);
             else
@@ -80,7 +82,15 @@ classdef SEA < handle
 
             % get the properties of st1_o and st2_o
             obj.se(1,obj.n2).st1_o.convergeTo(obj.st1_o, obj.n1);
-            obj.se(1,obj.n2).st2_o.convergeTo(obj.st2_o, obj.n1);
+            if (strcmp(obj.order, 'Same'))                
+                obj.se(1,obj.n2).st2_o.convergeTo(obj.st2_o, obj.n1);
+            elseif (strcmp(obj.order,'Reverse'))
+                obj.se(1,obj.n2).st2_i.convergeTo(obj.st2_i, obj.n1);
+                obj.se(1,1).st2_o.convergeTo(obj.st2_o, obj.n1);
+            else
+                error('Uncomplished work.');
+            end
+                
             
             % get eta and P of sea
             obj.P = 0;
@@ -106,7 +116,7 @@ classdef SEA < handle
                 sea.se(1, i).get_i;
             end
     
-            F = sea.se(1, numel(sea(1,:))).st2_i.T.v - T0;
+            F = sea.se(1, numel(sea.se(1,:))).st2_i.T.v - T0;
         end
     end    
 end

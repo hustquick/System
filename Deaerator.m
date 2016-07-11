@@ -11,6 +11,7 @@ classdef Deaerator < handle
     
     methods
         function obj = Deaerator
+           obj.p = Pressure;
            obj.st_i_1 = Stream;
            obj.st_i_2 = Stream;
            obj.st_o = Stream;           
