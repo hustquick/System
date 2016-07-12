@@ -15,7 +15,7 @@ classdef ATCA < handle
             obj.st_i = Stream;
             obj.st_o = Stream;
             tc1 = AirTroughCollector;  % A long trough collector composed by ..
-                                    % a row of trough collectors
+                                        % a row of trough collectors
             obj.tc = tc1;
         end
     end
@@ -67,7 +67,7 @@ classdef ATCA < handle
             p = (obj.st_i.p.v + obj.st_o.p.v) / 2;
             density = CoolProp.PropsSI('D', 'T', T, 'P', p, fluid);
             q_m_basic = obj.tc.q_use ./ (obj.st_o.h - obj.st_i.h);  
-            value = 4 * q_m_basic / (density * pi * obj.tc.d_i^2);
+            value = 4 * q_m_basic / (density * pi * obj.tc.d_a_i^2);
         end
     end
 end

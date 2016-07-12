@@ -25,9 +25,9 @@ classdef TroughCollector < handle
         v;          % Actual oil speed in the pipe
     end
     properties(Dependent)
-        q_use;
-        q_tot;
-        eta;
+        q_use;      % Heat used by the air
+        q_tot;      % Total heat provided by the collector
+        eta;        % Thermal efficiency
         v_s;          % Oil speed in the pipe if only one collector 
                       % in a row, m/s
     end
@@ -80,6 +80,8 @@ classdef TroughCollector < handle
                 (U .* para);
         end
         function calculate(obj)
+            % Calculate the number of trough collectors required and the
+            % actual speed in the pipe
             obj.n = 0;
             obj.v = obj.n .* obj.v_s;
             while(obj.v < obj.v_min)

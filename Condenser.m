@@ -15,6 +15,7 @@ classdef Condenser < handle
     end
     methods
         function work(obj)
+            % get the outlet properties by given inlet properites
             obj.st_i.flowTo(obj.st_o);
             obj.st_o.p = obj.st_i.p;
             obj.st_o.T.v = CoolProp.PropsSI('T', 'P', obj.st_o.p.v, 'Q', ...

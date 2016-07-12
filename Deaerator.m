@@ -20,6 +20,7 @@ classdef Deaerator < handle
     end
     methods
         function work(obj, tb)
+            % get the outlet properties by turbine and inlet properties
             obj.st_o.fluid = obj.st_i_1.fluid;
             obj.st_o.T.v = CoolProp.PropsSI('T', 'Q', obj.st_o.x, ...
                 'P', obj.st_o.p.v, obj.st_o.fluid);

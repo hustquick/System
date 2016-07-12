@@ -16,6 +16,8 @@ classdef DCA < handle
             obj.dc = DishCollector;
         end
         function work(obj)
+            % get the inlet and outlet properties, and efficiency of the
+            % dish collector array
             obj.dc.st_i.convergeTo(obj.st_i, obj.n);
             obj.dc.st_o.convergeTo(obj.st_o, obj.n);
             obj.eta = obj.dc.eta;

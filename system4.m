@@ -1,4 +1,5 @@
 clear;
+% This system is the cascade system for demenstration.
 %% Get results matrix
 number = 1;
 eta_diff = zeros(1,number);
@@ -16,7 +17,7 @@ hs.ev.st2_i = hs.sh.st2_o;
 hs.ph.st2_i = hs.ev.st2_o;
 hs.tca.st_i = hs.ph.st2_o;
 hs.dca.st_i = hs.tca.st_o;
-hs.sec.st2 = hs.st2;      % Cooling water stream for each Stirling engine
+hs.sec.st2_i = hs.st2;      % Cooling water stream for each Stirling engine
 
 hs.st1(1) = hs.sec.st1_i;
 hs.st1(2) = hs.sh.st2_i;
@@ -78,7 +79,7 @@ hs.otb.st_o.p.v = 0.3605e6;
 
 hs.ge.eta = 0.975;
 
-hs.he.DeltaT = 15;
+DeltaT_1_2 = 15;
 hs.DeltaT_1_4 = 15;          % Minimun temperature difference between air
 %and water
 
@@ -103,7 +104,7 @@ hs.cd.work();
 hs.pu.p = hs.otb.st_i.p;    %% Assume no pressure drop
 hs.pu.work();
 
-hs.he.st1_o.T.v = hs.he.st2_i.T.v + hs.he.DeltaT;
+hs.he.st1_o.T.v = hs.he.st2_i.T.v + DeltaT_1_2;
 % hs.he.get_st2_o();
 h_4_6 = hs.he.st1_i.h + hs.he.st2_i.h - hs.he.st1_o.h;
 hs.he.st2_i.flowTo(hs.he.st2_o);

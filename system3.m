@@ -1,10 +1,11 @@
 clear;
+% This system is the cascade system with two stages of Rankine cycle using
+% different types of organic fluids.
 %% Get results matrix
 number = 1;
 eta_diff = zeros(1,number);
 eta_cs_r = zeros(1,number);
 eta_sea = zeros(1,number);
-ratio = zeros(1,number);
 used = zeros(1,number);
 for k = 1 : number
 cs = CascadeSystem;
@@ -102,7 +103,7 @@ cs.otb2.st_o.p.v = 0.167e6;
 cs.oge1.eta = 0.975;
 cs.oge2.P = 140e3;
 cs.oge2.eta = 0.975;
-cs.he.DeltaT = 15;
+DeltaT_1_2 = 15;
 cs.DeltaT_3_4 = 15;          % Minimun temperature difference between oil
 %and water
 
@@ -123,7 +124,7 @@ cs.pu2.work();
 %% Calculate the Stirling engine array
 cs.sea.calculate();
 
-cs.he.st1_o.T.v = cs.he.st2_i.T.v + cs.he.DeltaT;
+cs.he.st1_o.T.v = cs.he.st2_i.T.v + DeltaT_1_2;
 
 cs.he.get_st2_o();
 cs.oph.calcSt1_o();

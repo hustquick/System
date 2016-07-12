@@ -6,6 +6,8 @@ classdef HeatExchanger < handle
         st1_o;
         st2_i;
         st2_o;
+    end
+    properties(Dependent)        
         DeltaT;     % Minimum temperature difference
     end
     
@@ -20,6 +22,7 @@ classdef HeatExchanger < handle
     
     methods
         function get_st1_i(obj)
+            % Calculate inlet properties of stream 1
             obj.st1_i.fluid = obj.st1_o.fluid;
             obj.st1_i.q_m = obj.st1_o.q_m;
             obj.st1_i.p = obj.st1_o.p;
@@ -39,6 +42,7 @@ classdef HeatExchanger < handle
             end
         end
         function get_st1_o(obj)
+            % Calculate outlet properties of stream 1
             obj.st1_o.fluid = obj.st1_i.fluid;
             obj.st1_o.q_m = obj.st1_i.q_m;
             obj.st1_o.p = obj.st1_i.p;
@@ -57,6 +61,7 @@ classdef HeatExchanger < handle
             end
         end
         function get_st2_i(obj)
+            % Calculate inlet properties of stream 2
             obj.st2_i.fluid = obj.st2_o.fluid;
             obj.st2_i.q_m = obj.st2_o.q_m;
             obj.st2_i.p = obj.st2_o.p;
@@ -75,6 +80,7 @@ classdef HeatExchanger < handle
             end
         end
         function get_imcprs_st2_i(obj)
+            % Calculate inlet properties of stream 2 (incompressible fluid)
             obj.st2_i.fluid = obj.st2_o.fluid;
             obj.st2_i.q_m = obj.st2_o.q_m;
             obj.st2_i.p = obj.st2_o.p;
@@ -86,6 +92,7 @@ classdef HeatExchanger < handle
             end
         end
         function get_st2_o(obj)
+            % Calculate onlet properties of stream 2
             obj.st2_o.fluid = obj.st2_i.fluid;
             obj.st2_o.q_m = obj.st2_i.q_m;
             obj.st2_o.p = obj.st2_i.p;
@@ -104,6 +111,7 @@ classdef HeatExchanger < handle
             end
         end
         function get_imcprs_st2_o(obj)
+            % Calculate outlet properties of stream 2 (imcompressible fluid)
             obj.st2_o.fluid = obj.st2_i.fluid;
             obj.st2_o.q_m = obj.st2_i.q_m;
             obj.st2_o.p = obj.st2_i.p;
@@ -115,6 +123,7 @@ classdef HeatExchanger < handle
             end
         end
         function calcSt1_o(obj)
+            % Calculate outlet properties of stream 1
             obj.st1_i.flowTo(obj.st1_o);
             obj.st1_o.p = obj.st1_i.p;
             if ~isempty(obj.st1_o.x)
@@ -123,9 +132,16 @@ classdef HeatExchanger < handle
             end
         end
         function get_q_m_2(obj)
+            % Calculate mass flow rate of stream 2
             obj.st2_i.q_m.v = obj.st1_i.q_m.v .* (obj.st1_o.h - ...
                 obj.st1_i.h) ./ (obj.st2_i.h - obj.st2_o.h);
         end
-    end    
+    end
+    methods
+        function DeltaT = get.DeltaT(obj)
+            DeltaT(1) = abs(obj.st1_i.T.v - obj.st2_o.T.v);
+            DeltaT(2) = abs(obj.st2_i.T.v - obj.st1_o.T.v);
+        end
+    end
 end
 

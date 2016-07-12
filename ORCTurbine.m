@@ -25,6 +25,7 @@ classdef ORCTurbine < handle
     end
     methods
         function flowInTurbine(obj, st1, st2, p)
+            % get the properties of a stream after it flows in a turbine
             st2.fluid = st1.fluid;
             st2.p = p;
             h2_i = CoolProp.PropsSI('H', 'P', st2.p.v, 'S', st1.s, st2.fluid);
@@ -33,6 +34,7 @@ classdef ORCTurbine < handle
                     h2, st2.fluid);
         end
         function work(obj, ge)
+            % get the mass flow rate of a turbine
             obj.flowInTurbine(obj.st_i, obj.st_o, obj.st_o.p);
             obj.st_i.q_m.v = (ge.P ./ ge.eta) ./ (obj.st_i.h - obj.st_o.h);
             obj.st_o.q_m = obj.st_i.q_m;

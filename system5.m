@@ -1,8 +1,8 @@
 clear;
 % This is the system for patent application
 %% Get results matrix
-number = 16;
-cs = CascadeSystem.empty(0, number);
+number = 2;
+cs = CascadeSystem5.empty(0, number);
 ss = SeparateSystem.empty(0, number);
 eta_diff = zeros(1,number);
 ratio = zeros(1,number);
@@ -11,7 +11,7 @@ P2 = zeros(1, number);
 DeltaA = zeros(1, number);
 
 for k = 1:number
-cs(k) = CascadeSystem;
+cs(k) = CascadeSystem5;
 %% Connection and State points
 cs(k).sea = SEF(1, k);
 % cs(k).sea.st1_i = cs(k).dca.st_o;
@@ -115,21 +115,13 @@ cs(k).tca.n1 = cs(k).tca.tc.n;
 cs(k).tca.n2 = cs(k).tca.st_i.q_m.v ./ cs(k).tca.tc.st_i.q_m.v;
 cs(k).tca.eta = cs(k).tca.tc.eta;
 
-T1 = zeros(1,3);
-q_m1 = zeros(1,3);
-T2 = zeros(1,11);
-q_m2 = zeros(1,11);
-T3 = zeros(1,11);
-q_m3 = zeros(1,3);
-T1_i = zeros(1,cs(k).sea.n1);
-T1_o = zeros(1,cs(k).sea.n1);
+T2 = zeros(1,numel(cs(k).st2));
+q_m2 = zeros(1,numel(cs(k).st2));
+T3 = zeros(1,numel(cs(k).st3));
+q_m3 = zeros(1,numel(cs(k).st3));
 T2_i = zeros(1,cs(k).sea.n1);
 T2_o = zeros(1,cs(k).sea.n1);
 
-for i = 1 : numel(cs(k).st1)
-    T1(i) = cs(k).st1(i).T.v;
-    q_m1(i) = cs(k).st1(i).q_m.v;
-end
 for i = 1 : numel(cs(k).st2)
     T2(i) = cs(k).st2(i).T.v;
     q_m2(i) = cs(k).st2(i).q_m.v;
