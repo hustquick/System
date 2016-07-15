@@ -18,11 +18,17 @@ st2.q_m.v = 2;
 st2.T.v = 303.15;
 st2.p.v = 1e5;
 
-sea1 = SEA(1,k+2,'Same');
+sea1 = SEA;
+sea1.n1 = 1;
+sea1.n2 = k+2;
+sea1.order = 'Same';
 sea1.st1_i = st1;
 sea1.st2_i = st2;
 
-sea2 = SEA(1,k+2,'Reverse');
+sea2 = SEA;
+sea2.n1 = 1;
+sea2.n2 = k + 2;
+sea2.order = 'Reverse';
 sea2.st1_i = st1;
 sea2.st2_i = st2;
 

@@ -1,4 +1,4 @@
-classdef CascadeSystem
+classdef CascadeSystem < handle
     %CascadeSystem
     
     properties

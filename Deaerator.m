@@ -30,7 +30,7 @@ classdef Deaerator < handle
             obj.st_i_2.T.v = CoolProp.PropsSI('T', 'H', st_i_2_h, ...
                 'P', obj.st_i_2.p.v, obj.st_i_2.fluid);
         end
-        function getP(obj)
+        function get_p(obj)
             obj.st_i_1.p = obj.p;
             obj.st_i_2.p = obj.p;
             obj.st_o.p = obj.p;

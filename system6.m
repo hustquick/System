@@ -58,15 +58,15 @@ ss(k).ge.eta = 0.975;
 
 ss(k).da.p = Pressure(1e6);
 
-ss(k).DeltaT_3_2 = 15;          % Minimun temperature difference between oil
-%and water
+ss(k).DeltaT_3_2 = 15;          % Minimun temperature difference 
+%   between oil and water
 
 %% Work
 % ss(k).tb.work(ss(k).ge);
 ss(k).cd.work();
 ss(k).pu1.p = ss(k).da.p;
 ss(k).pu1.work();
-ss(k).da.getP();
+ss(k).da.get_p();
 st1 = Stream;
 st1.p = ss(k).tb.st_o_1.p;
 % ss(k).tb.st_i.q_m.v = 1;

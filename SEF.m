@@ -15,23 +15,24 @@ classdef SEF < handle
     end
     
     methods
-        function obj = SEF(n1, n2)
-            % Array of Stirling engines on the focula
-            obj.n1 = n1;
-            obj.n2 = n2;
-            obj.se(n1, n2) = StirlingEngineOnFocus;
+        function obj = SEF
+            % Array of Stirling engines on the focula            
+            obj.st2_i = Stream;
+            obj.st2_o = Stream;
+        end
+    end
+    methods
+        function initialize(obj)
+            obj.se(obj.n1, obj.n2) = StirlingEngineOnFocus;
             for i = 1 : numel(obj.se(1,:))
                 for j = 1 : numel(obj.se(:,1))
                     obj.se(j,i).st2_i = Stream;
                     obj.se(j,i).st2_o = Stream;
                 end
             end
-            obj.st2_i = Stream;
-            obj.st2_o = Stream;
         end
-    end
-    methods
         function calculate(obj)
+            obj.initialize();
                 obj.st2_i.convergeTo(obj.se(1,1).st2_i, 1 / obj.n1);
                 obj.se(1,1).get_o;
                 

@@ -21,11 +21,18 @@ classdef SEA < handle
     end
     
     methods
-        function obj = SEA(n1, n2, order)
+        function obj = SEA
             % order is a string, 'Same' or 'Reverse'
-            obj.n1 = n1;
-            obj.n2 = n2;
-            obj.se(n1, n2) = StirlingEngine;
+            obj.st1_i = Stream;
+            obj.st1_o = Stream;
+            obj.st2_i = Stream;
+            obj.st2_o = Stream;
+            
+        end
+    end
+    methods
+        function initialize(obj)
+            obj.se(obj.n1, obj.n2) = StirlingEngine;
             for i = 1 : numel(obj.se(1,:))
                 for j = 1 : numel(obj.se(:,1))
                     obj.se(j,i).st1_i = Stream;
@@ -34,15 +41,9 @@ classdef SEA < handle
                     obj.se(j,i).st2_o = Stream;
                 end
             end
-            obj.st1_i = Stream;
-            obj.st1_o = Stream;
-            obj.st2_i = Stream;
-            obj.st2_o = Stream;
-            obj.order = order;
         end
-    end
-    methods
-        function calculate(obj)
+        function calculate(obj) 
+            obj.initialize();
             obj.st1_i.convergeTo(obj.se(1,1).st1_i, 1 / obj.n1);
             if (strcmp(obj.order, 'Same'))
                 %%%%% Same order %%%%%

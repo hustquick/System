@@ -69,8 +69,13 @@ classdef Turbine < handle
         end
         function value = get_q_m(obj, ge)
             P = ge.P ./ ge.eta;
+            st_tmp1 = Stream;
+            st_tmp2 = Stream;
+            obj.flowInTurbine(obj.st_i, st_tmp1, obj.st_o_1.p);
+            obj.flowInTurbine(st_tmp1, st_tmp2, obj.st_o_2.p);
+            
             delta_h = obj.st_i.h - obj.y .* ...
-                obj.st_o_1.h - (1 - obj.y) .* obj.st_o_2.h;
+                st_tmp1.h - (1 - obj.y) .* st_tmp2.h;
             value = P / delta_h;
         end
        
