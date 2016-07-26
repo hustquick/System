@@ -87,7 +87,7 @@ classdef CascadeSystem2 < handle
             obj.dca.work();
             obj.da.get_p();
             % Guess the value of obj.tb.y
-            guess = 0.1; % This initial value can be obtained by the power of turbine
+            guess = 0.13; % This initial value can be obtained by the power of turbine
             options = optimset('Algorithm','levenberg-marquardt','Display','iter');
             fsolve(@(x)CalcTb_q_m(x, obj), guess, options);
             obj.pu2.p = obj.tb.st_i.p;

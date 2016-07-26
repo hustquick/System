@@ -2,14 +2,16 @@ clear;
 % This system is the cascade system with both Stirling cycle and Rankine
 % Cycle, without a heat exchanger between the air and the water.
 %% Get results matrix
-number = 5;
-cs(number) = CascadeSystem2;
-ss(number) = SeparateSystem2;
+number = 40;
+cs = CascadeSystem2.empty;
+ss = SeparateSystem2.empty;
 eta_diff = zeros(1,number);
 ratio = zeros(1,number);
 used = zeros(1,number);
 for k = 1:number
 %% Connection and State points
+cs(k) = CascadeSystem2;
+ss(k) = SeparateSystem2;
 cs(k).initialize();
 %% Design parameters
 cs(k).sea.n1 = 4;
@@ -18,7 +20,7 @@ cs(k).sea.order = 'Same';
 
 cs(k).dca.n = cs(k).sea.n2;
 
-cs(k).dca.dc.amb.I_r = 650 + k * 50;
+cs(k).dca.dc.amb.I_r = 600 + 5 * k;
 cs(k).dca.dc.st_i.fluid = char(Const.Fluid(1));
 cs(k).dca.dc.st_i.T.v = convtemp(350, 'C', 'K');   % Design parameter
 cs(k).dca.dc.st_i.p.v = 5e5;
@@ -69,5 +71,6 @@ ss(k).calculate(cs(k));
 %% Comparison
 eta_diff(k) = (cs(k).eta - ss(k).eta) ./ ss(k).eta;
 ratio(k) = cs(k).sea.P ./ cs(k).ge.P;
-used(k) = (cs(k).sea.P ./ cs(k).sea.eta) ./ (cs(k).dca.n .* cs(k).dca.dc.q_tot);
+used(k) = (cs(k).sea.P ./ cs(k).sea.eta) ./ (cs(k).dca.n .* ...
+    cs(k).dca.dc.q_tot .* cs(k).dca.eta);
 end

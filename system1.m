@@ -3,13 +3,14 @@ clear;
 % Cycle, with a heat exchanger between the air and the water.
 %% Get results matrix
 number = 2;
-cs(number) = CascadeSystem1;
-ss(number) = SeparateSystem1;
+cs = CascadeSystem1.empty;
+ss = SeparateSystem1.empty;
 eta_diff = zeros(1,number);
 ratio = zeros(1,number);
 used = zeros(1,number);
 for k = 1:number
 cs(k) = CascadeSystem1;
+ss(k) = SeparateSystem1;
 %% Connection and State points
 cs(k).initialize();
 

@@ -2,8 +2,8 @@ classdef StirlingEngine < handle
     %StirlingEngine This class defines some basic characteristics of Stirling engine
     
     properties
-        U_1 = 30;   % Overall heat transfer coefficient of Stirling engine at air side, W/m^2-K
-        U_2 = 30;  % Overall heat transfer coefficient of Stirling engine at water side, W/m^2-K
+        U_1 = 150;   % Overall heat transfer coefficient of Stirling engine at air side, W/m^2-K
+        U_2 = 150;  % Overall heat transfer coefficient of Stirling engine at water side, W/m^2-K
         A_1 = 6;    % Heat transfer area of Stirling engine at air side, m^2
         A_2 = 6;    % Heat transfer area of Stirling engine at water side, m^2
         k = 1.4;    % Specific heat ratio of the working gas in Stirling engine, for H2

@@ -3,12 +3,13 @@ clear;
 % different types of organic fluids.
 %% Get results matrix
 number = 2;
-cs(number) = CascadeSystem3;
-ss(number) = SeparateSystem3;
+cs = CascadeSystem3.empty;
+ss = SeparateSystem3.empty;
 eta_diff = zeros(1,number);
 used = zeros(1,number);
 for k = 1 : number
-
+cs(k) = CascadeSystem3;
+ss(k) = SeparateSystem3;
 %% Connection and State points
 cs(k).initialize();
 cs(k).sea.n1 = 1;

@@ -1,4 +1,4 @@
-classdef InsLayer
+classdef InsLayer < handle
     %InsLayer The insulating layer of the dish receiver
     
     properties(Constant)

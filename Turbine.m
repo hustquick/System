@@ -64,7 +64,9 @@ classdef Turbine < handle
                 st_tmp2.convergeTo(obj.st_o_2,1 - obj.y);
             else
                 error('wrong y value of turbine');
-%                 flag = 1;
+%                 obj.y = 1;
+%                 st_tmp1.convergeTo(obj.st_o_1, obj.y);
+%                 st_tmp2.convergeTo(obj.st_o_2,1 - obj.y);
             end
         end
         function value = get_q_m(obj, ge)

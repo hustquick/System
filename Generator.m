@@ -1,4 +1,4 @@
-classdef Generator
+classdef Generator < handle
     %Generator 
     
     properties

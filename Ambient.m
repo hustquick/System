@@ -1,12 +1,21 @@
-classdef Ambient
+classdef Ambient < handle
     %Ambient Environment parameters
     
     properties
-        I_r = 400;                     % Irradiance, W/m^2
-        T = Temperature(convtemp(20, 'C', 'K'));      % Temperature, K
-        p = Pressure(101325);                      % Pressure, Pa
-        w = 1.5;                         % Wind speed, m/s
-        fluid = char(Const.Fluid(1)); % Ambient fluid type
+        I_r;                    % Irradiance, W/m^2
+        T;                      % Temperature, K
+        p                       % Pressure, Pa
+        w                       % Wind speed, m/s
+        fluid                   % Ambient fluid type
+    end
+    
+    methods
+        function obj = Ambient
+            obj.T = Temperature(convtemp(20, 'C', 'K'));
+            obj.p = Pressure(101325);
+            obj.w = 1.5;   
+            obj.fluid = char(Const.Fluid(1));
+        end
     end
    
 end

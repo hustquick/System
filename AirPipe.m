@@ -1,4 +1,4 @@
-classdef AirPipe
+classdef AirPipe < handle
     %AirPipe This class is used to describe the air pipe in dish receiver
     
     properties(Constant)

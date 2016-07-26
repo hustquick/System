@@ -2,8 +2,8 @@ clear;
 % This is the system for patent application
 %% Get results matrix
 number = 2;
-cs(number) = CascadeSystem5;
-ss(number) = SeparateSystem5;
+cs = CascadeSystem5.emtpy;
+ss = SeparateSystem5.empty;
 eta_diff = zeros(1,number);
 ratio = zeros(1,number);
 P1 = zeros(1,number);
@@ -12,6 +12,7 @@ DeltaA = zeros(1, number);
 
 for k = 1:number
 cs(k) = CascadeSystem5;
+ss(k) = SeparateSystem5;
 %% Connection and State points
 cs(k).initialize();
 cs(k).sea.n1 = 1;
