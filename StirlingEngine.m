@@ -2,14 +2,14 @@ classdef StirlingEngine < handle
     %StirlingEngine This class defines some basic characteristics of Stirling engine
     
     properties
-        U_1 = 150;   % Overall heat transfer coefficient of Stirling engine at air side, W/m^2-K
-        U_2 = 150;  % Overall heat transfer coefficient of Stirling engine at water side, W/m^2-K
+        U_1 = 30;   % Overall heat transfer coefficient of Stirling engine at air side, W/m^2-K
+        U_2 = 30;  % Overall heat transfer coefficient of Stirling engine at water side, W/m^2-K
         A_1 = 6;    % Heat transfer area of Stirling engine at air side, m^2
         A_2 = 6;    % Heat transfer area of Stirling engine at water side, m^2
         k = 1.4;    % Specific heat ratio of the working gas in Stirling engine, for H2
         gamma = 3.375;  % Compression ratio of Stirling engine, ~\cite{Fraser2008}
-        s_se = 10;  % Speed of Stirling engine, Hz
-        n_g = 8.158e-2; % Amount of working gas in each Stirling engine, mol
+        s_se = 20;  % Speed of Stirling engine, Hz (10Hz, 5kW)
+        n_g = 4.158e-2; % Amount of working gas in each Stirling engine, mol
         st1_i;   % Heating stream at inlet
         st1_o;   % Heating stream at outlet
         st2_i;   % Cooling stream at inlet
@@ -67,8 +67,13 @@ classdef StirlingEngine < handle
         end
         function P = get.P(obj)
             % Power of the Stirling engine using the speed of engine
-            P = obj.n_g .* Const.R .* (obj.T_H - obj.T_L) .* ...
+            P1 = obj.n_g .* Const.R .* (obj.T_H - obj.T_L) .* ...
                 log(obj.gamma) .* obj.s_se;
+            if P1 > 0
+                P = P1;
+            else
+                P = 0;
+            end
         end
         function get_o(obj)
             obj.st1_i.flowTo(obj.st1_o);
