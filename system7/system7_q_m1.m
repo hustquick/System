@@ -18,7 +18,7 @@ P2 = zeros(1, number);
 P3 = zeros(1, number);
 P4 = zeros(1, number);
 P5 = zeros(1, number);
-q_m1 = zeros(1, number);
+q_m1cp1 = zeros(1, number);
 
 for k = 1 : number
 st1 = Stream;
@@ -75,22 +75,22 @@ P2(k) = sea2(k).P;
 P3(k) = sea3(k).P;
 P4(k) = sea4(k).P;
 P5(k) = sea5(k).P;
-q_m1(k) = st1.q_m.v;
+q_m1cp1(k) = st1.q_m.v .* st1.cp;
 end
 
 subplot(1,2,1);
 
-plot(q_m1,eta1);
+plot(q_m1cp1,eta1);
 hold on
-plot(q_m1,eta2);
-plot(q_m1,eta3);
-plot(q_m1,eta4);
-plot(q_m1,eta5);
+plot(q_m1cp1,eta2);
+plot(q_m1cp1,eta3);
+plot(q_m1cp1,eta4);
+plot(q_m1cp1,eta5);
 
 subplot(1,2,2);
-plot(q_m1,P1);
+plot(q_m1cp1,P1);
 hold on
-plot(q_m1,P2);
-plot(q_m1,P3);
-plot(q_m1,P4);
-plot(q_m1,P5)
+plot(q_m1cp1,P2);
+plot(q_m1cp1,P3);
+plot(q_m1cp1,P4);
+plot(q_m1cp1,P5)

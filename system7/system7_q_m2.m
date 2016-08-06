@@ -69,7 +69,7 @@ P2(k) = sea2.P;
 P3(k) = sea3.P;
 P4(k) = sea4.P;
 P5(k) = sea5.P;
-q_m2(k) = st2.q_m.v;
+q_m2(k) = st2.q_m.v .* st2.cp;
 end
 
 subplot(1,2,1);
