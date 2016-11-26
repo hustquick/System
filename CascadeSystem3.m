@@ -1,5 +1,5 @@
 classdef CascadeSystem3 < handle
-    %CascadeSystem2
+    %CascadeSystem3
     
     properties
         st1;

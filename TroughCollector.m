@@ -3,7 +3,7 @@ classdef TroughCollector < handle
     %and uses vacumn receiver
     
     properties(Constant)
-        A = 545;        % Aperture area of the collector, m^2
+        A = 45;        % Aperture area of the collector, m^2
         gamma = 0.93;   % Intercept factor of the collector
         rho = 0.94;     % Reflectance of the collector
         shading = 1;    % Shading factor of the collector

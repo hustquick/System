@@ -1,5 +1,7 @@
 classdef HeatExchanger < handle
     %HeatExchanger This class defines heat exchangers
+    %   st1 preferred to be hot fluid
+    %   st2 preferred to be cold fluid
     
     properties
         st1_i;
