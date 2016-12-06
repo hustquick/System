@@ -1,6 +1,6 @@
 clear;
 % Different kinds of connection form of Stirling engines
-number = 15;
+number = 5;
 n_se = 6;
 sea1 = SEA.empty;
 sea2 = SEA.empty;
@@ -93,4 +93,5 @@ hold on
 plot(q_m1cp1,P2);
 plot(q_m1cp1,P3);
 plot(q_m1cp1,P4);
-plot(q_m1cp1,P5)
+plot(q_m1cp1,P5);
+legend('1', '2', '3', '4', '5');

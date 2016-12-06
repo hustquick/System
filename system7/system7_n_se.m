@@ -1,6 +1,6 @@
 clear;
 % Different kinds of connection form of Stirling engines
-number = 14;
+number = 12;
 sea1 = SEA.empty;
 sea2 = SEA.empty;
 sea3 = SEC.empty;

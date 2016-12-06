@@ -86,6 +86,7 @@ plot(T1,eta2);
 plot(T1,eta3);
 plot(T1,eta4);
 plot(T1,eta5);
+legend('1', '2', '3', '4', '5');
 
 subplot(1,2,2);
 plot(T1,P1);
@@ -93,4 +94,5 @@ hold on
 plot(T1,P2);
 plot(T1,P3);
 plot(T1,P4);
-plot(T1,P5)
+plot(T1,P5);
+legend('1', '2', '3', '4', '5');
