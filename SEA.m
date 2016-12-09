@@ -3,7 +3,7 @@ classdef SEA < handle
     %   The array is built with the same kind of Stirling engines, all of
     %   them are the objects of StirlingEngine class.    
     properties
-        se = StirlingEngine;         % Stirling engine array
+        se;         % Stirling engine array
     end
     properties
         n1;         % Rows of Stirling engine array
@@ -27,7 +27,7 @@ classdef SEA < handle
             obj.st1_o = Stream;
             obj.st2_i = Stream;
             obj.st2_o = Stream;
-            
+            obj.se = StirlingEngine;
         end
     end
     methods
