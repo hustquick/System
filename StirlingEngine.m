@@ -8,7 +8,7 @@ classdef StirlingEngine < handle
         A_2 = 6;    % Heat transfer area of Stirling engine at water side, m^2
 %         k = 1.4;    % Specific heat ratio of the working gas in Stirling engine, for H2
 %         gamma = 3.375;  % Compression ratio of Stirling engine, ~\cite{Fraser2008}
-        s_se = 50;  % Speed of Stirling engine, Hz (10Hz, 5kW)
+        s_se = 25;  % Speed of Stirling engine, Hz (10Hz, 5kW)
         wf = 'Helium';  % Working fluid, Helium
         k = 1.66;   % Specific heat ratio of the working gas in Stirling engine, for He
         V_DH = 7.028e-5;    % Dead volume of heater, m^3
@@ -77,7 +77,7 @@ classdef StirlingEngine < handle
             % Regeneration effectiveness of the Stirling engine
 %             e = (obj.T_R() - obj.T_L()) ...
 %                 ./ (obj.T_H() - obj.T_L());
-            e = 0.7;
+            e = 0.75;
         end
         function gamma_H = gamma_H(obj)            
             V_E = obj.S_E + obj.C_E;

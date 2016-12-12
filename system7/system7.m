@@ -30,18 +30,21 @@ st2.q_m.v = 0.3 * k;
 st2.T.v = 300;
 st2.p.v = 5e5;
 
-sea1(k).order = 'Same';
+sea1(k) = SEC(n_se,'Parallel');
 sea1(k).st1_i = st1;
 sea1(k).st2_i = st2;
 
 sea2(k) = SEA;
 sea2(k).n1 = 1;
 sea2(k).n2 = n_se;
-sea2(k).order = 'Reverse';
+sea2(k).order = 'Same';
 sea2(k).st1_i = st1;
 sea2(k).st2_i = st2;
 
-sea3(k) = SEC(n_se,'Parallel');
+sea3(k) = SEA;
+sea3(k).n1 = 1;
+sea3(k).n2 = n_se;
+sea3(k).order = 'Reverse';
 sea3(k).st1_i = st1;
 sea3(k).st2_i = st2;
 
