@@ -84,6 +84,7 @@ classdef SEC < handle
                         obj.se(1).st1_o.convergeTo(obj.se(i).st1_o,1);
                         obj.se(1).st2_i.convergeTo(obj.se(i).st2_i,1);
                         obj.se(1).st2_o.convergeTo(obj.se(i).st2_o,1);
+                        obj.se(i).get_o;
                     end
                     obj.se(1).st1_o.convergeTo(obj.st1_o, obj.n_se);
                     obj.se(1).st2_o.convergeTo(obj.st2_o, obj.n_se);
