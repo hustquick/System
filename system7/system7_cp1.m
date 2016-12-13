@@ -26,13 +26,13 @@ st2 = Stream;
 for k = 1 : number
     st1(k) = Stream;
 %     st1(k).fluid = char(Const.Fluid(1));
-    st1(k).q_m.v = 0.6;        % Change this value
+    st1(k).q_m.v = 0.4;        % Change this value
     st1(k).T.v = 1000;
     st1(k).p.v = 5e5;
 
     st2(k) = Stream;
     st2(k).fluid = char(Const.Fluid(1));
-    st2(k).q_m.v = 0.6;
+    st2(k).q_m.v = 0.4;
     st2(k).T.v = 300;
     st2(k).p.v = 5e5;
 end

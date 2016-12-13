@@ -17,7 +17,7 @@ q_m2 = zeros(1, number);
 for k = 1 : number
     st1 = Stream;
     st1.fluid = char(Const.Fluid(1));
-    st1.q_m.v = 0.3;        % Change this value
+    st1.q_m.v = 0.4;        % Change this value
     st1.T.v = 1000;
     st1.p.v = 5e5;
 

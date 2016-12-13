@@ -29,7 +29,7 @@ for k = 1 : number
 
     st2 = Stream;
     st2.fluid = char(Const.Fluid(1));
-    st2.q_m.v = 0.3;
+    st2.q_m.v = 0.4;
     st2.T.v = 300;
     st2.p.v = 5e5;
     

@@ -20,13 +20,13 @@ P5 = zeros(1, number);
 for k = 1 : number
 st1 = Stream;
 st1.fluid = char(Const.Fluid(1));
-st1.q_m.v = 0.3 * k;
+st1.q_m.v = 0.4 * k;
 st1.T.v = 1000;
 st1.p.v = 5e5;
 
 st2 = Stream;
 st2.fluid = char(Const.Fluid(1));
-st2.q_m.v = 0.3 * k;
+st2.q_m.v = 0.4 * k;
 st2.T.v = 300;
 st2.p.v = 5e5;
 
