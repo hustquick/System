@@ -86,7 +86,7 @@ plot(T1,eta2);
 plot(T1,eta3);
 plot(T1,eta4);
 plot(T1,eta5);
-legend('1', '2', '3', '4', '5');
+legend('Type 1', 'Type 2', 'Type 3', 'Type 4', 'Type 5');
 
 subplot(1,2,2);
 plot(T1,P1);
@@ -95,4 +95,4 @@ plot(T1,P2);
 plot(T1,P3);
 plot(T1,P4);
 plot(T1,P5);
-legend('1', '2', '3', '4', '5')
+legend('Type 1', 'Type 2', 'Type 3', 'Type 4', 'Type 5')

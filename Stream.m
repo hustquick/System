@@ -32,13 +32,14 @@ classdef Stream < handle
             if obj.fluid == st1.fluid
                 if  obj.p.v == st1.p.v
                     obj.p = st1.p;
-%                     st2 = Stream;       % Create a new stream
+                    st2 = Stream;       % Create a new stream
                     st2.fluid = obj.fluid;
                     st2.p = obj.p;
                     st2.q_m.v = obj.q_m.v + st1.q_m.v;  % How to make sure it is always true?
                     h = (obj.q_m.v .* obj.h + st1.q_m.v .* st1.h)...
                         ./ (obj.q_m.v + st1.q_m.v);
-                    st2.T.v = CoolProp.PropsSI('T', 'H', h, 'P', st2.p.v);
+                    st2.T.v = CoolProp.PropsSI('T', 'H', h, 'P', ...
+                        st2.p.v, st2.fluid);
                 else
                     error('The two streams have different pressures!');
                 end

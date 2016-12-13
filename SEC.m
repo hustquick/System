@@ -55,7 +55,18 @@ classdef SEC < handle
                         obj.se(i).get_o;
                     end
                     obj.st1_o = obj.se(obj.n_se).st1_o;
-                    obj.se(1).st2_o.convergeTo(obj.st2_o, obj.n_se);
+%                     obj.se(1).st2_o.convergeTo(obj.st2_o, obj.n_se);
+%                     h = 0;
+%                     for i = 1 : obj.n_se
+%                         h = h + obj.se(i).st2_o.h;
+%                     end
+%                     h = h ./ obj.n_se;
+%                     obj.st2_o.T.v = 
+                    st_tmp = obj.se(1).st2_o;
+                    for i = 2 : obj.n_se
+                        st_tmp = st_tmp.mix(obj.se(i).st2_o);
+                    end
+                    obj.st2_o = st_tmp;
                 case 'Serial2'
                     %%%%% Cooling fluid with serial connection %%%%%
                     for i = 1 : obj.n_se
@@ -68,7 +79,12 @@ classdef SEC < handle
                         obj.se(i).st2_i = obj.se(i-1).st2_o;
                         obj.se(i).get_o;
                     end
-                    obj.se(1).st1_o.convergeTo(obj.st1_o, obj.n_se);
+%                     obj.se(1).st1_o.convergeTo(obj.st1_o, obj.n_se);
+                    st_tmp = obj.se(1).st1_o;
+                    for i = 2 : obj.n_se
+                        st_tmp = st_tmp.mix(obj.se(i).st1_o);
+                    end
+                    obj.st1_o = st_tmp;
                     obj.st2_o = obj.se(obj.n_se).st2_o;
                 case 'Parallel'
                     %%%%% Parallel connection %%%%%     
