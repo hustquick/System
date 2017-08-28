@@ -179,9 +179,11 @@ ss1(k).tca2.st_i.p = ss(k).tca.st_i.p;
 ss1(k).tca2.st_o.p = ss(k).tca.st_i.p;
 ss1(k).tca1.st_i.p = ss(k).tca.st_i.p;
 ss1(k).tca1.st_o.p = ss(k).tca.st_i.p;
-ss1(k).tca3.st_i.T.v = ss(k).sh.st2_i.T.v + ss(k).sh.st1_i.T.v ...
-    - ss(k).sh.st1_o.T.v;
-ss1(k).tca3.st_o.T.v = ss(k).sh.st2_i.T.v;
+
+ss1(k).tca3.st_i.T.v = (ss(k).ph.st2_i.T.v + (ss(k).sh.st1_o.T.v + ss(k).DeltaT_3_2 ...
+    - ss(k).ph.st2_i.T.v) * (ss(k).st3(2).T.v - ss(k).st3(3).T.v) ...
+    / (ss(k).st3(1).T.v - ss(k).st3(3).T.v) + ss(k).ph.st1_o.T.v + ss(k).DeltaT_3_2) / 2;
+ss1(k).tca3.st_o.T.v = ss(k).sh.st1_o.T.v + ss(k).DeltaT_3_2;
 ss1(k).tca2.st_i.T.v = ss(k).ev.st2_o.T.v;
 ss1(k).tca2.st_o.T.v = ss1(k).tca3.st_i.T.v;
 ss1(k).tca1.st_i.T.v = ss(k).ph.st2_i.T.v + ss(k).ph.st1_i.T.v ...

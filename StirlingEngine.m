@@ -10,6 +10,7 @@ classdef StirlingEngine < handle
         gamma = 3.375;  % Compression ratio of Stirling engine, ~\cite{Fraser2008}
         s_se = 20;  % Speed of Stirling engine, Hz (10Hz, 5kW)
         n_g = 4.158e-2; % Amount of working gas in each Stirling engine, mol
+                    % 4.158e-2 mol based on 5 kW engine
         st1_i;   % Heating stream at inlet
         st1_o;   % Heating stream at outlet
         st2_i;   % Cooling stream at inlet

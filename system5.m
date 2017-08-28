@@ -1,8 +1,8 @@
 clear;
 % This is the system for patent application
 %% Get results matrix
-number = 2;
-cs = CascadeSystem5.emtpy;
+number = 1;
+cs = CascadeSystem5.empty;
 ss = SeparateSystem5.empty;
 eta_diff = zeros(1,number);
 ratio = zeros(1,number);

@@ -2,7 +2,7 @@ clear;
 % This system is the cascade system with both Stirling cycle and Rankine
 % Cycle, with a heat exchanger between the air and the water.
 %% Get results matrix
-number = 2;
+number = 1;
 cs = CascadeSystem1.empty;
 ss = SeparateSystem1.empty;
 eta_diff = zeros(1,number);
@@ -15,11 +15,13 @@ ss(k) = SeparateSystem1;
 cs(k).initialize();
 
 cs(k).sea.n1 = 3;
-cs(k).sea.n2 = 30;
-cs(k).sea.order = 'Same';
+% cs(k).sea.n2 = 20;
+cs(k).sea.order = 'Reverse';
 %% Design parameters
 
-cs(k).dca.n = 30;
+cs(k).dca.dc.amb.I_r = 700;
+
+cs(k).dca.n = 20;
 cs(k).dca.dc.st_i.fluid = char(Const.Fluid(1));
 cs(k).dca.dc.st_i.T.v = convtemp(350, 'C', 'K');   % Design parameter
 cs(k).dca.dc.st_i.p.v = 5e5;
@@ -27,7 +29,7 @@ cs(k).dca.dc.st_o.T.v = convtemp(800, 'C', 'K');
 
 cs(k).tca.tc.amb.I_r = cs(k).dca.dc.amb.I_r;
 cs(k).tca.st_o.fluid = char(Const.Fluid(3));
-cs(k).tca.st_o.T.v = convtemp(380, 'C', 'K');
+cs(k).tca.st_o.T.v = convtemp(350, 'C', 'K');
 cs(k).tca.st_o.p.v = 2e6;
 
 cs(k).tb.st_i.fluid = char(Const.Fluid(2));
@@ -36,7 +38,7 @@ cs(k).tb.st_i.p.v = 2.35e6;
 cs(k).tb.st_o_2.p.v = 1.5e4;
 
 % cs(k).ge.P = 4e6;  
-cs(k).ge.P = 4e6;
+cs(k).ge.P = 6e6;
 cs(k).ge.eta = 0.975;
 
 cs(k).da.p.v = 1e6;
