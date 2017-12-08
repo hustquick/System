@@ -1,12 +1,14 @@
 classdef Stream < handle
-    %Stream This class describes a fluid stream
+    %Stream This class describes a fluid stream that has inherent
+    %properties and dependent properties
     
     properties
         fluid;  % Fluid type
         q_m;    % Mass flow rate, kg/s
         T;      % Temperature, K
         p;      % Pressure, Pa
-        x;      % Quality of two?phase stream
+        x;      % Quality, [0, 1] for two phase stream; NaN for single 
+                %   phase stream
     end
     properties(Dependent)
         h;      % Mass specific enthalpy, J.kg
@@ -17,28 +19,25 @@ classdef Stream < handle
     methods
         function obj = Stream
             obj.T = Temperature;
-            obj.q_m = Q_m;
+            obj.q_m = Massflow;
             obj.p = Pressure;
         end
         function flowTo(obj, st)
-            % st2 is another state of the same stream st1 after a flow
-            % process
             st.fluid = obj.fluid;
             st.q_m = obj.q_m;
         end
         function st2 = mix(obj, st1)
-            % Get the properties of a stream mixed by two streams converged
-            % The two streams have the same fluid type
+            % Get the properties of a stream mixed by two streams
+            % The two streams must have the same fluid type and pressure
             if obj.fluid == st1.fluid
                 if  obj.p.v == st1.p.v
                     obj.p = st1.p;
-%                     st2 = Stream;       % Create a new stream
                     st2.fluid = obj.fluid;
                     st2.p = obj.p;
-                    st2.q_m.v = obj.q_m.v + st1.q_m.v;  % How to make sure it is always true?
+                    st2.q_m.v = obj.q_m.v + st1.q_m.v;
                     h = (obj.q_m.v .* obj.h + st1.q_m.v .* st1.h)...
                         ./ (obj.q_m.v + st1.q_m.v);
-                    st2.T.v = CoolProp.PropsSI('T', 'H', h, 'P', st2.p.v);
+                    st2.T.v = CoolProp.PropsSI('T', 'H', h, 'P',st2.p.v);
                 else
                     error('The two streams have different pressures!');
                 end
@@ -55,11 +54,14 @@ classdef Stream < handle
             st.T = obj.T;
             st.p = obj.p;
             st.x = obj.x;
-            st.q_m.v = obj.q_m.v .* y; % How to make sure it is always true?
-            % that if y or obj.q_m.v changed, st.q_m.v automatically change
+            st.q_m.v = obj.q_m.v .* y;
         end
     end
     methods
+        % The dependent properties can be obtained by the inherent
+        %   properties
+        % If x is NaN, then the dependent properties are determined
+        %   by T and P; otherwise, they are determined by P and x
         function value = get.h(obj)
             if isempty(obj.x)
                 value = CoolProp.PropsSI('H', 'T', obj.T.v, ...
