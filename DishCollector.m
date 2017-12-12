@@ -4,16 +4,17 @@ classdef DishCollector < handle
     
     properties(Constant)
         
-        gamma = 0.97;       % Intercept factor of the collector
-        rho = 0.91;         % Reflectance of the collector
-        shading = 0.95;     % Shading factor of the collector
-        d_ap = 0.184;       % Aperture diameter of the dish receiver, m
-        d_cav = 0.46;       % Diameter of the cavity of the dish receiver, m
-        dep_cav = 0.23;     % Depth of the cavity of the dish receiver, m
+        gamma = 1;       % Intercept factor of the collector
+        rho = 0.8;         % Reflectance of the collector
+        shading = 1;     % Shading factor of the collector
+        d_ap = 0.025;       % Aperture diameter of the dish receiver, m
+        d_cav = 0.45;       % Diameter of the cavity of the dish receiver, m
+        dep_cav = 0.38;     % Depth of the cavity of the dish receiver, m
         theta = degtorad(45);% Dish aperture angle(0 is horizontal, 90 is vertically down), rad
     end
     properties
-        A = 87.7;         % Aperture area of the collector, m^2
+        A = 23.28;         % Aperture area of the collector, m^2
+                        
 %         A;
         amb;        % Ambient
         %         airPipe.T;        % Temperature of the fluid pipe, K
@@ -232,7 +233,7 @@ classdef DishCollector < handle
             %temperature
             obj.st_i.flowTo(obj.st_o);
             obj.st_o.p = obj.st_i.p;
-            guess = [1500; 400; 19] ;
+            guess = [1500; 200; 19] ;
             options = optimset('Display','iter');
             x = fsolve(@(x)CalcDishCollector3(x, obj), ...
                 guess, options);

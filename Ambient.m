@@ -11,7 +11,7 @@ classdef Ambient < handle
     
     methods
         function obj = Ambient
-            obj.T = Temperature(convtemp(20, 'C', 'K'));
+            obj.T = Temperature(convtemp(10, 'C', 'K'));
             obj.p = Pressure(101325);
             obj.w = 4;   
             obj.fluid = char(Const.Fluid(1));
