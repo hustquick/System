@@ -7,7 +7,7 @@ classdef DishCollector < handle
         gamma = 1;       % Intercept factor of the collector
         rho = 0.8;         % Reflectance of the collector
         shading = 1;     % Shading factor of the collector
-        d_ap = 0.025;       % Aperture diameter of the dish receiver, m
+        d_ap = 0.25;       % Aperture diameter of the dish receiver, m
         d_cav = 0.45;       % Diameter of the cavity of the dish receiver, m
         dep_cav = 0.38;     % Depth of the cavity of the dish receiver, m
         theta = degtorad(45);% Dish aperture angle(0 is horizontal, 90 is vertically down), rad

@@ -3,16 +3,16 @@ classdef TroughCollector < handle
     %and uses vacumn receiver
     
     properties(Constant)
-        A = 545;        % Aperture area of the collector, m^2
+        A = 20 * 2.55;        % Aperture area of the collector, m^2
         gamma = 0.93;   % Intercept factor of the collector
-        rho = 0.94;     % Reflectance of the collector
+        rho = 0.8;     % Reflectance of the collector
         shading = 1;    % Shading factor of the collector
         tau = 0.95;    % Transmissivity of trough receiver
-        alpha = 0.96;  % Absorptivity of the absorber selective coating of trough collector
-        w = 5.76;      % Width of trough collector, m
+        alpha = 0.94;  % Absorptivity of the absorber selective coating of trough collector
+        w = 2.55;      % Width of trough collector, m
         Fe = 0.97;     % Soiling factor of the trough collector
-        d_i = 0.066;    % Inner diameter of the absorber, m
-        d_o = 0.07;    % Outer diameter of the absorber, m
+        d_i = 0.035;    % Inner diameter of the absorber, m
+        d_o = 0.038;    % Outer diameter of the absorber, m
         phi = degtorad(70);    % Incidence angle
         v_min = 1.1;      % Minimun fluid speed in pipe, corresponding to limiting the fouling, m/s
         v_max = 2.9;      % Maximun fluid speed in pipe, corresponding to limiting the erosion, m/s
