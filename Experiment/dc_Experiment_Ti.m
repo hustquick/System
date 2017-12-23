@@ -1,6 +1,6 @@
 %% Calculation for dish collector
 clear;
-num = 10;
+num = 5;
 dc = DishCollector.empty;
 eta = zeros(1,num);
 T_o = zeros(1, num);
@@ -12,12 +12,11 @@ Q_use_measured = zeros(1,num);
 eta_measured = zeros(1,num);
 
 % Experimental data
-DNI = [303	358	414	426	512	596	620	641	658	683];
-T_amb = 273.15 + [8.9    9.3	10.0	10.2	11.8	14.2	16.0	...
-    16.3	16.2	16.3];
-v_wind = [0.8	0.8	0.7	0.7	0.5	0.4	0.4	0.4	0.4	0.4];
-T_o_measured = [570.1	602.3	624.5	630.7	671.3	705.3	716.8	...
-    723.1	731.6	739.7];
+DNI = [616	614	610	618	615];
+T_amb = 273.15 + [16.3	15.1	15.5	15.7	15.7];
+v_wind = [0.4	0.4	0.4	0.4	0.4];
+T_i = [383.15	403.15	423.15	443.15	463.15];
+T_o_measured = [660.6	674.0	685.3	702.8	714.8];
 for k = 1 : num
     dc(k) = DishCollector;
 
@@ -25,7 +24,7 @@ for k = 1 : num
     dc(k).amb.T.v = T_amb(k);
     dc(k).amb.w = v_wind(k);
     dc(k).st_i.fluid = char(Const.Fluid(1));
-    dc(k).st_i.T.v = convtemp(150, 'C', 'K');   % Design parameter
+    dc(k).st_i.T.v = T_i(k);   % Design parameter
     dc(k).st_i.p.v = 4e5;
     dc(k).st_i.q_m.v = 0.03;
     

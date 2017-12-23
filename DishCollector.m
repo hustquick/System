@@ -5,7 +5,7 @@ classdef DishCollector < handle
     properties(Constant)
         
         gamma = 1;       % Intercept factor of the collector
-        rho = 0.8;         % Reflectance of the collector
+        rho = 0.71;         % Reflectance of the collector
         shading = 1;     % Shading factor of the collector
         d_ap = 0.25;       % Aperture diameter of the dish receiver, m
         d_cav = 0.45;       % Diameter of the cavity of the dish receiver, m
@@ -28,6 +28,7 @@ classdef DishCollector < handle
         q_use;      % Energy used, transferred to the fluid, W
         q_tot;      % Energy projected to the reflector, W
         eta;        % Thermal efficiency of the collector
+        v_o;        % Outlet speed, m/s
     end
     properties(Dependent, Access = protected)
         d_bar_cav;
@@ -202,7 +203,11 @@ classdef DishCollector < handle
             %temperature
             obj.st_i.flowTo(obj.st_o);
             obj.st_o.p = obj.st_i.p;
-            guess = [1500; 400; 1000] ;
+            Cp = CoolProp.PropsSI('C', 'T', obj.st_i.T.v, ...
+                'P', obj.st_i.p.v, obj.st_i.fluid);
+            q_m = obj.st_i.q_m.v;
+            guess = [obj.st_i.T.v + obj.q_in / Cp / q_m + 10; obj.amb.T.v + 10; obj.st_i.T.v + ...
+                obj.q_in / Cp / q_m] ;
             options = optimset('Display','iter');
             fsolve(@(x)CalcDishCollector2(x, obj), ...
                 guess, options);
@@ -287,6 +292,13 @@ classdef DishCollector < handle
         end
         function value = get.eta(obj)
             value = obj.q_use ./ obj.q_tot;
+        end
+        function value = get.v_o(obj)
+            rho_o = CoolProp.PropsSI('D', 'T', obj.st_o.T.v,...
+                'P', obj.st_o.p.v, obj.st_o.fluid);
+            q_m = obj.st_o.q_m.v;
+            A_airPipe = pi * obj.airPipe.d_i^2 / 4;
+            value = q_m ./ (A_airPipe * rho_o);
         end
     end
 end

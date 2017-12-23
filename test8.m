@@ -1,7 +1,8 @@
-%% Calculation for dish collector
+%% Calculation for trough collector
 clear;
+
 num = 10;
-dc = DishCollector.empty;
+tc = TroughCollector.empty;
 eta = zeros(1,num);
 T_o = zeros(1, num);
 Q_use = zeros(1, num);
@@ -19,26 +20,27 @@ v_wind = [0.8	0.8	0.7	0.7	0.5	0.4	0.4	0.4	0.4	0.4];
 T_o_measured = [570.1	602.3	624.5	630.7	671.3	705.3	716.8	...
     723.1	731.6	739.7];
 for k = 1 : num
-    dc(k) = DishCollector;
+    tc(k) = TroughCollector;
 
-    dc(k).amb.I_r = DNI(k);
-    dc(k).amb.T.v = T_amb(k);
-    dc(k).amb.w = v_wind(k);
-    dc(k).st_i.fluid = char(Const.Fluid(1));
-    dc(k).st_i.T.v = convtemp(150, 'C', 'K');   % Design parameter
-    dc(k).st_i.p.v = 4e5;
-    dc(k).st_i.q_m.v = 0.03;
+    tc(k).amb.I_r = DNI(k);
+    tc(k).amb.T.v = T_amb(k);
+    tc(k).amb.w = v_wind(k);
+    tc(k).st_i.fluid = char(Const.Fluid(3));
+    tc(k).st_i.T.v = convtemp(150, 'C', 'K');   % Design parameter
+    tc(k).st_i.p.v = 4e5;
+    tc(k).st_i.q_m.v = 0.03;
     
-    dc(k).get_T_o();
-    T_o(k) = dc(k).st_o.T.v; %-273.15;
-    Q_use(k) = dc(k).q_use;
-    eta(k) = dc(k).eta;
-    I_r(k) = dc(k).amb.I_r;
+    tc(k).get_T_o();
+    T_o(k) = tc(k).st_o.T.v; %-273.15;
+    Q_use(k) = tc(k).q_use;
+    eta(k) = tc(k).eta;
+    I_r(k) = tc(k).amb.I_r;
     
     h_o_measured(k) = CoolProp.PropsSI('H', 'T', T_o_measured(k), ...
         'P', 4e5, char(Const.Fluid(1)));
-    h_i(k) = CoolProp.PropsSI('H', 'T', dc(k).st_i.T.v, ...
+    h_i(k) = CoolProp.PropsSI('H', 'T', tc(k).st_i.T.v, ...
         'P', 4e5, char(Const.Fluid(1)));
-    Q_use_measured(k) = dc(k).st_i.q_m.v .* (h_o_measured(k) - h_i(k));
+    Q_use_measured(k) = tc(k).st_i.q_m.v .* (h_o_measured(k) - h_i(k));
     eta_measured(k) = eta(k) .* Q_use_measured(k) ./ Q_use(k);
 end
+

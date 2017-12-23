@@ -19,7 +19,13 @@ classdef Const
                 c = (a - b) / log(a / b);
             else
 %                 c = 0;
-                error('The two numbers are wrong!');
+                if a > 0
+                    b = - b;
+                    c = (a - b) / log(a / b);
+                else
+                    a = - a;
+                    c = (a - b) / log(a / b);
+                end
             end
         end
         function Nu = Nu_nat_conv(Gr, T_cav, T_amb, theta, d_ap, d_bar_cav)
