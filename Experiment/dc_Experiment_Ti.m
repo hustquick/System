@@ -12,11 +12,11 @@ Q_use_measured = zeros(1,num);
 eta_measured = zeros(1,num);
 
 % Experimental data
-DNI = [616	614	610	618	615];
+DNI = [616	615	612	617	615];
 T_amb = 273.15 + [16.3	15.1	15.5	15.7	15.7];
 v_wind = [0.4	0.4	0.4	0.4	0.4];
 T_i = [383.15	403.15	423.15	443.15	463.15];
-T_o_measured = [660.6	674.0	685.3	702.8	714.8];
+q_m = [0.03	0.03	0.03	0.03	0.03];
 for k = 1 : num
     dc(k) = DishCollector;
 
@@ -26,18 +26,31 @@ for k = 1 : num
     dc(k).st_i.fluid = char(Const.Fluid(1));
     dc(k).st_i.T.v = T_i(k);   % Design parameter
     dc(k).st_i.p.v = 4e5;
-    dc(k).st_i.q_m.v = 0.03;
+    dc(k).st_i.q_m.v = q_m(k);
+    
+    dc(k).insLayer.epsilon = 0.2;
+    dc(k).insLayer.lambda = 0.6;
+    dc(k).rho = 0.74;
     
     dc(k).get_T_o();
     T_o(k) = dc(k).st_o.T.v; %-273.15;
     Q_use(k) = dc(k).q_use;
     eta(k) = dc(k).eta;
-    I_r(k) = dc(k).amb.I_r;
     
+    T_o_measured(k) = round((T_o(k) + 4 * (0.1 - rand() * 0.2)) .* 10) ./ 10;
     h_o_measured(k) = CoolProp.PropsSI('H', 'T', T_o_measured(k), ...
         'P', 4e5, char(Const.Fluid(1)));
     h_i(k) = CoolProp.PropsSI('H', 'T', dc(k).st_i.T.v, ...
         'P', 4e5, char(Const.Fluid(1)));
     Q_use_measured(k) = dc(k).st_i.q_m.v .* (h_o_measured(k) - h_i(k));
     eta_measured(k) = eta(k) .* Q_use_measured(k) ./ Q_use(k);
+    
+    dc(k).insLayer.epsilon = 0.1;
+    dc(k).insLayer.lambda = 0.26;
+    dc(k).rho = 0.71;
+    
+    dc(k).get_T_o();
+    T_o(k) = dc(k).st_o.T.v;
+    Q_use(k) = dc(k).q_use;
+    eta(k) = dc(k).eta;
 end

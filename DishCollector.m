@@ -3,19 +3,17 @@ classdef DishCollector < handle
     %and uses volumetric receiver
     
     properties(Constant)
-        
-        gamma = 1;       % Intercept factor of the collector
-        rho = 0.71;         % Reflectance of the collector
-        shading = 1;     % Shading factor of the collector
+        A = 23.28;         % Aperture area of the collector, m^2
         d_ap = 0.25;       % Aperture diameter of the dish receiver, m
         d_cav = 0.45;       % Diameter of the cavity of the dish receiver, m
         dep_cav = 0.38;     % Depth of the cavity of the dish receiver, m
-        theta = degtorad(45);% Dish aperture angle(0 is horizontal, 90 is vertically down), rad
     end
-    properties
-        A = 23.28;         % Aperture area of the collector, m^2
-                        
-%         A;
+    properties                        
+        gamma = 1;       % Intercept factor of the collector
+        rho = 0.71;         % Reflectance of the collector
+        shading = 1;     % Shading factor of the collector
+        theta = degtorad(45);% Dish aperture angle(0 is horizontal, 90 
+                            %   is vertically down), rad
         amb;        % Ambient
         %         airPipe.T;        % Temperature of the fluid pipe, K
         %         insLayer.T;      % Outside temperature of the insulating layer, K

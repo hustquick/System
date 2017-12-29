@@ -10,7 +10,7 @@ classdef TroughCollector < handle
         tau = 0.95;    % Transmissivity of trough receiver
         alpha = 0.94;  % Absorptivity of the absorber selective coating of trough collector
         w = 2.55;      % Width of trough collector, m
-        Fe = 0.97;     % Soiling factor of the trough collector
+        Fe = 0.97;     % Soiling factor of the trough collector . 0.97
         d_i = 0.035;    % Inner diameter of the absorber, m
         d_o = 0.038;    % Outer diameter of the absorber, m
         phi = degtorad(70);    % Incidence angle
@@ -97,6 +97,32 @@ classdef TroughCollector < handle
 %                 L = obj.L_per_q_m * obj.st_i.q_m.v;
 %             obj.n = L / (obj.A / obj.w);
             end
+        end
+        function calculate_T_o(obj)
+            % Calculate the outlet temperature of the trough collector
+            % known L
+            obj.st_i.flowTo(obj.st_o);
+            obj.st_o.p = obj.st_i.p;
+            guess = obj.st_i.T.v + 20;
+            options = optimset('Display','iter');
+            fsolve(@(x)CalcTroughCollector(x, obj), ...
+                guess, options);
+        end
+        function F = CalcTroughCollector(x, tc)
+            %CalcTroughCollector Use expressions to calculation parameters
+            %of trough collector
+            %   First expression expresses q_dr_1 in two different forms
+            %   Second expression expresses q_cond_tot = q_cond_conv + q_cond_rad
+            %   Third expression expresses q_in = q_ref + q_dr_1 + q_cond_tot +
+            %   q_conv_tot + q_rad_emit
+            tc.st_o.T.v = x(1);
+            L = tc.st_o.q_m.v .* L_per_q_m(tc);
+%             F = cell(3,1);
+%             F{1} = dc.q_dr_1_1 - dc.q_dr_1_2;
+%             F{2} = dc.q_cond_tot - dc.q_cond_conv - dc.q_cond_rad;
+%             F{3} = dc.q_dr_1_1 + dc.q_ref + (dc.q_cond_tot ...
+%                 + dc.q_conv_tot + dc.q_rad_emit) - dc.q_in;
+            F = tc.A/tc.w - L;
         end
     end
     methods
